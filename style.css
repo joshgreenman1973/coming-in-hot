@@ -279,3 +279,12 @@ body.touch .offer-btn .kh { display: none; }
   #interact-prompt { bottom: 240px; font-size: 12px; }
   #progress-wrap { bottom: 276px; width: 180px; }
 }
+@media (max-width: 430px) {
+  #touch-left { gap: 7px; left: 8px; }
+  #touch-right { gap: 7px; right: 8px; }
+  .tbtn { width: 54px; height: 54px; font-size: 19px; }
+  .tbtn.steer { width: 62px; height: 62px; font-size: 22px; }
+  .tbtn.big { width: 72px; height: 72px; font-size: 24px; }
+  .tbtn.act { font-size: 18px; }
+  #nav-banner { bottom: 214px; min-width: 180px; max-width: calc(100vw - 16px); }
+}
