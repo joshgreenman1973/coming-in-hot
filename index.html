@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Deliverista — a night on the streets of Brownstone Brooklyn</title>
+<meta name="description" content="A realistic ebike food-delivery sim on the real streets of Carroll Gardens, Boerum Hill, Gowanus and Park Slope.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚲</text></svg>">
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<!-- ============ TITLE SCREEN ============ -->
+<div id="title-screen">
+  <div class="title-inner">
+    <div class="title-kicker">SECOND SHIFT · BROWNSTONE BROOKLYN</div>
+    <h1 class="title-word">DELIVER<span class="title-accent">ISTA</span></h1>
+    <div class="title-sub">Pick up. Ride hard. Park legal-ish. Get the tip.</div>
+    <div class="title-map-note" id="title-map-note">Loading the real street grid…</div>
+    <button id="start-btn" class="start-btn" disabled>CLOCK IN</button>
+    <div class="title-controls">
+      <div><b>W/↑</b> throttle &nbsp; <b>S/↓</b> brake &nbsp; <b>A/D</b> steer</div>
+      <div><b>E</b> park / mount / interact &nbsp; <b>Enter</b> accept order &nbsp; <b>M</b> sound</div>
+      <div class="title-warning">Real streets. Real one-ways. Real restaurants. The cars do not love you.</div>
+    </div>
+  </div>
+  <div class="title-footer">
+    <button id="about-btn" class="ai-btn">AI caution</button>
+    <span class="osm-credit">Map data © OpenStreetMap contributors (ODbL)</span>
+  </div>
+</div>
+
+<!-- ============ AI CAUTION POPOVER ============ -->
+<div id="about-pop" class="about-pop hidden">
+  <button class="about-close" id="about-close">×</button>
+  <h3>AI caution</h3>
+  <p>This game was built with AI assistance. The street network, one-way directions, traffic signals and restaurant names come from OpenStreetMap and reflect real Brooklyn geography, but traffic behavior, wait times, payouts and tips are simulated and simplified. Delivery addresses are invented. Nothing here is a statement about any real restaurant or block.</p>
+  <p>See the <a href="https://github.com/joshgreenman1973/deliverista-sim/blob/main/METHODOLOGY.md" target="_blank" rel="noopener">methodology</a> for data sources and simulation assumptions.</p>
+</div>
+
+<!-- ============ HUD ============ -->
+<div id="hud" class="hidden">
+  <div id="hud-top-left">
+    <div id="clock">6:00 PM</div>
+    <div id="earnings">$0.00</div>
+  </div>
+
+  <div id="order-ticket" class="ticket hidden">
+    <div class="ticket-tear"></div>
+    <div class="ticket-body" id="ticket-body"></div>
+  </div>
+
+  <div id="offer-card" class="ticket offer hidden">
+    <div class="ticket-tear"></div>
+    <div class="ticket-body" id="offer-body"></div>
+    <div class="offer-actions">
+      <span class="key-hint">ENTER accept</span>
+      <span class="key-hint dim">ESC decline</span>
+      <div class="offer-timer"><div id="offer-timer-bar"></div></div>
+    </div>
+  </div>
+
+  <div id="hud-bottom-left">
+    <div class="meter-row"><span class="meter-label">SPD</span><span id="speed-num">0</span><span class="meter-unit">mph</span></div>
+    <div class="meter-row"><span class="meter-label">BATT</span>
+      <div class="bar"><div id="batt-bar"></div></div>
+    </div>
+    <div class="meter-row" id="food-row"><span class="meter-label">FOOD</span>
+      <div class="bar"><div id="food-bar"></div></div>
+    </div>
+  </div>
+
+  <canvas id="minimap" width="440" height="440"></canvas>
+  <div id="street-label"></div>
+  <div id="toast-stack"></div>
+  <div id="interact-prompt" class="hidden"></div>
+  <div id="progress-wrap" class="hidden"><div class="progress-label" id="progress-label"></div><div class="progress-outer"><div id="progress-bar"></div></div></div>
+</div>
+
+<!-- ============ SHIFT END ============ -->
+<div id="shift-end" class="hidden">
+  <div class="ticket final">
+    <div class="ticket-tear"></div>
+    <div class="ticket-body" id="shift-summary"></div>
+    <button id="again-btn" class="start-btn">NEW SHIFT</button>
+  </div>
+</div>
+
+<!-- ============ TOUCH CONTROLS ============ -->
+<div id="touch-ui" class="hidden">
+  <div id="touch-left">
+    <button class="tbtn" id="t-left">◀</button>
+    <button class="tbtn" id="t-right">▶</button>
+  </div>
+  <div id="touch-right">
+    <button class="tbtn" id="t-e">E</button>
+    <button class="tbtn" id="t-brake">▼</button>
+    <button class="tbtn big" id="t-gas">▲</button>
+  </div>
+</div>
+
+<script src="world.js"></script>
+<script src="actors.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
