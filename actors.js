@@ -2,13 +2,13 @@
 "use strict";
 
 const Traffic = {
-  cars: [], peds: [], MAX_CARS: 55, MAX_PEDS: 70,
+  cars: [], peds: [], MAX_CARS: 40, MAX_PEDS: 54,
   doorTimer: 0,
 };
 
 /* speed limits m/s by class (city ~25mph on avenues, slower on side streets) */
 const CAR_SPEED = { 1: 6.5, 2: 9.5, 3: 11.5 };
-const MOVING_COLORS = ["#c9c2ae", "#8f959e", "#5a616b", "#3d434c", "#7d5340", "#a8a8a8", "#333840", "#e0d9c5", "#57636e", "#f0c93c"]; // last = taxi
+const MOVING_COLORS = ["#d8d2be", "#98a2ae", "#c33b2f", "#3f6fae", "#7d5340", "#b8b8b8", "#3fae6a", "#e8e0cc", "#e0862f", "#f0c93c"]; // last = taxi
 
 function laneOffsetFor(seg, rev) {
   // drive on the right side of travel direction
@@ -116,12 +116,12 @@ function updateCars(dt, gameT, player) {
       }
     }
 
-    // player ahead → brake + honk
+    // player ahead → brake early + honk
     const pdx = px - pos.x, pdy = py - pos.y;
     const pAhead = pdx * pos.ux + pdy * pos.uy;
-    if (pAhead > 0 && pAhead < 12 && Math.abs(-pdy * pos.ux + pdx * pos.uy) < 2.2) {
-      target = Math.min(target, Math.max(0, (pAhead - 4.5) * 1.4));
-      if (pAhead < 8 && car.speed > 1 && car.honk <= 0) { car.honk = 3 + Math.random() * 4; Game && Game.honk(pos); }
+    if (pAhead > 0 && pAhead < 18 && Math.abs(-pdy * pos.ux + pdx * pos.uy) < 2.6) {
+      target = Math.min(target, Math.max(0, (pAhead - 5.5) * 1.1));
+      if (pAhead < 9 && car.speed > 1 && car.honk <= 0) { car.honk = 3 + Math.random() * 4; Game && Game.honk(pos); }
     }
     if (car.honk > 0) car.honk -= dt;
 
@@ -200,12 +200,70 @@ function updatePeds(dt, px, py) {
   Traffic.peds = Traffic.peds.filter(p => !p.dead);
 }
 
+/* ---- city buses: follow real MTA route polylines, stop for pickups ---- */
+const Buses = { list: [] };
+
+function initBuses() {
+  Buses.list = [];
+  W.busRoutes.forEach((route, ri) => {
+    const n = Math.max(1, Math.round(route.len / 900)); // one bus per ~900m of route
+    for (let i = 0; i < n; i++) {
+      Buses.list.push({
+        route: ri, d: (route.len * (i + Math.random() * 0.5)) / n,
+        speed: 0, max: 8.2, dwell: 0, nextStop: 0,
+      });
+    }
+    // deterministic stop points every ~280m
+    route.stops = [];
+    for (let s = 140; s < route.len - 60; s += 260 + (ri * 37) % 90) route.stops.push(s);
+  });
+}
+
+function busPos(bus) {
+  const r = W.busRoutes[bus.route];
+  const cum = r.cum, pts = r.pts;
+  let d = bus.d % r.len;
+  // binary search cum for segment
+  let lo = 0, hi = cum.length - 1;
+  while (lo < hi - 1) { const mid = (lo + hi) >> 1; if (cum[mid] <= d) lo = mid; else hi = mid; }
+  const segLen = cum[lo + 1] - cum[lo] || 1;
+  const f = (d - cum[lo]) / segLen;
+  const a = pts[lo], b = pts[lo + 1];
+  const x = a[0] + (b[0] - a[0]) * f, y = a[1] + (b[1] - a[1]) * f;
+  return { x, y, ang: Math.atan2(b[1] - a[1], b[0] - a[0]) };
+}
+
+function updateBuses(dt, player) {
+  for (const bus of Buses.list) {
+    const r = W.busRoutes[bus.route];
+    if (bus.dwell > 0) { bus.dwell -= dt; bus.speed = 0; continue; }
+    let target = bus.max;
+    const pos = busPos(bus);
+    // player directly ahead → brake + honk
+    const pdx = player.x - pos.x, pdy = player.y - pos.y;
+    const hx = Math.cos(pos.ang), hy = Math.sin(pos.ang);
+    const ahead = pdx * hx + pdy * hy;
+    if (ahead > 0 && ahead < 16 && Math.abs(-pdy * hx + pdx * hy) < 2.6) {
+      target = Math.min(target, Math.max(0, (ahead - 7) * 1.1));
+      if (ahead < 11 && bus.speed > 2 && typeof Game !== "undefined") Game.busHonk(pos);
+    }
+    if (bus.speed < target) bus.speed = Math.min(target, bus.speed + 1.6 * dt);
+    else bus.speed = Math.max(target, bus.speed - 5 * dt);
+    const before = bus.d % r.len;
+    bus.d = (bus.d + bus.speed * dt) % r.len;
+    // stop at the next bus stop we cross
+    for (const s of r.stops) {
+      if (before < s && bus.d >= s) { bus.dwell = 2.5 + Math.random() * 3.5; bus.speed = 0; break; }
+    }
+  }
+}
+
 /* ---- door hazard: parked car near player swings a door ---- */
 const openDoors = [];
 function updateDoors(dt, player) {
   Traffic.doorTimer -= dt;
   if (Traffic.doorTimer <= 0 && player.riding && player.speed > 4) {
-    Traffic.doorTimer = 4 + Math.random() * 7;
+    Traffic.doorTimer = 7 + Math.random() * 9;
     // find parked car ahead of player within door-zone
     const hx = Math.cos(player.ang), hy = Math.sin(player.ang);
     let cand = null;
@@ -221,7 +279,7 @@ function updateDoors(dt, player) {
     if (cand && Math.random() < 0.5) {
       cand.door = 3.5; // seconds open
       openDoors.push(cand);
-      if (typeof Game !== "undefined") Game.doorSound();
+      if (typeof Game !== "undefined") { Game.doorSound(); Game.doorBurst(cand); }
     }
   }
   for (let i = openDoors.length - 1; i >= 0; i--) {

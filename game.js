@@ -43,25 +43,30 @@ const Game = {};
     if (e.key === "Enter") acceptOffer();
     if (e.key === "Escape") declineOffer();
     if (e.key.toLowerCase() === "m") { S.muted = !S.muted; toast(S.muted ? "Sound off" : "Sound on"); }
+    if (e.key.toLowerCase() === "v") toggleView();
     if (e.key.toLowerCase() === "e") interact();
   });
   addEventListener("keyup", e => keys[e.key.toLowerCase()] = false);
 
-  // touch
+  // touch (pointer events so it also works with mouse-drag on hybrids)
   const touch = { gas: 0, brake: 0, left: 0, right: 0 };
   function bindTouch(id, prop) {
     const el = document.getElementById(id);
     if (!el) return;
-    const on = e => { e.preventDefault(); touch[prop] = 1; };
-    const off = e => { e.preventDefault(); touch[prop] = 0; };
-    el.addEventListener("touchstart", on); el.addEventListener("touchend", off);
-    el.addEventListener("touchcancel", off);
+    const on = e => { e.preventDefault(); touch[prop] = 1; el.classList.add("pressed"); };
+    const off = e => { e.preventDefault(); touch[prop] = 0; el.classList.remove("pressed"); };
+    el.addEventListener("pointerdown", on);
+    el.addEventListener("pointerup", off);
+    el.addEventListener("pointercancel", off);
+    el.addEventListener("pointerleave", off);
   }
   bindTouch("t-gas", "gas"); bindTouch("t-brake", "brake");
   bindTouch("t-left", "left"); bindTouch("t-right", "right");
   const tE = document.getElementById("t-e");
-  if (tE) tE.addEventListener("touchstart", e => { e.preventDefault(); if (S.offer) acceptOffer(); else interact(); });
-  const isTouch = matchMedia("(pointer: coarse)").matches;
+  if (tE) tE.addEventListener("pointerdown", e => { e.preventDefault(); interact(); });
+  const isTouch = matchMedia("(pointer: coarse)").matches || innerWidth < 500;
+  if (isTouch) document.body.classList.add("touch");
+  const EKEY = () => isTouch ? "P" : "E";
 
   /* ---------- audio ---------- */
   let AC = null, master = null;
@@ -90,8 +95,28 @@ const Game = {};
     const g = AC.createGain(); g.gain.value = vol || 0.3;
     src.connect(g); g.connect(master); src.start();
   }
-  Game.honk = pos => { const d = Math.hypot(pos.x - P.x, pos.y - P.y); tone(392, 0.28, "sawtooth", Math.max(0.02, 0.14 - d * 0.002)); tone(329, 0.28, "sawtooth", Math.max(0.015, 0.1 - d * 0.002)); };
+  Game.honk = pos => {
+    const d = Math.hypot(pos.x - P.x, pos.y - P.y);
+    tone(392, 0.28, "sawtooth", Math.max(0.02, 0.14 - d * 0.002));
+    tone(329, 0.28, "sawtooth", Math.max(0.015, 0.1 - d * 0.002));
+    burst(pos.x, pos.y - 2.5, "HONK!", "#ffd24d", 2.6);
+  };
+  let lastBusHonk = -9;
+  Game.busHonk = pos => {
+    if (S.t - lastBusHonk < 2.5) return;
+    lastBusHonk = S.t;
+    tone(180, 0.6, "sawtooth", 0.16); tone(150, 0.6, "sawtooth", 0.13);
+    burst(pos.x, pos.y - 3, "HOOONK!", "#ffd24d", 3.4);
+  };
   Game.doorSound = () => tone(180, 0.3, "sawtooth", 0.08, 0, 320);
+  Game.doorBurst = pc => burst(pc.x, pc.y - 2, "CLACK!", "#f7f1e3", 2.2);
+
+  /* ---------- comic bursts (world-space) ---------- */
+  const FX = [];
+  function burst(x, y, text, color, size) {
+    FX.push({ x, y, text, color, size: size || 2.6, t0: S.t });
+    if (FX.length > 14) FX.shift();
+  }
   const dingSound = () => { tone(880, 0.12, "sine", 0.14); tone(1320, 0.25, "sine", 0.12, 0.1); };
   const cashSound = () => { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.14, "triangle", 0.13, i * 0.06)); };
   const thud = () => { noise(0.18, 0.4); tone(70, 0.25, "sine", 0.25, 0, 40); };
@@ -126,49 +151,120 @@ const Game = {};
   }
 
   /* ---------- orders ---------- */
+  const ORDER_TYPES = [
+    { key: "standard", w: 0.55, badge: "", tipMult: 1, feeAdd: 0, dlMult: 1.25, frag: 1, items: [2, 4] },
+    { key: "rush", w: 0.16, badge: "🔥 HOT RUSH", cls: "rush", tipMult: 1.55, feeAdd: 0.5, dlMult: 0.8, frag: 1, items: [1, 3] },
+    { key: "big", w: 0.15, badge: "🎉 BIG ORDER", cls: "big", tipMult: 1.35, feeAdd: 3, dlMult: 1.5, frag: 1.25, items: [4, 7], heavy: true },
+    { key: "fragile", w: 0.14, badge: "🥤 SOUP + DRINKS", cls: "fragile", tipMult: 1.25, feeAdd: 0, dlMult: 1.3, frag: 2.1, items: [2, 4] },
+  ];
+  const MENU = [
+    ["pizza", ["grandma slice", "pepperoni pie", "garlic knots", "calzone", "caesar salad", "baked ziti"]],
+    ["mexican", ["al pastor tacos", "carnitas burrito", "chips + guac", "elote", "horchata", "quesadilla"]],
+    ["japanese", ["spicy tuna roll", "salmon avocado roll", "miso soup", "gyoza", "chirashi bowl", "seaweed salad"]],
+    ["sushi", ["dragon roll", "salmon nigiri", "miso soup", "edamame", "rainbow roll"]],
+    ["chinese", ["pork dumplings", "lo mein", "general tso's", "scallion pancakes", "hot + sour soup", "fried rice"]],
+    ["thai", ["pad thai", "green curry", "spring rolls", "tom yum", "mango sticky rice", "drunken noodles"]],
+    ["coffee", ["oat milk latte", "cold brew", "croissant", "avocado toast", "matcha", "everything bagel"]],
+    ["cafe", ["cappuccino", "BLT on a roll", "granola bowl", "iced chai", "banana bread"]],
+    ["burger", ["smash burger", "waffle fries", "black + white shake", "onion rings", "spicy chicken sando"]],
+    ["american", ["smash burger", "waffle fries", "milkshake", "cobb salad", "wings", "mac + cheese"]],
+    ["italian", ["rigatoni alla vodka", "chicken parm", "tiramisu", "caprese", "focaccia", "linguine vongole"]],
+    ["indian", ["chicken tikka masala", "garlic naan", "samosas", "saag paneer", "mango lassi", "biryani"]],
+    ["seafood", ["lobster roll", "shrimp basket", "clam chowder", "fish tacos", "crab cakes"]],
+    ["middle eastern", ["chicken shawarma", "falafel plate", "hummus + pita", "baba ganoush", "baklava"]],
+    ["korean", ["bulgogi bowl", "kimchi fried rice", "tteokbokki", "korean fried chicken", "japchae"]],
+    ["bakery", ["dozen bagels", "black + white cookie", "babka", "rugelach", "seven-layer cake"]],
+    ["ice_cream", ["two-scoop sundae", "banana split", "milkshake", "pint to go"]],
+    ["juice", ["green smoothie", "acai bowl", "fresh-squeezed OJ", "ginger shot"]],
+  ];
+  const DEFAULT_ITEMS = ["dinner special", "house salad", "seltzer", "dessert of the day", "side of fries"];
+
+  function itemsFor(cuisine, type) {
+    const c = (cuisine || "").toLowerCase();
+    let pool = DEFAULT_ITEMS;
+    for (const [k, v] of MENU) if (c.includes(k)) { pool = v; break; }
+    const n = type.items[0] + ((Math.random() * (type.items[1] - type.items[0] + 1)) | 0);
+    const out = [];
+    const used = new Set();
+    let subtotal = 0;
+    for (let i = 0; i < n; i++) {
+      const it = pool[(Math.random() * pool.length) | 0];
+      if (used.has(it)) continue;
+      used.add(it);
+      const q = Math.random() < 0.25 ? 2 : 1;
+      const price = (3.5 + Math.random() * 9.5) * q;
+      subtotal += price;
+      out.push({ q, name: it, price });
+    }
+    return { list: out, subtotal };
+  }
+
+  function pickType() {
+    let r = Math.random(), acc = 0;
+    for (const t of ORDER_TYPES) { acc += t.w; if (r <= acc) return t; }
+    return ORDER_TYPES[0];
+  }
+
   function makeOffer() {
     for (let tries = 0; tries < 30; tries++) {
       const r = W.restaurants[(Math.random() * W.restaurants.length) | 0];
       const dToR = Math.hypot(r.x - P.x, r.y - P.y);
       if (dToR > 700) continue;
       const rNode = nearestNode(r.x, r.y);
-      // destination 350–1400m away
+      // destination 300–1600m away
       const dNode = (Math.random() * W.nodes.length) | 0;
       const dp = W.nodes[dNode];
       const crow = Math.hypot(dp[0] - r.x, dp[1] - r.y);
-      if (crow < 350 || crow > 1400) continue;
+      if (crow < 300 || crow > 1600) continue;
       const path = astar(rNode, dNode, true);
       if (!path || path.length < 2) continue;
       const len = pathLength(path);
-      const estSec = dToR / 6 + len / 6.5 + 45;
-      const fee = 3 + len * 0.0016 + Math.random() * 1.2;
-      const tipBase = 1.5 + Math.random() * 4.5 + len * 0.0018;
+      const type = pickType();
+      const order = itemsFor(r.cuisine, type);
+      // curbside pickup point: the closest rideable spot to the restaurant
+      const stp = closestStreet(r.x, r.y);
+      const pickX = stp ? stp.px : r.x, pickY = stp ? stp.py : r.y;
+      const estSec = dToR / 7 + len / 7.5 + 40;
+      const fee = 3 + len * 0.0016 + type.feeAdd + Math.random() * 1.2;
+      const tipBase = (1.5 + Math.random() * 4.5 + len * 0.0018 + order.subtotal * 0.04) * type.tipMult;
       S.offer = {
-        rest: r, restNode: rNode, destNode: dNode,
+        rest: r, restNode: rNode, destNode: dNode, pickX, pickY,
         destX: dp[0], destY: dp[1], addr: addressFor(dNode),
         fee, tipBase: tipBase * (S.rain ? 1.35 : 1),
         est: estSec, deadline: 0, routeLen: len,
+        type, items: order.list, subtotal: order.subtotal,
       };
       S.offerT = 12;
       renderOffer();
       $("offer-card").classList.remove("hidden");
+      if (isTouch && tE) tE.classList.remove("attn");
       dingSound();
       return;
     }
     S.nextOfferT = 3; // retry soon
   }
 
+  function itemLines(o, max) {
+    const lines = o.items.slice(0, max).map(it =>
+      `<div class="t-item"><span><span class="q">${it.q}×</span>${it.name}</span><span>$${it.price.toFixed(2)}</span></div>`).join("");
+    const more = o.items.length > max ? `<div class="t-item"><span>…+${o.items.length - max} more</span></div>` : "";
+    return lines + more;
+  }
+
   function renderOffer() {
     const o = S.offer;
     const totalEst = o.fee + o.tipBase;
+    const badge = o.type.badge ? `<span class="t-badge ${o.type.cls}">${o.type.badge}</span>` : "";
     $("offer-body").innerHTML =
-      `<div class="t-head">NEW ORDER · ${fmtClock()}</div>
+      `<div class="t-head"><span>NEW ORDER · ${fmtClock()}</span>${badge}</div>
        <div class="t-rest">${o.rest.name}</div>
        <div class="t-cuisine">${o.rest.cuisine || "food"}</div>
        <div class="t-rule"></div>
+       ${itemLines(o, 4)}
+       <div class="t-rule"></div>
        <div class="t-row"><span>Deliver to</span><b class="t-addr">${o.addr}</b></div>
        <div class="t-row"><span>Trip</span><b>${(o.routeLen / 1609 * 1.1).toFixed(1)} mi</b></div>
-       <div class="t-row"><span>Quoted</span><b>${Math.ceil(o.est / 60)} min</b></div>
+       <div class="t-row"><span>Quoted</span><b>${Math.ceil(o.est * o.type.dlMult / 60)} min</b></div>
        <div class="t-rule"></div>
        <div class="t-row"><span>Est. payout</span><span class="t-money">${fmtMoney(totalEst)}</span></div>`;
   }
@@ -178,7 +274,7 @@ const Game = {};
     S.order = S.offer;
     S.offer = null;
     $("offer-card").classList.add("hidden");
-    S.order.deadline = S.t + S.order.est * 1.4;
+    S.order.deadline = S.t + S.order.est * S.order.type.dlMult;
     S.order.acceptT = S.t;
     S.phase = "topickup";
     P.food = 1; P.carrying = false;
@@ -200,13 +296,19 @@ const Game = {};
                    S.phase === "waiting" ? "KITCHEN IS FINISHING…" :
                    S.phase === "todrop" ? "FOOD ON BOARD — GO" :
                    "PARK + WALK IT IN";
-    const left = Math.max(0, o.deadline - S.t);
+    const left = o.deadline - S.t;
+    const clockStr = left >= 0
+      ? `${Math.floor(left / 60)}:${String(Math.floor(left % 60)).padStart(2, "0")}`
+      : `<span class="t-clock-late">−${Math.floor(-left / 60)}:${String(Math.floor(-left % 60)).padStart(2, "0")}</span>`;
+    const badge = o.type.badge ? `<span class="t-badge ${o.type.cls}">${o.type.badge}</span>` : "";
     $("ticket-body").innerHTML =
-      `<div class="t-head">ACTIVE ORDER</div>
+      `<div class="t-head"><span>ACTIVE ORDER</span>${badge}</div>
        <div class="t-rest">${o.rest.name}</div>
        <div class="t-rule"></div>
+       ${itemLines(o, 3)}
+       <div class="t-rule"></div>
        <div class="t-row"><span>To</span><b class="t-addr">${o.addr}</b></div>
-       <div class="t-row"><span>Clock</span><b>${Math.floor(left / 60)}:${String(Math.floor(left % 60)).padStart(2, "0")}</b></div>
+       <div class="t-row"><span>Clock</span><b>${clockStr}</b></div>
        <div class="t-rule"></div>
        <div class="t-status">${status}</div>`;
     $("order-ticket").classList.remove("hidden");
@@ -224,8 +326,128 @@ const Game = {};
   function targetPoint() {
     const o = S.order;
     if (!o) return null;
-    if (S.phase === "topickup" || S.phase === "waiting") return { x: o.rest.x, y: o.rest.y, label: o.rest.name };
+    if (S.phase === "topickup" || S.phase === "waiting") return { x: o.pickX, y: o.pickY, label: o.rest.name };
     return { x: o.destX, y: o.destY, label: o.addr };
+  }
+
+  /* ---------- GPS navigation ---------- */
+  let navManeuver = null;   // {x, y} of next turn, for the world chevron
+  let navCache = "";
+  function dirArrow(a) {
+    if (S.view === "ride") {
+      // heading-up view: arrows are relative to the way you're facing
+      const rel = normAng(a - P.ang);
+      const dirs = ["⬆", "↗", "➡", "↘", "⬇", "↙", "⬅", "↖"];
+      return dirs[Math.round(((rel + 2 * Math.PI) % (2 * Math.PI)) / (Math.PI / 4)) % 8];
+    }
+    const dirs = ["➡", "↘", "⬇", "↙", "⬅", "↖", "⬆", "↗"];
+    return dirs[Math.round((((a % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) / (Math.PI / 4)) % 8];
+  }
+  function fmtDist(m) {
+    const ft = m * 3.28084;
+    if (ft > 950) return (m / 1609).toFixed(1) + " mi";
+    return (Math.round(ft / 10) * 10 || 10) + " ft";
+  }
+  function streetNameBetween(a, b) {
+    for (const e of W.adjBike[a]) if (e.to === b) { const n = W.segs[e.seg].name; if (n) return n; }
+    return "";
+  }
+  function normAng(a) {
+    while (a > Math.PI) a -= 2 * Math.PI;
+    while (a < -Math.PI) a += 2 * Math.PI;
+    return a;
+  }
+  function routeNearest(r) {
+    let best = { d: Infinity, i: 0, t: 0 };
+    for (let i = 0; i < r.length - 1; i++) {
+      const a = W.nodes[r[i]], b = W.nodes[r[i + 1]];
+      const dx = b[0] - a[0], dy = b[1] - a[1];
+      const L2 = dx * dx + dy * dy || 1;
+      let t = ((P.x - a[0]) * dx + (P.y - a[1]) * dy) / L2;
+      t = Math.max(0, Math.min(1, t));
+      const d = Math.hypot(P.x - (a[0] + dx * t), P.y - (a[1] + dy * t));
+      if (d < best.d) best = { d, i, t };
+    }
+    return best;
+  }
+  function computeManeuver() {
+    const r = S.route;
+    const near = routeNearest(r);
+    if (near.d > 40) return { arrow: "⟳", main: "Rerouting…", sub: "", cls: "offroute", man: null };
+    // distance from the player's projection to each vertex ahead
+    const distTo = i => {
+      let d = 0;
+      const a0 = W.nodes[r[near.i]], b0 = W.nodes[r[near.i + 1]];
+      d += Math.hypot(b0[0] - a0[0], b0[1] - a0[1]) * (1 - near.t);
+      for (let k = near.i + 1; k < i; k++) {
+        const a = W.nodes[r[k]], b = W.nodes[r[k + 1]];
+        d += Math.hypot(b[0] - a[0], b[1] - a[1]);
+      }
+      return d;
+    };
+    const rem = distTo(r.length - 1) + near.d;
+    const dest = S.phase === "topickup" || S.phase === "waiting" ? "pickup" : "the drop";
+    const eta = Math.max(1, Math.round(rem / 7 / 60 * 10) / 10);
+    // walk forward looking for the next real turn
+    for (let i = near.i + 1; i < r.length - 1; i++) {
+      const p0 = W.nodes[r[i - 1]], p1 = W.nodes[r[i]], p2 = W.nodes[r[i + 1]];
+      const angIn = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]);
+      const angOut = Math.atan2(p2[1] - p1[1], p2[0] - p1[0]);
+      const turn = normAng(angOut - angIn) * 180 / Math.PI;
+      const dTo = distTo(i);
+      if (Math.abs(turn) > 28) {
+        const st = streetNameBetween(r[i], r[i + 1]);
+        const hard = Math.abs(turn) > 55;
+        const dir = turn > 0 ? "right" : "left";
+        const arrow = hard ? (turn > 0 ? "➡" : "⬅") : (turn > 0 ? "↗" : "↖");
+        return {
+          arrow,
+          main: (hard ? "Turn " : "Bear ") + dir + (st ? " · " + st : ""),
+          sub: fmtDist(Math.max(5, dTo)) + " · " + fmtDist(rem) + " to " + dest + " · " + eta + " min",
+          cls: "", man: { x: W.nodes[r[i]][0], y: W.nodes[r[i]][1] },
+        };
+      }
+    }
+    const endP = W.nodes[r[r.length - 1]];
+    return {
+      arrow: "⚑",
+      main: (dest === "pickup" ? "Pickup ahead" : "Drop ahead"),
+      sub: fmtDist(rem) + " · straight shot",
+      cls: "arrive", man: { x: endP[0], y: endP[1] },
+    };
+  }
+  function navUpdate() {
+    const el = $("nav-banner");
+    let show = false, arrow = "⬆", main = "", sub = "", cls = "";
+    navManeuver = null;
+    const tp = targetPoint();
+    if (S.running && S.order && tp) {
+      show = true;
+      if (!P.riding) {
+        const d = Math.hypot(tp.x - P.x, tp.y - P.y);
+        arrow = dirArrow(Math.atan2(tp.y - P.y, tp.x - P.x));
+        main = S.phase === "walking" || S.phase === "todrop" ? "Walk it in" : "Back to the bike";
+        sub = fmtDist(d) + " to the door";
+        cls = "arrive";
+      } else if (S.route && S.route.length > 1) {
+        const nav = computeManeuver();
+        arrow = nav.arrow; main = nav.main; sub = nav.sub; cls = nav.cls;
+        navManeuver = nav.man;
+      } else {
+        main = "Head to " + tp.label;
+        arrow = dirArrow(Math.atan2(tp.y - P.y, tp.x - P.x));
+      }
+    }
+    const sig = show + arrow + main + sub + cls;
+    if (sig !== navCache) {
+      navCache = sig;
+      el.classList.toggle("hidden", !show);
+      el.className = show ? ("" + cls) : "hidden";
+      el.id = "nav-banner";
+      $("nav-arrow").textContent = arrow;
+      $("nav-main").textContent = main;
+      $("nav-sub").textContent = sub;
+    }
   }
 
   function deliverPayout() {
@@ -238,6 +460,7 @@ const Game = {};
     S.earned += total; S.fees += o.fee; S.tips += tip; S.deliveries++;
     S.bestTip = Math.max(S.bestTip, tip);
     cashSound();
+    burst(P.x, P.y - 3, "+" + fmtMoney(total), "#4fdf7d", 3.2);
     $("earnings").classList.remove("bump"); void $("earnings").offsetWidth; $("earnings").classList.add("bump");
     toast(`Delivered · ${fmtMoney(o.fee)} fee + ${fmtMoney(tip)} tip`, "cash");
     if (tip < 1) toast("Stiffed on the tip. It happens.", "bad");
@@ -255,7 +478,7 @@ const Game = {};
     if (!S.running) return;
     if (P.riding) {
       // dismount if slow
-      if (Math.abs(P.speed) < 1.2) {
+      if (Math.abs(P.speed) < 2) {
         P.riding = false;
         bike.x = P.x; bike.y = P.y; bike.ang = P.ang;
         if (S.phase === "todrop") { S.phase = "walking"; updateTicket(); }
@@ -302,22 +525,31 @@ const Game = {};
     const onSidewalk = st && seg && st.d > ROAD_HALF[seg.cls] + 0.5;
     const grip = S.rain ? 0.72 : 1;
 
-    // battery + top speed
-    const battOK = P.battery > 0.12;
-    let vmax = battOK ? 11.2 : 5.6;               // ~25 mph / ~12 mph
-    if (onSidewalk) vmax = Math.min(vmax, 4.2);
-    if (P.knock > 0) vmax = Math.min(vmax, 2);
+    // top speed
+    const heavy = P.carrying && S.order && S.order.type.heavy;
+    let vmax = 12.5;                               // ~28 mph
+    if (heavy) vmax *= 0.92;
+    if (onSidewalk) vmax = Math.min(vmax, 5.5);
+    if (P.knock > 0) vmax = Math.min(vmax, 2.5);
 
-    const accel = battOK ? 4.2 : 2.2;
-    if (up) { P.speed = Math.min(vmax, P.speed + accel * dt); P.battery = Math.max(0, P.battery - dt * 0.00042 * (P.speed + 3)); }
-    else if (down) P.speed = P.speed > 0.3 ? Math.max(0, P.speed - (S.rain ? 5.5 : 8.5) * dt) : Math.max(-2.2, P.speed - 2.5 * dt);
-    else P.speed *= (1 - 0.35 * dt);
+    const accel = 6.5 * (heavy ? 0.85 : 1);
+    if (up) P.speed = Math.min(vmax, P.speed + accel * dt);
+    else if (down) P.speed = P.speed > 0.3 ? Math.max(0, P.speed - (S.rain ? 6.5 : 9.5) * dt) : Math.max(-3.2, P.speed - 3 * dt);
+    else P.speed *= (1 - 0.3 * dt);
 
-    // steering (bicycle-ish)
+    // steering (bicycle-ish, forgiving)
     const steerTarget = (left ? -1 : 0) + (right ? 1 : 0);
-    P.steer += (steerTarget - P.steer) * Math.min(1, dt * (S.rain ? 6 : 9));
-    const sf = Math.min(1, Math.abs(P.speed) / 3.5);
-    P.ang += P.steer * 2.4 * sf * grip * dt * Math.sign(P.speed || 1);
+    P.steer += (steerTarget - P.steer) * Math.min(1, dt * (S.rain ? 8 : 12));
+    const sf = Math.min(1, Math.abs(P.speed) / 2.4);
+    P.ang += P.steer * 3.1 * sf * grip * dt * Math.sign(P.speed || 1);
+
+    // lane assist: when not steering and roughly parallel to the street, glide along it
+    if (!steerTarget && seg && st.d < ROAD_HALF[seg.cls] + 1.5 && Math.abs(P.speed) > 2) {
+      const d1 = normAng(seg.ang - P.ang);
+      const d2 = normAng(seg.ang + Math.PI - P.ang);
+      const dmin = Math.abs(d1) < Math.abs(d2) ? d1 : d2;
+      if (Math.abs(dmin) < 0.55) P.ang += dmin * Math.min(1, dt * 2.6);
+    }
     if (onSidewalk) P.wobble = Math.min(1, P.wobble + dt * 2); else P.wobble *= (1 - dt * 3);
 
     const nx = P.x + Math.cos(P.ang) * P.speed * dt;
@@ -333,8 +565,8 @@ const Game = {};
         const dx = nx - px, dy = ny - py;
         const dd = Math.hypot(dx, dy) || 1;
         P.x = px + dx / dd * lim; P.y = py + dy / dd * lim;
-        if (P.speed > 4) { P.food = Math.max(0, P.food - 0.08); thud(); }
-        P.speed *= 0.35;
+        if (P.speed > 5) { P.food = Math.max(0, P.food - 0.05); thud(); }
+        P.speed *= Math.abs(P.speed) > 3 ? 0.55 : 0.93;
       } else { P.x = nx; P.y = ny; }
     } else { P.x = nx; P.y = ny; }
 
@@ -352,34 +584,49 @@ const Game = {};
       for (const car of Traffic.cars) {
         const cp = carPos(car);
         const d = Math.hypot(cp.x - P.x, cp.y - P.y);
-        if (d < 2.3) {
+        if (d < 2.0) {
           const closing = Math.abs(P.speed) + car.speed;
-          if (closing > 2.5) crash("Clipped by a car", 0.3);
-          else { P.speed *= 0.3; }
+          if (closing > 4.5) crash("Clipped by a car", 0.25);
+          else { P.speed *= 0.4; }
+          break;
+        }
+      }
+      // buses
+      for (const bus of Buses.list) {
+        const bp = busPos(bus);
+        const dx = bp.x - P.x, dy = bp.y - P.y;
+        if (dx * dx + dy * dy > 36) continue;
+        // oriented check against the 11m bus body
+        const hx = Math.cos(bp.ang), hy = Math.sin(bp.ang);
+        const lon = Math.abs(dx * hx + dy * hy), lat = Math.abs(-dx * hy + dy * hx);
+        if (lon < 6.2 && lat < 2.1) {
+          const rn = W.busRoutes[bus.route].name;
+          if (Math.abs(P.speed) + bus.speed > 3) crash("Clipped by the " + rn, 0.3);
+          else P.speed *= 0.2;
           break;
         }
       }
       // parked cars
-      if (Math.abs(P.speed) > 2) {
+      if (Math.abs(P.speed) > 3.5) {
         for (const pc of W.parked) {
           const dx = pc.x - P.x, dy = pc.y - P.y;
-          if (dx * dx + dy * dy < 4.6) {
-            if (pc.door > 0) crash("DOORED", 0.42);
-            else crash("Hit a parked car", 0.18);
+          if (dx * dx + dy * dy < 3.4) {
+            if (pc.door > 0) crash("DOORED", 0.38);
+            else crash("Hit a parked car", 0.1);
             break;
           }
         }
-      } else if (P.speed > 3) {}
+      }
       // open doors (wider zone than the car body)
       for (const pc of openDoors) {
         const doorX = pc.x - Math.sin(pc.ang) * -2.0, doorY = pc.y + Math.cos(pc.ang) * -2.0;
         const d = Math.hypot(doorX - P.x, doorY - P.y);
-        if (d < 1.7 && Math.abs(P.speed) > 3) { crash("DOORED", 0.42); break; }
+        if (d < 1.7 && Math.abs(P.speed) > 3.5) { crash("DOORED", 0.38); break; }
       }
       // pedestrians
       for (const ped of Traffic.peds) {
         const pp = pedPos(ped);
-        if (Math.hypot(pp.x - P.x, pp.y - P.y) < 1.5 && Math.abs(P.speed) > 2) {
+        if (Math.hypot(pp.x - P.x, pp.y - P.y) < 1.3 && Math.abs(P.speed) > 2.8) {
           crash("You clipped a pedestrian", 0.25);
           S.earned = Math.max(0, S.earned - 5);
           toast("-$5.00 · watch the sidewalk", "bad");
@@ -407,10 +654,13 @@ const Game = {};
 
     function crash(msg, dmg) {
       S.crashes++;
-      P.crashCd = 2.2; P.knock = 1.1;
-      P.speed = Math.min(P.speed, 0.8);
-      if (P.carrying) P.food = Math.max(0, P.food - dmg);
+      P.crashCd = 1.8; P.knock = 0.7;
+      P.speed = Math.min(P.speed, 1.2);
+      const frag = S.order ? S.order.type.frag : 1;
+      if (P.carrying) P.food = Math.max(0, P.food - dmg * frag);
       thud();
+      burst(P.x + Math.cos(P.ang) * 2, P.y + Math.sin(P.ang) * 2 - 1.5,
+        msg === "DOORED" ? "DOORED!" : "WHAM!", "#ff5a5a", 3.4);
       toast(msg + (P.carrying ? " · food took a hit" : ""), "bad");
     }
   }
@@ -431,20 +681,20 @@ const Game = {};
     if (!o) {
       if (!P.riding) {
         const d = Math.hypot(bike.x - P.x, bike.y - P.y);
-        if (d < 6) prompt = { text: "<b>E</b> — hop on the bike" };
+        if (d < 6) prompt = { text: "<b>" + EKEY() + "</b> — hop on the bike" };
       }
       return;
     }
 
     if (S.phase === "topickup") {
-      const d = Math.hypot(o.rest.x - P.x, o.rest.y - P.y);
+      const d = Math.hypot(o.pickX - P.x, o.pickY - P.y);
       if (d < 16 && Math.abs(P.speed) < 1) {
         S.phase = "waiting";
         S.waitT = 1.5 + Math.random() * (Math.random() < 0.2 ? 6 : 2.5); // sometimes the kitchen is slow
         updateTicket();
       } else if (d < 30) prompt = { text: "Stop at <b>" + o.rest.name + "</b> to pick up" };
     } else if (S.phase === "waiting") {
-      const d = Math.hypot(o.rest.x - P.x, o.rest.y - P.y);
+      const d = Math.hypot(o.pickX - P.x, o.pickY - P.y);
       if (d > 18) { S.phase = "topickup"; progress = null; updateTicket(); return; }
       if (!progress) progress = { label: "WAITING ON THE KITCHEN", t: 0, dur: S.waitT };
       progress.t += dt;
@@ -454,12 +704,13 @@ const Game = {};
         S.phase = "todrop";
         computeRoute(); updateTicket();
         dingSound();
+        burst(P.x, P.y - 3, "ORDER UP!", "#ffb347", 3);
         toast("Order up — " + o.rest.name);
       }
     } else if (S.phase === "todrop" || S.phase === "walking") {
       const d = Math.hypot(o.destX - P.x, o.destY - P.y);
       if (P.riding) {
-        if (d < 28) prompt = { text: "<b>E</b> — park the bike, walk it in" };
+        if (d < 28) prompt = { text: "<b>" + EKEY() + "</b> — park the bike, walk it in" };
       } else {
         if (d < 8) {
           if (!progress) progress = { label: "HANDING IT OFF", t: 0, dur: 1.2 };
@@ -467,7 +718,7 @@ const Game = {};
           if (progress.t >= progress.dur) { progress = null; deliverPayout(); }
         } else {
           const bd = Math.hypot(bike.x - P.x, bike.y - P.y);
-          prompt = bd < 6 && d > 40 ? { text: "<b>E</b> — hop on the bike" } : { text: "Walk to the door · " + Math.round(d) + "m" };
+          prompt = bd < 6 && d > 40 ? { text: "<b>" + EKEY() + "</b> — hop on the bike" } : { text: "Walk to the door · " + fmtDist(d) };
         }
       }
       // ticking clock anxiety
@@ -477,11 +728,9 @@ const Game = {};
     // route recompute if strayed
     if (S.route && P.riding) {
       S.routeT += dt;
-      if (S.routeT > 1.5) {
+      if (S.routeT > 1) {
         S.routeT = 0;
-        let minD = 1e9;
-        for (const ni of S.route) { const p = W.nodes[ni]; const d = Math.hypot(p[0] - P.x, p[1] - P.y); if (d < minD) minD = d; }
-        if (minD > 70) computeRoute();
+        if (routeNearest(S.route).d > 35) computeRoute();
       }
     }
   }
@@ -491,18 +740,22 @@ const Game = {};
   function makeRoofPattern() {
     const c = document.createElement("canvas"); c.width = c.height = 96;
     const g = c.getContext("2d");
-    g.fillStyle = "#211d20"; g.fillRect(0, 0, 96, 96);
+    g.fillStyle = "#2c2531"; g.fillRect(0, 0, 96, 96);
     const rnd = mulberry(7);
     for (let i = 0; i < 26; i++) {
       const x = rnd() * 96, y = rnd() * 96, w = 8 + rnd() * 18, h = 8 + rnd() * 18;
-      const shade = ["#262126", "#2a2326", "#252028", "#2d2624", "#231f24"][(rnd() * 5) | 0];
+      const shade = ["#443229", "#4c3630", "#3c3541", "#513b2e", "#3a3040", "#463a33", "#54413b"][(rnd() * 7) | 0];
       g.fillStyle = shade; g.fillRect(x, y, w, h);
-      g.fillStyle = "rgba(255,255,255,.03)"; g.fillRect(x, y, w, 1.5);
+      g.fillStyle = "rgba(255,220,170,.06)"; g.fillRect(x, y, w, 1.5);
     }
-    // occasional lit window
-    for (let i = 0; i < 10; i++) {
-      g.fillStyle = "rgba(255,190,90," + (0.05 + rnd() * 0.1) + ")";
+    // lit windows + the odd bodega neon
+    for (let i = 0; i < 16; i++) {
+      g.fillStyle = "rgba(255,200,110," + (0.1 + rnd() * 0.16) + ")";
       g.fillRect(rnd() * 94, rnd() * 94, 2, 2);
+    }
+    for (let i = 0; i < 4; i++) {
+      g.fillStyle = ["rgba(80,230,200,.2)", "rgba(255,120,190,.2)", "rgba(160,240,90,.18)"][(rnd() * 3) | 0];
+      g.fillRect(rnd() * 92, rnd() * 92, 2.5, 2.5);
     }
     roofPattern = ctx.createPattern(c, "repeat");
   }
@@ -519,25 +772,37 @@ const Game = {};
     lampSprite = c;
   }
 
-  const cam = { x: 0, y: 0, z: 3.4 };
+  const cam = { x: 0, y: 0, z: 3.4, rot: 0 };
   function render() {
     const w = canvas.width, h = canvas.height;
-    const zBase = (isTouch ? 4.6 : 5.8) * DPR;
-    const zoomOut = Math.min(0.55, Math.abs(P.speed) * 0.045);
-    const zTarget = zBase * (1 - zoomOut * 0.25);
+    const rideCam = S.view === "ride";
+    const zBase = (isTouch ? 4.6 : 5.8) * DPR * (rideCam ? 1.16 : 1);
+    const zoomOut = Math.min(0.6, Math.abs(P.speed) * 0.05);
+    const zTarget = zBase * (1 - zoomOut * (rideCam ? 0.3 : 0.25));
     cam.z += (zTarget - cam.z) * 0.03;
-    const lookX = P.x + Math.cos(P.ang) * Math.min(30, P.speed * 2.6) * (P.riding ? 1 : 0);
-    const lookY = P.y + Math.sin(P.ang) * Math.min(30, P.speed * 2.6) * (P.riding ? 1 : 0);
-    cam.x += (lookX - cam.x) * 0.06; cam.y += (lookY - cam.y) * 0.06;
+    const look = rideCam ? Math.min(16, 5 + Math.abs(P.speed) * 1.3) : Math.min(30, Math.abs(P.speed) * 2.6);
+    const lookX = P.x + Math.cos(P.ang) * look * (P.riding ? 1 : 0.3);
+    const lookY = P.y + Math.sin(P.ang) * look * (P.riding ? 1 : 0.3);
+    const follow = rideCam ? 0.12 : 0.06;
+    cam.x += (lookX - cam.x) * follow; cam.y += (lookY - cam.y) * follow;
+    const rotTarget = rideCam ? P.ang + Math.PI / 2 : 0;
+    cam.rot += normAng(rotTarget - cam.rot) * (rideCam ? 0.09 : 0.16);
+    if (!rideCam && Math.abs(normAng(cam.rot)) < 0.005) cam.rot = 0;
+    const rot = cam.rot;
 
     const z = cam.z;
-    const vw = w / z, vh = h / z;
-    const vx0 = cam.x - vw / 2, vy0 = cam.y - vh / 2;
+    const ax = w / 2, ay = rideCam ? h * 0.62 : h / 2;
+    cam.ax = ax; cam.ay = ay;
+    // culling bounds: circle that covers the (possibly rotated) viewport
+    const R = Math.hypot(w, h) / (2 * z) + 16;
+    const vx0 = cam.x - R, vy0 = cam.y - R, vw = R * 2, vh = R * 2;
+    // draws a glyph/text upright regardless of camera rotation
+    const upright = (x, y, fn) => { ctx.save(); ctx.translate(x, y); ctx.rotate(rot); fn(); ctx.restore(); };
 
     // rooftops base
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.fillStyle = "#1d191c"; ctx.fillRect(0, 0, w, h);
-    ctx.setTransform(z, 0, 0, z, -vx0 * z, -vy0 * z);
+    ctx.fillStyle = "#2a2430"; ctx.fillRect(0, 0, w, h);
+    ctx.translate(ax, ay); ctx.scale(z, z); ctx.rotate(-rot); ctx.translate(-cam.x, -cam.y);
     if (roofPattern) {
       ctx.save(); ctx.fillStyle = roofPattern;
       const sc = 0.55; ctx.scale(sc, sc);
@@ -548,39 +813,70 @@ const Game = {};
     ctx.lineCap = "round"; ctx.lineJoin = "round";
     // sidewalk casing
     for (const c of [3, 2, 1]) {
-      ctx.strokeStyle = "#39343a";
+      ctx.strokeStyle = "#4c4652";
       ctx.lineWidth = (ROAD_HALF[c] + SIDEWALK) * 2;
       ctx.stroke(W.paths[c]);
     }
     // asphalt
     for (const c of [3, 2, 1]) {
-      ctx.strokeStyle = c === 3 ? "#232227" : "#26252a";
+      ctx.strokeStyle = c === 3 ? "#302f38" : "#34333c";
       ctx.lineWidth = ROAD_HALF[c] * 2;
       ctx.stroke(W.paths[c]);
     }
     // center dashes on bigger streets
-    ctx.strokeStyle = "rgba(230,220,160,.28)";
+    ctx.strokeStyle = "rgba(240,225,160,.4)";
     ctx.lineWidth = 0.35;
     ctx.setLineDash([4, 6]);
     for (const c of [3, 2]) ctx.stroke(W.dashPaths[c]);
     ctx.setLineDash([]);
     // bike lanes
-    ctx.strokeStyle = "rgba(60,160,90,.30)";
+    ctx.strokeStyle = "rgba(72,190,110,.42)";
     ctx.lineWidth = 1.6;
     ctx.stroke(W.bikePaths);
 
-    // route
+    // gps route: soft glow + thin animated cyan dashes (thin so it never reads as traffic)
     if (S.route && S.route.length > 1) {
-      ctx.strokeStyle = "rgba(255,179,71,.55)";
-      ctx.lineWidth = 1.7;
-      ctx.setLineDash([5, 5]);
-      ctx.lineDashOffset = -S.t * 14;
       ctx.beginPath();
       const p0 = W.nodes[S.route[0]];
       ctx.moveTo(p0[0], p0[1]);
       for (let i = 1; i < S.route.length; i++) { const p = W.nodes[S.route[i]]; ctx.lineTo(p[0], p[1]); }
+      ctx.strokeStyle = "rgba(63,216,255,.16)";
+      ctx.lineWidth = 2.8;
+      ctx.stroke();
+      ctx.strokeStyle = "rgba(63,216,255,.9)";
+      ctx.lineWidth = 0.7;
+      ctx.setLineDash([2.6, 2.2]);
+      ctx.lineDashOffset = -S.t * 10;
       ctx.stroke();
       ctx.setLineDash([]);
+    }
+    // pulsing chevron ring at the next turn
+    if (navManeuver) {
+      const pu = 1 + Math.sin(S.t * 6) * 0.22;
+      ctx.strokeStyle = "rgba(63,216,255,.95)";
+      ctx.lineWidth = 0.8;
+      ctx.beginPath(); ctx.arc(navManeuver.x, navManeuver.y, 3.4 * pu, 0, 7); ctx.stroke();
+      ctx.strokeStyle = "rgba(63,216,255,.35)";
+      ctx.beginPath(); ctx.arc(navManeuver.x, navManeuver.y, 5.6 * pu, 0, 7); ctx.stroke();
+    }
+
+    // street trees (canopies over the curb line)
+    for (const tr of W.trees) {
+      if (tr.x < vx0 - 6 || tr.x > vx0 + vw + 6 || tr.y < vy0 - 6 || tr.y > vy0 + vh + 6) continue;
+      ctx.fillStyle = "rgba(20,40,22,.35)";
+      ctx.beginPath(); ctx.arc(tr.x + 0.5, tr.y + 0.6, tr.r, 0, 7); ctx.fill();
+      ctx.fillStyle = tr.col;
+      ctx.beginPath(); ctx.arc(tr.x, tr.y, tr.r, 0, 7); ctx.fill();
+      ctx.fillStyle = "rgba(255,255,220,.14)";
+      ctx.beginPath(); ctx.arc(tr.x - tr.r * 0.3, tr.y - tr.r * 0.3, tr.r * 0.45, 0, 7); ctx.fill();
+    }
+
+    // restaurant storefronts
+    ctx.font = "2.6px sans-serif";
+    ctx.textAlign = "center";
+    for (const r of W.restaurants) {
+      if (r.x < vx0 - 4 || r.x > vx0 + vw + 4 || r.y < vy0 - 4 || r.y > vy0 + vh + 4) continue;
+      upright(r.x, r.y, () => ctx.fillText(r.emoji || "🍴", 0, 0.9));
     }
 
     // parked cars (culled)
@@ -623,6 +919,30 @@ const Game = {};
       ctx.restore();
     }
 
+    // buses (real MTA routes)
+    ctx.textAlign = "center";
+    for (const bus of Buses.list) {
+      const bp = busPos(bus);
+      if (bp.x < vx0 - 15 || bp.x > vx0 + vw + 15 || bp.y < vy0 - 15 || bp.y > vy0 + vh + 15) continue;
+      ctx.save(); ctx.translate(bp.x, bp.y); ctx.rotate(bp.ang);
+      ctx.fillStyle = "rgba(255,240,190,.08)";
+      ctx.beginPath(); ctx.moveTo(5.4, -1.1); ctx.lineTo(15, -3.2); ctx.lineTo(15, 3.2); ctx.lineTo(5.4, 1.1); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = "#2a3f8f";
+      roundRect(-5.6, -1.5, 11.2, 3, 0.7); ctx.fill();
+      ctx.fillStyle = "#e9e4d6";
+      roundRect(-5.6, -1.5, 11.2, 1.1, 0.5); ctx.fill();
+      ctx.fillStyle = "#ffd23c"; ctx.fillRect(5.1, -1.2, 0.5, 2.4);
+      ctx.fillStyle = "rgba(15,18,30,.5)";
+      for (let wx = -4.6; wx < 4.4; wx += 1.4) ctx.fillRect(wx, -1.35, 0.9, 0.75);
+      ctx.restore();
+      const nm = W.busRoutes[bus.route].name;
+      upright(bp.x, bp.y, () => {
+        ctx.font = "700 1.9px 'IBM Plex Mono'";
+        ctx.fillStyle = "#fff";
+        ctx.fillText(nm, 0, 0.7);
+      });
+    }
+
     // pedestrians
     for (const ped of Traffic.peds) {
       const pp = pedPos(ped);
@@ -639,10 +959,12 @@ const Game = {};
       ctx.lineWidth = 0.7;
       ctx.beginPath(); ctx.arc(tp.x, tp.y, 7 * pulse, 0, 7); ctx.stroke();
       ctx.beginPath(); ctx.arc(tp.x, tp.y, 2.2, 0, 7); ctx.stroke();
-      ctx.font = "600 3.2px 'IBM Plex Mono'";
-      ctx.textAlign = "center";
-      ctx.fillStyle = "rgba(244,239,228,.95)";
-      ctx.fillText(tp.label, tp.x, tp.y - 9 * pulse);
+      upright(tp.x, tp.y, () => {
+        ctx.font = "600 3.2px 'IBM Plex Mono'";
+        ctx.textAlign = "center";
+        ctx.fillStyle = "rgba(244,239,228,.95)";
+        ctx.fillText(tp.label, 0, -9 * pulse);
+      });
     }
 
     // parked bike (when walking)
@@ -655,6 +977,29 @@ const Game = {};
       ctx.fillStyle = "#f4efe4"; ctx.beginPath(); ctx.arc(0, 0, 0.7, 0, 7); ctx.fill();
       if (P.carrying) { ctx.fillStyle = "#ff4d2e"; ctx.fillRect(-0.4, -1.3, 0.9, 0.7); }
       ctx.restore();
+    }
+
+    // comic bursts
+    for (let i = FX.length - 1; i >= 0; i--) {
+      const fx = FX[i];
+      const age = S.t - fx.t0;
+      if (age > 1.3 || age < 0) { FX.splice(i, 1); continue; }
+      const pop = age < 0.18 ? age / 0.18 : 1;
+      const alpha = age > 0.8 ? 1 - (age - 0.8) / 0.5 : 1;
+      ctx.save();
+      ctx.translate(fx.x, fx.y - age * 1.6);
+      ctx.rotate(rot - 0.06 + 0.04 * Math.sin(age * 20));
+      ctx.scale(0.6 + 0.4 * pop, 0.6 + 0.4 * pop);
+      ctx.font = "400 " + fx.size + "px Anton";
+      ctx.textAlign = "center";
+      ctx.globalAlpha = alpha;
+      ctx.lineWidth = fx.size * 0.18;
+      ctx.strokeStyle = "#1a1420";
+      ctx.strokeText(fx.text, 0, 0);
+      ctx.fillStyle = fx.color;
+      ctx.fillText(fx.text, 0, 0);
+      ctx.restore();
+      ctx.globalAlpha = 1;
     }
 
     // night: lamp glow
@@ -682,10 +1027,36 @@ const Game = {};
 
     // vignette
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    const vg = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.36, w / 2, h / 2, Math.max(w, h) * 0.75);
-    vg.addColorStop(0, "rgba(8,8,14,0)");
-    vg.addColorStop(1, "rgba(6,6,12,.55)");
+    const vg = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.36, w / 2, h / 2, Math.max(w, h) * 0.78);
+    vg.addColorStop(0, "rgba(10,8,16,0)");
+    vg.addColorStop(1, "rgba(10,8,16,.34)");
     ctx.fillStyle = vg; ctx.fillRect(0, 0, w, h);
+
+    // gps edge arrow: points to the next turn (or the target) when it's off-screen
+    const navPt = navManeuver || targetPoint();
+    if (navPt && S.order && P.riding) {
+      const dxw = navPt.x - cam.x, dyw = navPt.y - cam.y;
+      const cr = Math.cos(rot), sr = Math.sin(rot);
+      const sx = ax + z * (dxw * cr + dyw * sr);
+      const sy = ay + z * (-dxw * sr + dyw * cr);
+      const m = 52 * DPR;
+      if (sx < m || sx > w - m || sy < m || sy > h - m) {
+        const cxs = Math.max(m, Math.min(w - m, sx));
+        const cys = Math.max(m, Math.min(h - m, sy));
+        const ang = Math.atan2(sy - cys, sx - cxs);
+        ctx.save();
+        ctx.translate(cxs, cys);
+        ctx.rotate(ang);
+        const sc = DPR * (1 + Math.sin(S.t * 6) * 0.12);
+        ctx.fillStyle = "rgba(63,216,255,.95)";
+        ctx.beginPath();
+        ctx.moveTo(16 * sc, 0); ctx.lineTo(-8 * sc, -10 * sc); ctx.lineTo(-3 * sc, 0); ctx.lineTo(-8 * sc, 10 * sc);
+        ctx.closePath();
+        ctx.strokeStyle = "rgba(16,20,30,.8)"; ctx.lineWidth = 2.5 * DPR; ctx.stroke();
+        ctx.fill();
+        ctx.restore();
+      }
+    }
   }
 
   function drawLightDot(x, y, st, ns) {
@@ -765,13 +1136,13 @@ const Game = {};
       $("clock").textContent = fmtClock();
       $("earnings").textContent = fmtMoney(S.earned);
       $("speed-num").textContent = Math.round(Math.abs(P.speed) * 2.237);
-      $("batt-bar").style.width = (P.battery * 100) + "%";
-      $("batt-bar").className = P.battery < 0.15 ? "low" : "";
       $("food-row").style.visibility = P.carrying ? "visible" : "hidden";
       $("food-bar").style.width = (P.food * 100) + "%";
       const st = closestStreet(P.x, P.y);
       $("street-label").textContent = st && W.segs[st.seg].name ? W.segs[st.seg].name : "";
       if (S.order) updateTicket();
+      navUpdate();
+      if (isTouch && tE) tE.classList.toggle("attn", !!prompt);
     }
     const pEl = $("interact-prompt");
     if (prompt) { pEl.innerHTML = prompt.text; pEl.classList.remove("hidden"); }
@@ -787,8 +1158,8 @@ const Game = {};
   /* ---------- shift end ---------- */
   function endShift() {
     S.running = false; S.over = true;
-    const best = Math.max(S.earned, +(localStorage.getItem("deliverista-best") || 0));
-    localStorage.setItem("deliverista-best", best);
+    const best = Math.max(S.earned, +(localStorage.getItem("cominginhot-best") || 0));
+    localStorage.setItem("cominginhot-best", best);
     const perHr = S.earned / (SHIFT_LEN / 3600) / 60; // per game-hour ≈ per real 60s… show per shift instead
     const grade = S.earned >= 120 ? "S" : S.earned >= 85 ? "A" : S.earned >= 55 ? "B" : S.earned >= 30 ? "C" : "D";
     $("shift-summary").innerHTML =
@@ -825,6 +1196,7 @@ const Game = {};
     S.t += dt; S.gameT += dt;
     updatePlayer(dt);
     updateCars(dt, S.gameT, P);
+    updateBuses(dt, P);
     updatePeds(dt, P.x, P.y);
     updateDoors(dt, { ...P, riding: P.riding });
     updateOrders(dt);
@@ -866,6 +1238,7 @@ const Game = {};
       rain: Math.random() < 0.3,
     });
     Traffic.cars = []; Traffic.peds = [];
+    initBuses();
     cam.x = P.x; cam.y = P.y;
     cam.z = (isTouch ? 4.6 : 5.8) * DPR;
     $("title-screen").classList.add("fading");
@@ -876,18 +1249,47 @@ const Game = {};
     toast(S.rain ? "Rain tonight — tips run hot, brakes run long" : "Clear night. Dinner rush is on.");
   }
 
+  function setView(v) {
+    S.view = v;
+    try { localStorage.setItem("cominginhot-view", v); } catch (e) {}
+    $("view-btn").textContent = v === "ride" ? "🚴 ride cam" : "🧭 bird's eye";
+  }
+  function toggleView() { setView(S.view === "ride" ? "north" : "ride"); }
+  setView(localStorage.getItem("cominginhot-view") || "ride");
+
   document.getElementById("start-btn").addEventListener("click", startShift);
   document.getElementById("again-btn").addEventListener("click", startShift);
+  document.getElementById("accept-btn").addEventListener("click", acceptOffer);
+  document.getElementById("decline-btn").addEventListener("click", declineOffer);
+  document.getElementById("view-btn").addEventListener("click", toggleView);
   document.getElementById("about-btn").addEventListener("click", () => $("about-pop").classList.toggle("hidden"));
   document.getElementById("about-close").addEventListener("click", () => $("about-pop").classList.add("hidden"));
 
   Game.debug = () => ({ t: S.t, running: S.running, phase: S.phase, x: P.x, y: P.y, speed: P.speed, cars: Traffic.cars.length, peds: Traffic.peds.length, offer: !!S.offer, order: !!S.order });
   Game.S = S; Game.P = P;
 
+  const CUISINE_EMOJI = [
+    ["pizza", "🍕"], ["mexican", "🌮"], ["japanese", "🍣"], ["sushi", "🍣"], ["chinese", "🥡"],
+    ["thai", "🍜"], ["noodle", "🍜"], ["ramen", "🍜"], ["coffee", "☕"], ["cafe", "☕"],
+    ["burger", "🍔"], ["american", "🍔"], ["italian", "🍝"], ["indian", "🍛"], ["seafood", "🦞"],
+    ["middle eastern", "🥙"], ["greek", "🥙"], ["falafel", "🥙"], ["korean", "🍲"], ["bakery", "🥐"],
+    ["ice cream", "🍦"], ["dessert", "🍦"], ["juice", "🥤"], ["smoothie", "🥤"], ["bagel", "🥯"],
+    ["sandwich", "🥪"], ["deli", "🥪"], ["breakfast", "🍳"], ["chicken", "🍗"], ["barbecue", "🍖"],
+    ["vegan", "🥗"], ["vegetarian", "🥗"], ["french", "🥖"], ["donut", "🍩"], ["steak", "🥩"],
+  ];
+  function emojiFor(cuisine) {
+    const c = (cuisine || "").toLowerCase().replace(/_/g, " ");
+    for (const [k, v] of CUISINE_EMOJI) if (c.includes(k)) return v;
+    return "🍴";
+  }
+
   makeRoofPattern(); makeLampSprite();
   loadWorld().then(() => {
+    W.restaurants.forEach(r => r.emoji = emojiFor(r.cuisine));
+    const nBus = new Set(W.busRoutes.map(r => r.name)).size;
     $("title-map-note").textContent =
-      W.restaurants.length + " real restaurants · the real streets of Carroll Gardens, Boerum Hill, Gowanus + Park Slope";
+      W.restaurants.length + " real restaurants · " + (nBus ? nBus + " real bus lines · " : "") +
+      "the real streets of Carroll Gardens, Boerum Hill, Gowanus + Park Slope";
     const btn = document.getElementById("start-btn");
     btn.disabled = false;
   }).catch(err => {

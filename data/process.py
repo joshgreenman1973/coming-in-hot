@@ -78,14 +78,65 @@ for e in rest_raw:
     out_rest.append({'name': name, 'x': x, 'y': y, 'cuisine': cuisine,
                      'street': t.get('addr:street', '')})
 
+# Bus routes: stitch relation member ways into continuous polylines
+out_buses = []
+try:
+    braw = json.load(open('buses_raw.json'))['elements']
+    bnodes = {e['id']: e for e in braw if e['type'] == 'node'}
+    bways = {e['id']: e for e in braw if e['type'] == 'way'}
+    rels = [e for e in braw if e['type'] == 'relation']
+    per_ref = {}
+    for rel in rels:
+        ref = rel.get('tags', {}).get('ref')
+        # local Brooklyn routes only; express X/SIM buses just ride the expressway here
+        if not ref or not (ref.startswith('B') and ref[1:].isdigit()):
+            continue
+        chains = []
+        chain = []
+        for m in rel.get('members', []):
+            if m['type'] != 'way' or m['ref'] not in bways:
+                continue
+            wnodes = [bnodes[n] for n in bways[m['ref']]['nodes'] if n in bnodes]
+            if len(wnodes) < 2:
+                continue
+            pts = [proj(n['lat'], n['lon']) for n in wnodes]
+            if not chain:
+                chain = list(pts)
+                continue
+            tail = chain[-1]
+            d_start = math.hypot(pts[0][0] - tail[0], pts[0][1] - tail[1])
+            d_end = math.hypot(pts[-1][0] - tail[0], pts[-1][1] - tail[1])
+            if min(d_start, d_end) > 80:
+                chains.append(chain)
+                chain = list(pts)
+                continue
+            if d_end < d_start:
+                pts = list(reversed(pts))
+            chain.extend(pts[1:])
+        if chain:
+            chains.append(chain)
+        best = max(chains, key=len, default=None)
+        if best and len(best) > 20:
+            per_ref.setdefault(ref, []).append(best)
+    for ref, chains in per_ref.items():
+        chains.sort(key=len, reverse=True)
+        for c in chains[:2]:  # keep up to two directions
+            out_buses.append({'ref': ref, 'pts': [[round(x, 1), round(y, 1)] for x, y in c]})
+except FileNotFoundError:
+    pass
+
 out = {
     'center': [CENTER_LAT, CENTER_LON],
     'nodes': out_nodes,
     'signals': sorted(signals),
     'ways': out_ways,
     'restaurants': out_rest,
+    'buses': out_buses,
 }
 json.dump(out, open('../map.json', 'w'), separators=(',', ':'))
 import os
 print('nodes', len(out_nodes), 'ways', len(out_ways), 'signals', len(signals),
-      'restaurants', len(out_rest), 'bytes', os.path.getsize('../map.json'))
+      'restaurants', len(out_rest), 'bus routes', len(out_buses),
+      'bytes', os.path.getsize('../map.json'))
+for b in out_buses:
+    print('  bus', b['ref'], len(b['pts']), 'pts')

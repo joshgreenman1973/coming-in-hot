@@ -5,7 +5,7 @@ const W = {
   nodes: [], ways: [], segs: [], adj: [], adjBike: [],
   restaurants: [], signals: new Set(), lights: [], nodeLight: {},
   grid: new Map(), GRID: 40,
-  parked: [], lamps: [],
+  parked: [], lamps: [], trees: [], busRoutes: [],
   paths: {}, bikePaths: null, dashPaths: {},
   minimapCanvas: null, bounds: { minX: 0, minY: 0, maxX: 0, maxY: 0 },
   ready: false,
@@ -68,9 +68,21 @@ async function loadWorld() {
     }
   });
 
+  // bus routes (real MTA routes stitched from OSM relations)
+  (data.buses || []).forEach(b => {
+    let L = 0;
+    const cum = [0];
+    for (let i = 1; i < b.pts.length; i++) {
+      L += Math.hypot(b.pts[i][0] - b.pts[i - 1][0], b.pts[i][1] - b.pts[i - 1][1]);
+      cum.push(L);
+    }
+    if (L > 500) W.busRoutes.push({ name: b.ref, pts: b.pts, cum, len: L });
+  });
+
   buildLights();
   buildParkedCars();
   buildLamps();
+  buildTrees();
   buildPaths();
   buildMinimap();
   W.ready = true;
@@ -116,7 +128,7 @@ function lightState(light, approachAng, t) {
 }
 
 /* ---- parked cars along curbs of every street ---- */
-const CAR_COLORS = ["#3c4250", "#4f4a44", "#5b6069", "#2e3138", "#6e6a5e", "#41474f", "#54423a", "#31363f", "#727272", "#22252b", "#8a8578", "#3a4a44"];
+const CAR_COLORS = ["#4c5468", "#5f5a50", "#6b7280", "#3a3e48", "#7e7a6a", "#8a4038", "#54423a", "#3f4a5c", "#8a8a8a", "#2e323a", "#9a9588", "#3f5a50", "#6a4a68", "#a04a30"];
 function buildParkedCars() {
   const rand = mulberry(1973);
   W.segs.forEach((s, si) => {
@@ -158,6 +170,33 @@ function buildLamps() {
   });
 }
 
+/* ---- street trees: brownstone Brooklyn is leafy ---- */
+const TREE_COLORS = ["#3e7a44", "#4c8a4a", "#356b3e", "#57944e", "#6aa054"];
+function buildTrees() {
+  const rand = mulberry(212);
+  W.segs.forEach(s => {
+    if (s.len < 26) return;
+    const pa = W.nodes[s.a], pb = W.nodes[s.b];
+    const ux = (pb[0] - pa[0]) / s.len, uy = (pb[1] - pa[1]) / s.len;
+    const nx = -uy, ny = ux;
+    const off = ROAD_HALF[s.cls] + SIDEWALK * 0.72;
+    for (const side of [-1, 1]) {
+      let d = 10 + rand() * 10;
+      while (d < s.len - 10) {
+        if (rand() < (s.cls === 1 ? 0.75 : 0.45)) {
+          W.trees.push({
+            x: pa[0] + ux * d + nx * off * side,
+            y: pa[1] + uy * d + ny * off * side,
+            r: 1.7 + rand() * 1.6,
+            col: TREE_COLORS[(rand() * TREE_COLORS.length) | 0],
+          });
+        }
+        d += 13 + rand() * 9;
+      }
+    }
+  });
+}
+
 /* ---- prerendered Path2D per street class + bike lanes + center dashes ---- */
 function buildPaths() {
   for (const c of [1, 2, 3]) W.paths[c] = new Path2D();
@@ -193,14 +232,14 @@ function buildMinimap() {
   const S = 440;
   c.width = S; c.height = S;
   const g = c.getContext("2d");
-  g.fillStyle = "#0b0b10"; g.fillRect(0, 0, S, S);
+  g.fillStyle = "#16151d"; g.fillRect(0, 0, S, S);
   const b = W.bounds;
   const scale = Math.min(S / (b.maxX - b.minX), S / (b.maxY - b.minY)) * 0.94;
   const ox = (S - (b.maxX - b.minX) * scale) / 2, oy = (S - (b.maxY - b.minY) * scale) / 2;
   W.mmXform = { scale, ox: ox - b.minX * scale, oy: oy - b.minY * scale };
   g.lineCap = "round";
   W.ways.forEach(way => {
-    g.strokeStyle = way.c === 3 ? "#4a4436" : way.c === 2 ? "#383530" : "#2a2827";
+    g.strokeStyle = way.c === 3 ? "#5c5340" : way.c === 2 ? "#46423a" : "#363331";
     g.lineWidth = way.c === 3 ? 3 : way.c === 2 ? 2.2 : 1.2;
     g.beginPath();
     const pts = way.n.map(i => W.nodes[i]);

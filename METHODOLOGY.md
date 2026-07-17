@@ -1,4 +1,4 @@
-# Deliverista — methodology
+# Coming In Hot — methodology
 
 A browser game that simulates an evening shift as an ebike food-delivery worker in Brownstone Brooklyn. This document explains what in the game is real, what is simulated and how the simulation works.
 
@@ -10,7 +10,8 @@ All geographic data comes from OpenStreetMap, fetched from the Overpass API on J
 - **One-way directions**: taken from OSM `oneway` tags. Simulated cars respect them; the route hint for the player also respects them.
 - **Traffic signals**: intersections with OSM `highway=traffic_signals` or `crossing=traffic_signals` nodes. Signal nodes within 30 meters are clustered into one controller per intersection.
 - **Street names**: from OSM `name` tags, shown as the bottom-of-screen street label and used to build delivery addresses.
-- **Restaurants**: all 526 named places tagged `restaurant`, `fast_food` or `cafe` in the area, with their real names, cuisine tags and locations.
+- **Restaurants**: all 526 named places tagged `restaurant`, `fast_food` or `cafe` in the area, with their real names, cuisine tags and locations. Pickup points snap to the nearest street, since some OSM points sit mid-block.
+- **Bus routes**: 14 local MTA lines (B25, B26, B37, B38, B41, B45, B52, B57, B61, B63, B65, B67, B69, B103) stitched from OSM `route=bus` relations, both directions where mapped. Express (X/SIM) routes that only pass through on the expressway are excluded. Bus stop spacing, dwell times, speeds and headways are invented.
 - **Bike lanes**: streets with OSM `cycleway` tags are drawn with a green lane; primary streets are drawn with one by default, which overstates coverage slightly.
 
 The raw Overpass responses and the processing script are in `data/`.
@@ -21,8 +22,11 @@ The raw Overpass responses and the processing script are in `data/`.
 - **Signal phases**: each intersection alternates a north-south and an east-west green phase with a fixed offset. Real NYC signal timing is not modeled.
 - **Parked cars, pedestrians, car doors**: procedurally generated. Door-opening hazards are random.
 - **Delivery addresses**: the street name is real; the house number is invented (a hash of the intersection ID). No real address or household is depicted.
-- **The economy**: base fee ($3 plus a per-distance component) and tips (a base drawn at random, scaled by delivery speed against the quote and food condition, with a rain bonus) are loosely modeled on published reporting about NYC app-delivery pay, but every number is invented. Nothing in the game reflects any real restaurant's order volume, wait times or customers.
-- **Kitchen waits, battery drain, crash physics, tickets**: all invented for gameplay.
+- **Order items and prices**: generated from small per-cuisine menus written for the game. They are not real menus.
+- **Order types**: standard, rush, big and fragile orders vary the payout, deadline and food-damage multipliers. The mix is invented.
+- **The economy**: base fee ($3 plus a per-distance component) and tips (a base drawn at random, scaled by order subtotal, delivery speed against the quote and food condition, with a rain bonus) are loosely modeled on published reporting about NYC app-delivery pay, but every number is invented. Nothing in the game reflects any real restaurant's order volume, wait times or customers.
+- **Navigation**: the turn-by-turn GPS runs A* over the real street graph, respecting one-way directions. Distances and ETAs derive from that graph, not from any routing service.
+- **Kitchen waits, crash physics, tickets, driving assists**: all invented for gameplay. A gentle lane-assist nudges the bike along the street when the player isn't steering.
 - **The clock**: one real second equals one game minute; a shift runs 6:00 PM to 2:00 AM in eight real minutes.
 
 ## Known simplifications
