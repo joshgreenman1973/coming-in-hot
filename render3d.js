@@ -15,27 +15,78 @@ const R3 = {
 function col3(hex) { return new THREE.Color(hex); }
 
 /* ---------- canvas textures ---------- */
-function facadeTextures() {
-  const map = document.createElement("canvas"); map.width = 96; map.height = 128;
-  const em = document.createElement("canvas"); em.width = 96; em.height = 128;
+function facadeTextures(seedN) {
+  let seed = seedN;
+  const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  const Wc = 192, Hc = 256;
+  const map = document.createElement("canvas"); map.width = Wc; map.height = Hc;
+  const em = document.createElement("canvas"); em.width = Wc; em.height = Hc;
   const g = map.getContext("2d"), e = em.getContext("2d");
-  g.fillStyle = "#cfc5ba"; g.fillRect(0, 0, 96, 128);
-  e.fillStyle = "#000"; e.fillRect(0, 0, 96, 128);
-  // cornice + base band
-  g.fillStyle = "#a89a8a"; g.fillRect(0, 0, 96, 9);
-  g.fillStyle = "#8f8274"; g.fillRect(0, 9, 96, 2);
-  g.fillStyle = "#b2a695"; g.fillRect(0, 116, 96, 12);
-  // windows: 3 cols × 4 rows
+  g.fillStyle = "#cfc5ba"; g.fillRect(0, 0, Wc, Hc);
+  e.fillStyle = "#000"; e.fillRect(0, 0, Wc, Hc);
+  // subtle brick striation
+  for (let y = 0; y < Hc; y += 6) {
+    g.fillStyle = "rgba(0,0,0," + (0.02 + rnd() * 0.02) + ")";
+    g.fillRect(0, y, Wc, 1);
+  }
+  // cornice with dentils + base band
+  g.fillStyle = "#a89a8a"; g.fillRect(0, 0, Wc, 14);
+  g.fillStyle = "#8f8274";
+  for (let x = 2; x < Wc; x += 12) g.fillRect(x, 9, 7, 5);
+  g.fillStyle = "#93866f"; g.fillRect(0, 14, Wc, 2);
+  g.fillStyle = "#b2a695"; g.fillRect(0, Hc - 16, Wc, 16);
+  // 4 floors × 4 windows, ground floor gets a door
   for (let r = 0; r < 4; r++) {
-    for (let c = 0; c < 3; c++) {
-      const x = 10 + c * 28, y = 18 + r * 25;
-      g.fillStyle = "#e2d9cc"; g.fillRect(x - 2, y - 3, 20, 3);       // lintel
-      g.fillStyle = "#453b33"; g.fillRect(x, y, 16, 18);              // window
-      g.fillStyle = "#5a4f45"; g.fillRect(x + 7, y, 2, 18);           // mullion
-      if (Math.random() < 0.38) {                                      // lit
-        e.fillStyle = "#ffd9a0"; e.fillRect(x + 1, y + 1, 14, 16);
+    const y = 26 + r * 54;
+    // floor line
+    g.fillStyle = "rgba(0,0,0,.05)"; g.fillRect(0, y + 44, Wc, 2);
+    for (let c = 0; c < 4; c++) {
+      const x = 12 + c * 46;
+      if (r === 3 && (c === 1)) {
+        // stoop door
+        g.fillStyle = "#e2d9cc"; g.fillRect(x - 3, y - 6, 32, 4);
+        g.fillStyle = "#2e2016"; g.fillRect(x, y - 2, 26, 44);
+        g.fillStyle = "#4a382a"; g.fillRect(x + 11, y - 2, 3, 44);
+        g.fillStyle = "#c8b06a"; g.fillRect(x + 7, y + 22, 2, 4); g.fillRect(x + 17, y + 22, 2, 4);
+        e.fillStyle = "#6a4f28"; e.fillRect(x + 2, y, 22, 6); // transom glow
+        continue;
+      }
+      // lintel + sill
+      g.fillStyle = "#e2d9cc"; g.fillRect(x - 3, y - 5, 32, 4);
+      g.fillStyle = "#bdb0a0"; g.fillRect(x - 3, y + 36, 32, 3);
+      // frame + panes
+      g.fillStyle = "#3d332b"; g.fillRect(x, y, 26, 36);
+      g.fillStyle = "#4f4238"; g.fillRect(x + 2, y + 2, 22, 32);
+      g.fillStyle = "#3d332b"; g.fillRect(x + 12, y, 2, 36); g.fillRect(x, y + 17, 26, 2);
+      const lit = rnd() < 0.33;
+      if (lit) {
+        const warm = ["#ffd9a0", "#ffcf8e", "#f5e2b8"][(rnd() * 3) | 0];
+        e.fillStyle = warm; e.fillRect(x + 2, y + 2, 22, 32);
+        e.fillStyle = "rgba(0,0,0,.35)"; e.fillRect(x + 12, y, 2, 36); e.fillRect(x, y + 17, 26, 2);
+        if (rnd() < 0.3) { e.fillStyle = "rgba(0,0,0,.6)"; e.fillRect(x + 4, y + 20, 8, 14); } // figure/curtain
+      }
+      // window AC unit
+      if (rnd() < 0.2) {
+        g.fillStyle = "#8a8578"; g.fillRect(x + 6, y + 26, 14, 10);
+        g.fillStyle = "#6f6a5e"; g.fillRect(x + 6, y + 30, 14, 2);
+        g.fillStyle = "rgba(0,0,0,.25)"; g.fillRect(x + 5, y + 36, 16, 2);
+        e.fillStyle = "#000"; e.fillRect(x + 6, y + 26, 14, 10);
       }
     }
+  }
+  // fire escape on some variants: rails, platforms, diagonal stairs
+  if (rnd() < 0.6) {
+    const fx = 58 + (rnd() * 40 | 0);
+    g.strokeStyle = "rgba(30,24,20,.6)"; g.lineWidth = 2.5;
+    g.beginPath();
+    g.moveTo(fx, 20); g.lineTo(fx, 210);
+    g.moveTo(fx + 40, 20); g.lineTo(fx + 40, 210);
+    for (let r = 0; r < 3; r++) {
+      const py = 62 + r * 54;
+      g.moveTo(fx - 6, py); g.lineTo(fx + 46, py);
+      g.moveTo(fx + 40, py); g.lineTo(fx, py + 42);
+    }
+    g.stroke();
   }
   const mapT = new THREE.CanvasTexture(map);
   const emT = new THREE.CanvasTexture(em);
@@ -230,6 +281,7 @@ function buildStatic3D() {
   const ribbon = new THREE.PlaneGeometry(1, 1);
   ribbon.rotateX(-Math.PI / 2);
   const sidewalks = makeInstanced(ribbon, W.segs.length, { color: 0x474050 });
+  const curbs = makeInstanced(ribbon.clone(), W.segs.length, { color: 0x5c5765 });
   const roads = makeInstanced(ribbon.clone(), W.segs.length, { color: 0x232028 });
   W.segs.forEach((s, i) => {
     const pa = W.nodes[s.a], pb = W.nodes[s.b];
@@ -240,7 +292,11 @@ function buildStatic3D() {
     dummy.scale.set(s.len + half * 2, 1, (half + SIDEWALK) * 2);
     dummy.updateMatrix();
     sidewalks.setMatrixAt(i, dummy.matrix);
-    dummy.position.y = 0.02;
+    dummy.position.y = 0.016;
+    dummy.scale.set(s.len + half * 1.8, 1, half * 2 + 0.7);
+    dummy.updateMatrix();
+    curbs.setMatrixAt(i, dummy.matrix);
+    dummy.position.y = 0.022;
     dummy.scale.set(s.len + half * 1.6, 1, half * 2);
     dummy.updateMatrix();
     roads.setMatrixAt(i, dummy.matrix);
@@ -302,28 +358,110 @@ function buildStatic3D() {
   // painted street names on the roadway (atlas, one mesh)
   buildLabels3D();
 
-  // buildings: facade texture with lit windows, plain roof
-  const { mapT, emT } = facadeTextures();
-  const facadeMat = new THREE.MeshLambertMaterial({
-    map: mapT, emissive: 0xffb060, emissiveIntensity: 0.85, emissiveMap: emT,
-  });
-  const roofMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
+  // buildings: two facade variants for texture variety, plain roofs
   const boxGeo = new THREE.BoxGeometry(1, 1, 1);
   boxGeo.translate(0, 0.5, 0);
-  const lots = new THREE.InstancedMesh(boxGeo, [facadeMat, facadeMat, roofMat, roofMat, facadeMat, facadeMat], W.lots.length);
-  W.lots.forEach((lot, i) => {
-    // brownstone rows share a cornice line: height set per block face, tiny per-lot jitter
-    const rowSeed = (((lot.si || 0) * 2 + (lot.side + 3) / 2) * 2654435761 % 100) / 100;
-    const h = 11.5 + rowSeed * 2 + ((i * 97) % 10) / 10 * 0.3;
-    dummy.position.set(lot.x, 0, lot.y);
-    dummy.rotation.set(0, -lot.ang, 0);
-    dummy.scale.set(lot.w, h, lot.depth);
-    dummy.updateMatrix();
-    lots.setMatrixAt(i, dummy.matrix);
-    lots.setColorAt(i, col3(lot.col).multiplyScalar(2.1));
+  const roofMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
+  const lotSets = [[], []];
+  W.lots.forEach((lot, i) => lotSets[(i * 7 + (lot.si || 0)) % 2].push([lot, i]));
+  lotSets.forEach((set, vi) => {
+    const { mapT, emT } = facadeTextures(vi ? 4241 : 977);
+    const facadeMat = new THREE.MeshLambertMaterial({
+      map: mapT, emissive: 0xffb060, emissiveIntensity: 0.85, emissiveMap: emT,
+    });
+    const im = new THREE.InstancedMesh(boxGeo, [facadeMat, facadeMat, roofMat, roofMat, facadeMat, facadeMat], set.length);
+    set.forEach(([lot, li], i) => {
+      const rowSeed = (((lot.si || 0) * 2 + (lot.side + 3) / 2) * 2654435761 % 100) / 100;
+      const h = 11.5 + rowSeed * 2 + ((li * 97) % 10) / 10 * 0.3;
+      dummy.position.set(lot.x, 0, lot.y);
+      dummy.rotation.set(0, -lot.ang, 0);
+      dummy.scale.set(lot.w, h, lot.depth);
+      dummy.updateMatrix();
+      im.setMatrixAt(i, dummy.matrix);
+      im.setColorAt(i, col3(lot.col).multiplyScalar(2.1));
+    });
+    im.instanceColor.needsUpdate = true;
+    R3.scene.add(im);
   });
-  lots.instanceColor.needsUpdate = true;
-  R3.scene.add(lots);
+
+  // sidewalk sheds: scaffolding over a few storefronts (it is New York)
+  const shedLots = [];
+  W.lots.forEach((lot, i) => { if (((lot.si || 0) * 13 + i * 29) % 100 < 4) shedLots.push(lot); });
+  const shedRoof = new THREE.BoxGeometry(1, 0.28, 3.4);
+  const shedRoofIM = new THREE.InstancedMesh(shedRoof, new THREE.MeshLambertMaterial({ color: 0x3f6a4a }), shedLots.length);
+  const shedLeg = new THREE.CylinderGeometry(0.05, 0.05, 3.5, 5);
+  shedLeg.translate(0, 1.75, 0);
+  const shedLegIM = makeInstanced(shedLeg, shedLots.length * 4, { color: 0x8a8578 });
+  shedLots.forEach((lot, i) => {
+    const nx = -Math.sin(lot.ang), ny = Math.cos(lot.ang);
+    const ux = Math.cos(lot.ang), uy = Math.sin(lot.ang);
+    const out = lot.depth / 2 + 1.9;
+    const cx = lot.x - nx * lot.side * out, cy = lot.y - ny * lot.side * out;
+    dummy.position.set(cx, 3.6, cy);
+    dummy.rotation.set(0, -lot.ang, 0);
+    dummy.scale.set(lot.w + 1.2, 1, 1);
+    dummy.updateMatrix();
+    shedRoofIM.setMatrixAt(i, dummy.matrix);
+    let k = 0;
+    for (const su of [-1, 1]) for (const sv of [-1, 1]) {
+      dummy.position.set(
+        cx + ux * su * (lot.w / 2 + 0.4) + nx * sv * 1.45,
+        0,
+        cy + uy * su * (lot.w / 2 + 0.4) + ny * sv * 1.45
+      );
+      dummy.scale.set(1, 1, 1);
+      dummy.updateMatrix();
+      shedLegIM.setMatrixAt(i * 4 + k++, dummy.matrix);
+    }
+  });
+  R3.scene.add(shedRoofIM);
+
+  // corner mailboxes
+  const boxes = [];
+  W.lights.forEach((l, li) => {
+    if (l.corners && l.corners.length === 2 && li % 7 === 0) boxes.push(l.corners[0]);
+  });
+  const mbGeo = new THREE.BoxGeometry(0.62, 1.05, 0.55);
+  mbGeo.translate(0, 0.53, 0);
+  const mbIM = makeInstanced(mbGeo, boxes.length, { color: 0x2a4a9a });
+  boxes.forEach((c, i) => {
+    dummy.position.set(c.x + 1.2, 0, c.y + 1.2);
+    dummy.rotation.set(0, -c.ang, 0);
+    dummy.scale.set(1, 1, 1);
+    dummy.updateMatrix();
+    mbIM.setMatrixAt(i, dummy.matrix);
+  });
+
+  // bus stop signs at the real stop spacing
+  const busSigns = [];
+  W.busRoutes.forEach((route, ri) => {
+    for (let s = 140; s < route.len - 60; s += 260 + (ri * 37) % 90) {
+      let lo = 0, hi = route.cum.length - 1;
+      while (lo < hi - 1) { const mid = (lo + hi) >> 1; if (route.cum[mid] <= s) lo = mid; else hi = mid; }
+      const segLen = route.cum[lo + 1] - route.cum[lo] || 1;
+      const f = (s - route.cum[lo]) / segLen;
+      const a = route.pts[lo], b = route.pts[lo + 1];
+      const x = a[0] + (b[0] - a[0]) * f, y = a[1] + (b[1] - a[1]) * f;
+      const ux = (b[0] - a[0]) / segLen, uy = (b[1] - a[1]) / segLen;
+      const st = closestStreet(x, y);
+      const off = st ? ROAD_HALF[W.segs[st.seg].cls] + 1.1 : 6;
+      busSigns.push({ x: x - uy * off, y: y + ux * off });
+    }
+  });
+  const bsPole = new THREE.CylinderGeometry(0.045, 0.045, 3.0, 5);
+  bsPole.translate(0, 1.5, 0);
+  const bsPoleIM = makeInstanced(bsPole, busSigns.length, { color: 0x8a8578 });
+  const bsSign = new THREE.BoxGeometry(0.5, 0.62, 0.06);
+  bsSign.translate(0, 2.75, 0);
+  const bsSignIM = makeInstanced(bsSign, busSigns.length, { color: 0x1f3a93 });
+  busSigns.forEach((p, i) => {
+    dummy.position.set(p.x, 0, p.y);
+    dummy.rotation.set(0, 0, 0);
+    dummy.scale.set(1, 1, 1);
+    dummy.updateMatrix();
+    bsPoleIM.setMatrixAt(i, dummy.matrix);
+    bsSignIM.setMatrixAt(i, dummy.matrix);
+  });
 
   // stoops on the residential rows
   const stoopLots = W.lots.filter((l, i) => l.cls === 1 && ((l.si * 7 + i * 13) % 10) < 7);
@@ -789,7 +927,7 @@ function buildPools3D() {
   headGeo.translate(0, 1.68, 0);
   const legGeo = new THREE.BoxGeometry(0.13, 0.55, 0.13);
   legGeo.translate(0, -0.27, 0);
-  R3.pools.peds = mkPool(70, () => {
+  R3.pools.peds = mkPool(100, () => {
     const g = new THREE.Group();
     const bm = new THREE.MeshLambertMaterial({ color: 0xffffff });
     const hm = new THREE.MeshLambertMaterial({ color: 0x2a2018 });
@@ -997,13 +1135,15 @@ function render3D(P, S, tp) {
     place(buses[biX++], bp.x, bp.y, bp.ang);
   }
 
-  // peds
+  // peds (render-culled so density stays near the player)
   const peds = R3.pools.peds;
   peds.forEach(g => g.visible = false);
-  Traffic.peds.forEach((ped, i) => {
-    if (i >= peds.length) return;
+  let pIdx = 0;
+  Traffic.peds.forEach(ped => {
+    if (pIdx >= peds.length) return;
     const pp = pedPos(ped);
-    const g = peds[i];
+    if (Math.hypot(pp.x - P.x, pp.y - P.y) > 260) return;
+    const g = peds[pIdx++];
     place(g, pp.x, pp.y, Math.atan2(ped.hy, ped.hx));
     g.userData.mat.color.set(ped.col);
     g.userData.hair.color.set(ped.hair || "#2a2018");

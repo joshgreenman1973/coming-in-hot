@@ -2,7 +2,7 @@
 "use strict";
 
 const Traffic = {
-  cars: [], peds: [], MAX_CARS: 34, MAX_PEDS: 62,
+  cars: [], peds: [], MAX_CARS: 34, MAX_PEDS: 95,
   doorTimer: 0,
 };
 
@@ -148,7 +148,7 @@ function spawnPed(px, py) {
     const s = W.segs[si];
     const pa = W.nodes[s.a];
     const d = Math.hypot(pa[0] - px, pa[1] - py);
-    if (d < 60 || d > 380) continue;
+    if (d < 40 || d > 270) continue;
     const side = Math.random() < 0.5 ? -1 : 1;
     const stroller = Math.random() < (Traffic.strollerP || 0);
     Traffic.peds.push({
@@ -319,7 +319,8 @@ function riderPos(r) {
   const x = pa[0] + (pb[0] - pa[0]) * f, y = pa[1] + (pb[1] - pa[1]) * f;
   const ux = (pb[0] - pa[0]) / s.len, uy = (pb[1] - pa[1]) / s.len;
   const dir = r.rev ? -1 : 1;
-  const off = (ROAD_HALF[s.cls] - 1.5) * dir;
+  // ride clear of the parking lane (parked cars reach ~2.1m in from the curb)
+  const off = Math.max(1.2, ROAD_HALF[s.cls] - 3.3) * dir;
   return { x: x - uy * off, y: y + ux * off, ang: Math.atan2(uy * dir, ux * dir), ux: ux * dir, uy: uy * dir };
 }
 
