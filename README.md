@@ -12,7 +12,7 @@ Works on phones (touch controls appear automatically) and desktops.
 - A / D or left / right arrows — steer
 - E — park the bike, remount, interact
 - Enter / tap ACCEPT — take an order; Esc / PASS — decline
-- V — flip between ride cam (driver's-eye, heading-up) and bird's eye (north-up)
+- V — cycle camera: 3D chase (Subway Surfers-style, the default), ride cam (top-down, heading-up) and bird's eye (north-up)
 - M — sound on/off
 
 ## The rules of the street
@@ -28,7 +28,7 @@ Works on phones (touch controls appear automatically) and desktops.
 
 ## Files
 
-- `index.html`, `style.css`, `world.js`, `actors.js`, `game.js` — the game (no build step, no dependencies)
+- `index.html`, `style.css`, `world.js`, `actors.js`, `game.js`, `render3d.js` — the game (no build step; Three.js from CDN powers the 3D chase view, with 2D canvas fallback)
 - `map.json` — compact street network, bus routes + restaurants, built from OpenStreetMap
 - `data/` — raw Overpass API responses and the processing script
 - `METHODOLOGY.md` — what's real, what's simulated

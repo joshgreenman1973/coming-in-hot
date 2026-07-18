@@ -362,7 +362,7 @@ const Game = {};
   let navManeuver = null;   // {x, y} of next turn, for the world chevron
   let navCache = "";
   function dirArrow(a) {
-    if (S.view === "ride") {
+    if (S.view !== "north") {
       // heading-up view: arrows are relative to the way you're facing
       const rel = normAng(a - P.ang);
       const dirs = ["⬆", "↗", "➡", "↘", "⬇", "↙", "⬅", "↖"];
@@ -626,6 +626,7 @@ const Game = {};
       for (const car of Traffic.cars) { const cp = carPos(car); capFor(cp.x, cp.y, 1.7, reach); }
       for (const bus of Buses.list) { const bp = busPos(bus); capFor(bp.x, bp.y, 2.5, reach + 2); }
       for (const pc of openDoors) capFor(pc.x - Math.sin(pc.ang) * -2.0, pc.y + Math.cos(pc.ang) * -2.0, 1.6, reach);
+      for (const r of Traffic.riders) { const rp = riderPos(r); capFor(rp.x, rp.y, 1.2, reach * 0.8); }
       // NOTE: no assist for pedestrians — reading crossers is the player's job
       for (const pc of W.parked) capFor(pc.x, pc.y, 1.3, 6);
     }
@@ -699,6 +700,17 @@ const Game = {};
           const rn = W.busRoutes[bus.route].name;
           if (Math.abs(P.speed) + bus.speed > 6) crash("Clipped by the " + rn, 0.25);
           else P.speed *= 0.3;
+          break;
+        }
+      }
+      // rival riders: tangle of handlebars
+      for (const r of Traffic.riders) {
+        const rp = riderPos(r);
+        const d = Math.hypot(rp.x - P.x, rp.y - P.y);
+        if (d < 1.5) {
+          if (Math.abs(P.speed) + r.speed > 8) crash("Tangled with another deliverista", 0.12);
+          else P.speed *= 0.6;
+          r.speed *= 0.3;
           break;
         }
       }
@@ -823,6 +835,14 @@ const Game = {};
           prompt = bd < 6 && d > 40 ? { text: "<b>" + EKEY() + "</b> — hop on the bike" } : { text: "Walk to the door · " + fmtDist(d) };
         }
       }
+      // the customer's stomach is audible from here
+      S.grumbleT = (S.grumbleT || 0) - dt;
+      if (S.grumbleT <= 0) {
+        const late = S.t > o.deadline;
+        S.grumbleT = late ? 1.3 : 2.4;
+        const g = late ? "HANGRY." : ["grrrmble…", "*stomach noises*", "grumble grumble", "grrrrr…"][(Math.random() * 4) | 0];
+        burst(o.destX + (Math.random() - 0.5) * 2, o.destY - 1, g, late ? "#ff5a5a" : "#e8d9a8", late ? 2.6 : 1.9);
+      }
       // ticking clock anxiety
       if (S.t > o.deadline && !o.lateWarned) { o.lateWarned = true; toast("You're past the quote — tip is melting", "bad"); }
     }
@@ -875,7 +895,18 @@ const Game = {};
   }
 
   const cam = { x: 0, y: 0, z: 3.4, rot: 0 };
+  const canvas3d = document.getElementById("game3d");
   function render() {
+    // 3D chase view takes over the whole frame when active
+    if (S.view === "3d" && typeof render3D === "function") {
+      const ok = render3D(P, S, targetPoint());
+      if (ok) {
+        if (canvas3d.style.display !== "block") { canvas3d.style.display = "block"; canvas.style.display = "none"; }
+        return;
+      }
+      if (typeof R3 !== "undefined" && R3.failed) setView("ride");
+    }
+    if (canvas3d.style.display !== "none") { canvas3d.style.display = "none"; canvas.style.display = "block"; }
     const w = canvas.width, h = canvas.height;
     const rideCam = S.view === "ride";
     const zBase = (isTouch ? 4.6 : 5.8) * DPR * (rideCam ? 1.16 : 1);
@@ -1057,7 +1088,10 @@ const Game = {};
     // moving cars
     for (const car of Traffic.cars) {
       const cp = carPos(car);
-      ctx.save(); ctx.translate(cp.x, cp.y); ctx.rotate(cp.ang);
+      ctx.save(); ctx.translate(cp.x, cp.y);
+      ctx.fillStyle = "rgba(10,8,16,.32)";
+      ctx.beginPath(); ctx.ellipse(0.3, 0.4, 2.5, 1.25, cp.ang, 0, 7); ctx.fill();
+      ctx.rotate(cp.ang);
       // headlight cone
       ctx.fillStyle = "rgba(255,240,190,.07)";
       ctx.beginPath(); ctx.moveTo(2, -0.7); ctx.lineTo(11, -2.6); ctx.lineTo(11, 2.6); ctx.lineTo(2, 0.7); ctx.closePath(); ctx.fill();
@@ -1075,7 +1109,10 @@ const Game = {};
     for (const bus of Buses.list) {
       const bp = busPos(bus);
       if (bp.x < vx0 - 15 || bp.x > vx0 + vw + 15 || bp.y < vy0 - 15 || bp.y > vy0 + vh + 15) continue;
-      ctx.save(); ctx.translate(bp.x, bp.y); ctx.rotate(bp.ang);
+      ctx.save(); ctx.translate(bp.x, bp.y);
+      ctx.fillStyle = "rgba(10,8,16,.35)";
+      ctx.beginPath(); ctx.ellipse(0.35, 0.5, 6, 1.9, bp.ang, 0, 7); ctx.fill();
+      ctx.rotate(bp.ang);
       ctx.fillStyle = "rgba(255,240,190,.08)";
       ctx.beginPath(); ctx.moveTo(5.4, -1.1); ctx.lineTo(15, -3.2); ctx.lineTo(15, 3.2); ctx.lineTo(5.4, 1.1); ctx.closePath(); ctx.fill();
       ctx.fillStyle = "#2a3f8f";
@@ -1094,22 +1131,62 @@ const Game = {};
       });
     }
 
-    // pedestrians (crossers pop a little more; some push strollers early on)
+    // pedestrians: little people — shoulders, head, swinging arms, soft shadow
     for (const ped of Traffic.peds) {
       const pp = pedPos(ped);
+      const pAng = Math.atan2(ped.hy, ped.hx);
+      const phase = S.t * ped.speed * 5.5 + ped.phase;
+      const swing = Math.sin(phase) * 0.24;
+      ctx.save();
+      ctx.translate(pp.x, pp.y);
+      // shadow
+      ctx.fillStyle = "rgba(10,8,16,.3)";
+      ctx.beginPath(); ctx.ellipse(0.22, 0.3, 0.62, 0.5, 0, 0, 7); ctx.fill();
+      ctx.rotate(pAng);
+      // stroller out front
       if (ped.stroller) {
-        ctx.save();
-        ctx.translate(pp.x + ped.hx * 0.95, pp.y + ped.hy * 0.95);
-        ctx.rotate(Math.atan2(ped.hy, ped.hx));
         ctx.fillStyle = "#d8d4c8";
-        roundRect(-0.5, -0.32, 1.0, 0.64, 0.2); ctx.fill();
+        roundRect(0.55, -0.32, 1.0, 0.64, 0.22); ctx.fill();
         ctx.strokeStyle = "rgba(20,16,24,.6)"; ctx.lineWidth = 0.12; ctx.stroke();
-        ctx.restore();
       }
+      // arms (swing opposite each other)
       ctx.fillStyle = ped.col;
-      ctx.beginPath(); ctx.arc(pp.x, pp.y, ped.cross ? 0.68 : 0.6, 0, 7); ctx.fill();
-      ctx.strokeStyle = "rgba(20,16,24,.6)"; ctx.lineWidth = 0.16; ctx.stroke();
+      ctx.beginPath(); ctx.arc(swing, -0.52, 0.15, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(-swing, 0.52, 0.15, 0, 7); ctx.fill();
+      // shoulders
+      ctx.beginPath(); ctx.ellipse(0, 0, 0.34, 0.56, 0, 0, 7); ctx.fill();
+      ctx.strokeStyle = "rgba(20,16,24," + (ped.cross ? ".85" : ".55") + ")";
+      ctx.lineWidth = ped.cross ? 0.16 : 0.1;
+      ctx.stroke();
+      // head
+      ctx.fillStyle = ped.hair;
+      ctx.beginPath(); ctx.arc(0.08, 0, 0.27, 0, 7); ctx.fill();
+      ctx.restore();
       if (ped.dog) { ctx.fillStyle = "#8a6f52"; ctx.beginPath(); ctx.arc(pp.x + 1.1, pp.y + 0.4, 0.32, 0, 7); ctx.fill(); }
+    }
+
+    // rival deliveristas
+    for (const r of Traffic.riders) {
+      const rp = riderPos(r);
+      if (rp.x < vx0 - 8 || rp.x > vx0 + vw + 8 || rp.y < vy0 - 8 || rp.y > vy0 + vh + 8) continue;
+      ctx.save();
+      ctx.translate(rp.x, rp.y);
+      ctx.fillStyle = "rgba(10,8,16,.3)";
+      ctx.beginPath(); ctx.ellipse(0.25, 0.35, 1.1, 0.55, rp.ang, 0, 7); ctx.fill();
+      ctx.rotate(rp.ang);
+      ctx.scale(0.62, 0.62);
+      ctx.strokeStyle = "#15121c"; ctx.lineWidth = 0.34;
+      ctx.beginPath(); ctx.moveTo(0.85, 0); ctx.lineTo(1.55, 0); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-1.5, 0); ctx.lineTo(-0.8, 0); ctx.stroke();
+      ctx.strokeStyle = "#cfc9ba"; ctx.lineWidth = 0.2;
+      ctx.beginPath(); ctx.moveTo(-1.1, 0); ctx.lineTo(1.1, 0); ctx.stroke();
+      ctx.fillStyle = r.jacket;
+      ctx.beginPath(); ctx.ellipse(0.1, 0, 0.85, 0.55, 0, 0, 7); ctx.fill();
+      ctx.fillStyle = "#1c1c22"; ctx.beginPath(); ctx.arc(0.5, 0, 0.34, 0, 7); ctx.fill();
+      ctx.fillStyle = r.bag;
+      ctx.fillRect(-1.85, -0.5, 1.0, 1.0);
+      ctx.strokeStyle = "rgba(0,0,0,.4)"; ctx.lineWidth = 0.08; ctx.strokeRect(-1.85, -0.5, 1.0, 1.0);
+      ctx.restore();
     }
 
     // restaurant + destination markers: big labeled map pin
@@ -1450,11 +1527,14 @@ const Game = {};
     updateCars(dt, S.gameT, P);
     updateBuses(dt, P);
     updatePeds(dt, P.x, P.y);
+    updateRiders(dt, S.gameT, P);
     updateDoors(dt, { ...P, riding: P.riding });
     updateOrders(dt);
     updateTutorial(dt);
     // stroller hour: the early-evening sidewalks belong to families
     Traffic.strollerP = shiftT() < 110 ? 0.16 : 0.03;
+    // dinner rush: the streets crawl with other deliveristas, thinning late
+    Traffic.riderTarget = shiftT() < 240 ? 13 : 6;
     if (shiftT() >= SHIFT_LEN) { endShift(); }
   }
   function tick(ts) {
@@ -1512,13 +1592,24 @@ const Game = {};
     toast(S.rain ? "Rain tonight — tips run hot, brakes run long" : "Clear night. Dinner rush is on.");
   }
 
+  const VIEW_LABEL = { "3d": "🧊 3D chase", ride: "🚴 ride cam", north: "🧭 bird's eye" };
   function setView(v) {
     S.view = v;
     try { localStorage.setItem("cominginhot-view", v); } catch (e) {}
-    $("view-btn").textContent = v === "ride" ? "🚴 ride cam" : "🧭 bird's eye";
+    $("view-btn").textContent = VIEW_LABEL[v] || v;
   }
-  function toggleView() { setView(S.view === "ride" ? "north" : "ride"); }
-  setView(localStorage.getItem("cominginhot-view") || "ride");
+  function toggleView() {
+    setView(S.view === "3d" ? "ride" : S.view === "ride" ? "north" : "3d");
+  }
+  {
+    let v = localStorage.getItem("cominginhot-view") || "3d";
+    if (!VIEW_LABEL[v]) v = "3d";
+    // showcase the 3D view once for players with an older saved preference
+    try {
+      if (!localStorage.getItem("cominginhot-3d-intro")) { v = "3d"; localStorage.setItem("cominginhot-3d-intro", "1"); }
+    } catch (e) {}
+    setView(v);
+  }
 
   document.getElementById("start-btn").addEventListener("click", startShift);
   document.getElementById("again-btn").addEventListener("click", startShift);

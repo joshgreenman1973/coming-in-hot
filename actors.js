@@ -155,6 +155,8 @@ function spawnPed(px, py) {
       seg: si, t: Math.random(), side, dir: Math.random() < 0.5 ? -1 : 1,
       speed: stroller ? 0.9 + Math.random() * 0.4 : 1.1 + Math.random() * 0.7,
       col: ["#e2cfae", "#96a2bc", "#c08484", "#88ac8a", "#c4b558", "#ab94cc", "#d89a6a", "#7ab8b0"][(Math.random() * 8) | 0],
+      hair: ["#241d18", "#4a3524", "#6b5138", "#b8a06a", "#8a8a8a", "#3a2a30", "#101014"][(Math.random() * 7) | 0],
+      phase: Math.random() * 7,
       cross: null, dog: !stroller && Math.random() < 0.12, stroller,
       hx: 1, hy: 0,
     });
@@ -283,6 +285,102 @@ function updateBuses(dt, player) {
       if (before < s && bus.d >= s) { bus.dwell = 2.5 + Math.random() * 3.5; bus.speed = 0; break; }
     }
   }
+}
+
+/* ---- rival deliveristas: everywhere at dinner time, thinner late ---- */
+const RIDER_JACKETS = ["#e8524a", "#4aa8e8", "#58c78a", "#e8a53a", "#b06ae0", "#e8e8de"];
+const RIDER_BAGS = ["#d43a2a", "#1fa8a0", "#e07820", "#2a56d4"];
+Traffic.riders = [];
+Traffic.riderTarget = 10;
+
+function spawnRider(px, py) {
+  for (let tries = 0; tries < 20; tries++) {
+    const si = (Math.random() * W.segs.length) | 0;
+    const s = W.segs[si];
+    const pa = W.nodes[s.a];
+    const d = Math.hypot(pa[0] - px, pa[1] - py);
+    if (d < 60 || d > 400) continue;
+    Traffic.riders.push({
+      seg: si, rev: Math.random() < 0.5, t: Math.random(),
+      speed: 0, max: 7.5 + Math.random() * 3.5,
+      jacket: RIDER_JACKETS[(Math.random() * RIDER_JACKETS.length) | 0],
+      bag: RIDER_BAGS[(Math.random() * RIDER_BAGS.length) | 0],
+      obeys: Math.random() < 0.3,
+    });
+    return true;
+  }
+  return false;
+}
+
+function riderPos(r) {
+  const s = W.segs[r.seg];
+  const pa = W.nodes[s.a], pb = W.nodes[s.b];
+  const f = r.rev ? 1 - r.t : r.t;
+  const x = pa[0] + (pb[0] - pa[0]) * f, y = pa[1] + (pb[1] - pa[1]) * f;
+  const ux = (pb[0] - pa[0]) / s.len, uy = (pb[1] - pa[1]) / s.len;
+  const dir = r.rev ? -1 : 1;
+  const off = (ROAD_HALF[s.cls] - 1.5) * dir;
+  return { x: x - uy * off, y: y + ux * off, ang: Math.atan2(uy * dir, ux * dir), ux: ux * dir, uy: uy * dir };
+}
+
+function updateRiders(dt, gameT, player) {
+  Traffic.riders = Traffic.riders.filter(r => {
+    const p = riderPos(r);
+    return Math.hypot(p.x - player.x, p.y - player.y) < 460;
+  });
+  while (Traffic.riders.length < Traffic.riderTarget) {
+    if (!spawnRider(player.x, player.y)) break;
+  }
+  for (const r of Traffic.riders) {
+    const s = W.segs[r.seg];
+    const pos = riderPos(r);
+    let target = r.max;
+    // red lights: most deliveristas roll them
+    const endNode = r.rev ? s.a : s.b;
+    const distToEnd = (r.rev ? r.t : 1 - r.t) * s.len;
+    const li = W.nodeLight[endNode];
+    if (li !== undefined && distToEnd < 10 && distToEnd > 2) {
+      const st = lightState(W.lights[li], pos.ang, gameT);
+      if (st === "r") target = r.obeys ? 0 : r.max * 0.55;
+    }
+    // don't rear-end the player
+    const pdx = player.x - pos.x, pdy = player.y - pos.y;
+    const pAhead = pdx * pos.ux + pdy * pos.uy;
+    if (pAhead > 0 && pAhead < 9 && Math.abs(-pdy * pos.ux + pdx * pos.uy) < 1.6) {
+      target = Math.min(target, Math.max(0.8, (pAhead - 2.5) * 1.6));
+    }
+    // or each other
+    for (const o of Traffic.riders) {
+      if (o === r) continue;
+      const op = riderPos(o);
+      const dx = op.x - pos.x, dy = op.y - pos.y;
+      const ahead = dx * pos.ux + dy * pos.uy;
+      if (ahead > 0 && ahead < 6 && Math.abs(-dy * pos.ux + dx * pos.uy) < 1.2) {
+        target = Math.min(target, Math.max(1, (ahead - 2) * 1.8));
+      }
+    }
+    if (r.speed < target) r.speed = Math.min(target, r.speed + 5 * dt);
+    else r.speed = Math.max(target, r.speed - 8 * dt);
+    r.t += r.speed * dt / s.len;
+    if (r.t >= 1) {
+      const opts = W.adjBike[endNode].filter(e => e.seg !== r.seg);
+      const pool = opts.length ? opts : W.adjBike[endNode];
+      if (!pool.length) { r.dead = true; continue; }
+      let best = null, bestScore = -2;
+      if (Math.random() < 0.7) {
+        for (const e of pool) {
+          const ns = W.segs[e.seg];
+          const dir = e.rev ? -1 : 1;
+          const npa = W.nodes[ns.a], npb = W.nodes[ns.b];
+          const ux = (npb[0] - npa[0]) / ns.len * dir, uy = (npb[1] - npa[1]) / ns.len * dir;
+          const score = ux * pos.ux + uy * pos.uy;
+          if (score > bestScore) { bestScore = score; best = e; }
+        }
+      } else best = pool[(Math.random() * pool.length) | 0];
+      r.seg = best.seg; r.rev = best.rev; r.t = 0;
+    }
+  }
+  Traffic.riders = Traffic.riders.filter(r => !r.dead);
 }
 
 /* ---- door hazard: parked car near player swings a door ---- */

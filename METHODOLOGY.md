@@ -22,7 +22,8 @@ The raw Overpass responses and the processing script are in `data/`.
 - **Traffic behavior**: cars spawn near the player, follow the street graph, prefer continuing straight, obey signals and yield to obstacles with a simple car-following rule. Volumes, speeds (roughly 15 mph on side streets, 25 mph on main streets) and signal timing (26-second cycles) are plausible but not calibrated to any measured data.
 - **Signal phases**: each intersection alternates a north-south and an east-west green phase with a fixed offset. Real NYC signal timing is not modeled.
 - **Parked cars, pedestrians, car doors**: procedurally generated. Door-opening hazards are random. Pedestrians cross at corners and jaywalk; some push strollers in the early evening. Sidewalk riding draws warnings, then $3 fines.
-- **Buildings**: procedural brownstone-style lots drawn parallel to each street's frontage. They are not real building footprints.
+- **Buildings**: procedural brownstone-style lots drawn parallel to each street's frontage. They are not real building footprints. Building heights in the 3D view are invented.
+- **Rival delivery riders**: simulated NPCs riding the street graph; more during the dinner rush.
 - **Menu prices**: invented, banded by item type (drinks, sides, desserts, mains) to plausible NYC levels.
 - **Delivery addresses**: the street name is real; the house number is invented (a hash of the intersection ID). No real address or household is depicted.
 - **Order items and prices**: generated from small per-cuisine menus written for the game. They are not real menus.
