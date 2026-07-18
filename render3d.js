@@ -954,7 +954,43 @@ function buildPools3D() {
     st.position.set(0.85, 0, 0);
     st.visible = false;
     g.add(st);
-    g.userData = { mat: bm, hair: hm, legs, stroller: st };
+    // dog on a leash (hidden unless this walker has one)
+    const dogG = new THREE.Group();
+    const dogMat = new THREE.MeshLambertMaterial({ color: 0x6b4a2f });
+    const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.13, 0.34, 3, 6), dogMat);
+    body.rotation.z = Math.PI / 2;
+    body.position.y = 0.32;
+    dogG.add(body);
+    const dHead = new THREE.Mesh(new THREE.SphereGeometry(0.12, 6, 5), dogMat);
+    dHead.position.set(0.3, 0.44, 0);
+    dogG.add(dHead);
+    const snout = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.07, 0.08), dark);
+    snout.position.set(0.42, 0.4, 0);
+    dogG.add(snout);
+    for (const s of [-1, 1]) {
+      const ear = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.09, 0.04), dark);
+      ear.position.set(0.26, 0.55, 0.07 * s);
+      dogG.add(ear);
+    }
+    const tail = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.045, 0.045), dogMat);
+    tail.position.set(-0.32, 0.42, 0);
+    tail.rotation.z = 0.6;
+    dogG.add(tail);
+    for (const [lx, lz] of [[0.18, 0.08], [0.18, -0.08], [-0.18, 0.08], [-0.18, -0.08]]) {
+      const dl = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.22, 0.045), dogMat);
+      dl.position.set(lx, 0.11, lz);
+      dogG.add(dl);
+    }
+    // leash from the owner's hand down to the collar
+    const leash = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 1.0, 4), dark);
+    leash.position.set(-0.42, 0.7, -0.2);
+    leash.rotation.z = 1.0;
+    leash.rotation.x = 0.35;
+    dogG.add(leash);
+    dogG.position.set(0.95, 0, 0.42);
+    dogG.visible = false;
+    g.add(dogG);
+    g.userData = { mat: bm, hair: hm, legs, stroller: st, dog: dogG, dogMat, tail };
     return g;
   });
 
@@ -1149,6 +1185,14 @@ function render3D(P, S, tp) {
     g.userData.hair.color.set(ped.hair || "#2a2018");
     walkAnim(g.userData.legs, S.t * ped.speed * 5.5 + (ped.phase || 0));
     g.userData.stroller.visible = !!ped.stroller;
+    g.userData.dog.visible = !!ped.dog;
+    if (ped.dog) {
+      const DOG_COLORS = [0x6b4a2f, 0x2a2622, 0xc9bfae, 0x8a6f52, 0x4a3a2e, 0xb8895a];
+      g.userData.dogMat.color.setHex(DOG_COLORS[((ped.phase || 0) * 10 | 0) % 6]);
+      const ph = S.t * ped.speed * 5.5 + (ped.phase || 0);
+      g.userData.dog.position.y = Math.abs(Math.sin(ph * 1.6)) * 0.05;
+      g.userData.tail.rotation.y = Math.sin(S.t * 9 + (ped.phase || 0)) * 0.5;
+    }
   });
 
   // rival riders

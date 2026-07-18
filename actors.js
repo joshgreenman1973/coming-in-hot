@@ -157,7 +157,7 @@ function spawnPed(px, py) {
       col: ["#e2cfae", "#96a2bc", "#c08484", "#88ac8a", "#c4b558", "#ab94cc", "#d89a6a", "#7ab8b0"][(Math.random() * 8) | 0],
       hair: ["#241d18", "#4a3524", "#6b5138", "#b8a06a", "#8a8a8a", "#3a2a30", "#101014"][(Math.random() * 7) | 0],
       phase: Math.random() * 7,
-      cross: null, dog: !stroller && Math.random() < 0.12, stroller,
+      cross: null, dog: !stroller && Math.random() < 0.17, stroller,
       hx: 1, hy: 0,
     });
     return true;

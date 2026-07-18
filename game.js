@@ -1191,7 +1191,14 @@ const Game = {};
       ctx.fillStyle = ped.hair;
       ctx.beginPath(); ctx.arc(0.08, 0, 0.27, 0, 7); ctx.fill();
       ctx.restore();
-      if (ped.dog) { ctx.fillStyle = "#8a6f52"; ctx.beginPath(); ctx.arc(pp.x + 1.1, pp.y + 0.4, 0.32, 0, 7); ctx.fill(); }
+      if (ped.dog) {
+        const dx = pp.x + ped.hx * 0.95 - ped.hy * 0.4;
+        const dy = pp.y + ped.hy * 0.95 + ped.hx * 0.4;
+        ctx.strokeStyle = "rgba(30,24,20,.6)"; ctx.lineWidth = 0.07;
+        ctx.beginPath(); ctx.moveTo(pp.x, pp.y); ctx.lineTo(dx, dy); ctx.stroke();
+        ctx.fillStyle = "#8a6f52";
+        ctx.beginPath(); ctx.ellipse(dx, dy, 0.42, 0.26, Math.atan2(ped.hy, ped.hx), 0, 7); ctx.fill();
+      }
     }
 
     // rival deliveristas
