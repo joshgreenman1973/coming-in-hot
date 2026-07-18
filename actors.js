@@ -2,7 +2,7 @@
 "use strict";
 
 const Traffic = {
-  cars: [], peds: [], MAX_CARS: 34, MAX_PEDS: 54,
+  cars: [], peds: [], MAX_CARS: 34, MAX_PEDS: 62,
   doorTimer: 0,
 };
 
@@ -210,12 +210,12 @@ function updatePeds(dt, px, py) {
     ped.hx = (pb2[0] - pa2[0]) / s.len * ped.dir;
     ped.hy = (pb2[1] - pa2[1]) / s.len * ped.dir;
     ped.t += ped.dir * ped.speed * dt / s.len;
-    // the occasional mid-block jaywalk
-    if (Math.random() < dt * 0.006) { startCross(ped); continue; }
+    // jaywalkers step out mid-block without warning
+    if (Math.random() < dt * 0.01) { startCross(ped); continue; }
     if (ped.t < 0 || ped.t > 1) {
       const node = ped.t < 0 ? s.a : s.b;
       // corners: many peds cross the street they're on before continuing
-      if (Math.random() < 0.4) { startCross(ped); continue; }
+      if (Math.random() < 0.5) { startCross(ped); continue; }
       const opts = W.adjBike[node];
       if (!opts.length) { ped.dead = true; continue; }
       const e = opts[(Math.random() * opts.length) | 0];

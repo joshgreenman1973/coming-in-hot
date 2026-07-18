@@ -13,7 +13,7 @@ const W = {
 };
 
 /* road half-widths (asphalt) + sidewalk width, meters */
-const ROAD_HALF = { 1: 4.2, 2: 6.5, 3: 8.5 };
+const ROAD_HALF = { 1: 4.7, 2: 6.8, 3: 8.5 };
 const SIDEWALK = 4.0;
 
 function segKey(x, y) { return ((x + 2048) << 12) | (y + 2048); }

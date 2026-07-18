@@ -626,7 +626,7 @@ const Game = {};
       for (const car of Traffic.cars) { const cp = carPos(car); capFor(cp.x, cp.y, 1.7, reach); }
       for (const bus of Buses.list) { const bp = busPos(bus); capFor(bp.x, bp.y, 2.5, reach + 2); }
       for (const pc of openDoors) capFor(pc.x - Math.sin(pc.ang) * -2.0, pc.y + Math.cos(pc.ang) * -2.0, 1.6, reach);
-      for (const ped of Traffic.peds) { if (ped.cross) { const pp = pedPos(ped); capFor(pp.x, pp.y, 1.5, reach); } }
+      // NOTE: no assist for pedestrians — reading crossers is the player's job
       for (const pc of W.parked) capFor(pc.x, pc.y, 1.3, 6);
     }
     if (onSidewalk) P.wobble = Math.min(1, P.wobble + dt * 2); else P.wobble *= (1 - dt * 3);
@@ -722,7 +722,7 @@ const Game = {};
       // pedestrians
       for (const ped of Traffic.peds) {
         const pp = pedPos(ped);
-        if (Math.hypot(pp.x - P.x, pp.y - P.y) < 1.2 && Math.abs(P.speed) > 4) {
+        if (Math.hypot(pp.x - P.x, pp.y - P.y) < 1.3 && Math.abs(P.speed) > 3) {
           if (ped.stroller) {
             crash("YOU HIT A STROLLER", 0.35);
             S.earned = Math.max(0, S.earned - 15);
@@ -1151,6 +1151,15 @@ const Game = {};
     // parked bike (when walking)
     if (!P.riding) drawBike(bike.x, bike.y, bike.ang, false);
 
+    // player halo: always know where you are
+    {
+      const hp = 1 + Math.sin(S.t * 4) * 0.12;
+      ctx.fillStyle = "rgba(247,241,227,.09)";
+      ctx.beginPath(); ctx.arc(P.x, P.y, 3.4 * hp, 0, 7); ctx.fill();
+      ctx.strokeStyle = "rgba(247,241,227,.8)";
+      ctx.lineWidth = 0.32;
+      ctx.beginPath(); ctx.arc(P.x, P.y, 2.5 * hp, 0, 7); ctx.stroke();
+    }
     // player
     if (P.riding) drawBike(P.x, P.y, P.ang, true);
     else {
@@ -1258,11 +1267,12 @@ const Game = {};
   function drawBike(x, y, ang, ridden) {
     ctx.save(); ctx.translate(x, y); ctx.rotate(ang);
     if (ridden && P.wobble > 0.1) ctx.rotate(Math.sin(S.t * 22) * 0.06 * P.wobble);
-    // headlight
+    // headlight (drawn full-size, before the bike itself shrinks)
     if (ridden) {
       ctx.fillStyle = "rgba(255,250,220,.1)";
       ctx.beginPath(); ctx.moveTo(1, -0.4); ctx.lineTo(9, -2.4); ctx.lineTo(9, 2.4); ctx.lineTo(1, 0.4); ctx.closePath(); ctx.fill();
     }
+    ctx.scale(0.62, 0.62);
     // wheels
     ctx.strokeStyle = "#111"; ctx.lineWidth = 0.34;
     ctx.beginPath(); ctx.moveTo(0.85, 0); ctx.lineTo(1.55, 0); ctx.stroke();
