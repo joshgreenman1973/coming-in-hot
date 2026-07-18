@@ -776,6 +776,30 @@ const Game = {};
           break;
         }
       }
+      // dogs underfoot + the leash clothesline
+      for (const ped of Traffic.peds) {
+        if (!ped.dog) continue;
+        const pp = pedPos(ped);
+        const dgx = pp.x + ped.hx * 0.95 - ped.hy * 0.42;
+        const dgy = pp.y + ped.hy * 0.95 + ped.hx * 0.42;
+        if (Math.hypot(dgx - P.x, dgy - P.y) < 0.9 && Math.abs(P.speed) > 3) {
+          crash("You ran over somebody's dog", 0.2);
+          S.earned = Math.max(0, S.earned - 10);
+          toast("-$10.00 · the dog is fine. The owner is not", "bad");
+          break;
+        }
+        const lx = dgx - pp.x, ly = dgy - pp.y;
+        const L2 = lx * lx + ly * ly || 1;
+        const t = ((P.x - pp.x) * lx + (P.y - pp.y) * ly) / L2;
+        if (t > 0.15 && t < 0.85) {
+          const qx = pp.x + lx * t, qy = pp.y + ly * t;
+          if (Math.hypot(qx - P.x, qy - P.y) < 0.42 && Math.abs(P.speed) > 4) {
+            crash("CLOTHESLINED", 0.25);
+            toast("You rode through a leash", "bad");
+            break;
+          }
+        }
+      }
       // red-light ticket (rare)
       if (Math.abs(P.speed) > 4 && seg) {
         for (const ni of [seg.a, seg.b]) {
@@ -803,7 +827,7 @@ const Game = {};
       if (P.carrying) P.food = Math.max(0, P.food - dmg * frag);
       thud();
       burst(P.x + Math.cos(P.ang) * 2, P.y + Math.sin(P.ang) * 2 - 1.5,
-        msg === "DOORED" ? "DOORED!" : "WHAM!", "#ff5a5a", 3.4);
+        msg === "DOORED" ? "DOORED!" : msg === "CLOTHESLINED" ? "CLOTHESLINED!" : "WHAM!", "#ff5a5a", 3.4);
       toast(msg + (P.carrying ? " · food took a hit" : ""), "bad");
     }
   }
