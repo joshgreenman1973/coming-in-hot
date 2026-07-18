@@ -91,29 +91,86 @@ function init3D() {
     R3.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     R3.renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
     R3.renderer.setSize(innerWidth, innerHeight, false);
+    // rich color instead of washed linear output
+    R3.renderer.outputEncoding = THREE.sRGBEncoding;
+    R3.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    R3.renderer.toneMappingExposure = 0.78;
     R3.scene = new THREE.Scene();
-    R3.scene.background = col3(0x12101c);
-    R3.scene.fog = new THREE.Fog(0x12101c, 70, 340);
+    R3.scene.background = col3(0x0d0b16);
+    R3.scene.fog = new THREE.Fog(0x0d0b16, 70, 340);
     R3.camera = new THREE.PerspectiveCamera(62, innerWidth / innerHeight, 0.5, 1600);
     R3.camPos = new THREE.Vector3(0, 8, 0);
     R3.camLook = new THREE.Vector3(0, 0, 0);
 
-    R3.scene.add(new THREE.AmbientLight(0x9090b8, 0.8));
-    const sun = new THREE.DirectionalLight(0xffd9a8, 0.85);
+    R3.scene.add(new THREE.AmbientLight(0x8888b0, 0.5));
+    const sun = new THREE.DirectionalLight(0xffd9a8, 0.75);
     sun.position.set(120, 220, -80);
     R3.scene.add(sun);
-    const fill = new THREE.DirectionalLight(0x5a6aa8, 0.4);
+    R3.sun = sun;
+    const fill = new THREE.DirectionalLight(0x5a6aa8, 0.3);
     fill.position.set(-100, 120, 140);
     R3.scene.add(fill);
+    // real shadows ground the world (skipped on touch devices for perf)
+    R3.shadows = !matchMedia("(pointer: coarse)").matches;
+    if (R3.shadows) {
+      R3.renderer.shadowMap.enabled = true;
+      R3.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      sun.castShadow = true;
+      sun.shadow.mapSize.set(2048, 2048);
+      sun.shadow.camera.left = -150; sun.shadow.camera.right = 150;
+      sun.shadow.camera.top = 150; sun.shadow.camera.bottom = -150;
+      sun.shadow.camera.near = 20; sun.shadow.camera.far = 620;
+      sun.shadow.bias = -0.0006;
+      R3.scene.add(sun.target);
+    }
+    // retro pipeline: render small, upscale with fat crisp pixels + palette crush
+    R3.blitScene = new THREE.Scene();
+    R3.blitCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    R3.blitMat = new THREE.ShaderMaterial({
+      uniforms: { tex: { value: null } },
+      vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",
+      fragmentShader: [
+        "uniform sampler2D tex; varying vec2 vUv;",
+        "void main(){",
+        "  vec3 c = texture2D(tex, vUv).rgb;",
+        "  float l = dot(c, vec3(0.299, 0.587, 0.114));",
+        "  c = mix(vec3(l), c, 1.45);",              // saturation punch
+        "  c = (c - 0.5) * 1.04 + 0.55;",            // gentle contrast + shadow lift
+        "  c = floor(c * 9.0 + 0.5) / 9.0;",         // 16-bit-ish banding
+        "  gl_FragColor = vec4(clamp(c, 0.0, 1.0), 1.0);",
+        "}",
+      ].join("\n"),
+      depthTest: false, depthWrite: false,
+    });
+    R3.blitScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), R3.blitMat));
+    R3.makeRT = () => {
+      if (R3.rt) R3.rt.dispose();
+      const s = Math.max(300, Math.round(innerWidth / 3.4));
+      R3.rt = new THREE.WebGLRenderTarget(s, Math.round(s * innerHeight / innerWidth), {
+        magFilter: THREE.NearestFilter, minFilter: THREE.NearestFilter,
+      });
+      R3.blitMat.uniforms.tex.value = R3.rt.texture;
+    };
+    R3.makeRT();
 
     buildSky3D();
     buildStatic3D();
     buildPools3D();
+    if (R3.shadows) {
+      R3.scene.traverse(o => {
+        if ((o.isMesh || o.isInstancedMesh) && o.material &&
+            !o.material.transparent && !o.material.isShaderMaterial) {
+          o.castShadow = true;
+          o.receiveShadow = true;
+        }
+      });
+    }
     addEventListener("resize", () => {
       if (!R3.ready) return;
       R3.renderer.setSize(innerWidth, innerHeight, false);
       R3.camera.aspect = innerWidth / innerHeight;
       R3.camera.updateProjectionMatrix();
+      R3.makeRT();
     });
     R3.ready = true;
   } catch (e) {
@@ -911,6 +968,10 @@ function render3D(P, S, tp) {
   R3.camera.lookAt(R3.camLook);
   if (R3.stars) R3.stars.position.set(P.x, 0, P.y);
   if (R3.moon) R3.moon.position.set(P.x + 650, 420, P.y - 700);
+  if (R3.shadows) {
+    R3.sun.position.set(P.x + 120, 220, P.y - 80);
+    R3.sun.target.position.set(P.x, 0, P.y);
+  }
 
   // cars (culled)
   const cars = R3.pools.cars;
@@ -1076,6 +1137,13 @@ function render3D(P, S, tp) {
     R3.pinRing.scale.set(pu, pu, 1);
   } else R3.pin.visible = false;
 
-  R3.renderer.render(R3.scene, R3.camera);
+  if (R3.retro) {
+    R3.renderer.setRenderTarget(R3.rt);
+    R3.renderer.render(R3.scene, R3.camera);
+    R3.renderer.setRenderTarget(null);
+    R3.renderer.render(R3.blitScene, R3.blitCam);
+  } else {
+    R3.renderer.render(R3.scene, R3.camera);
+  }
   return true;
 }

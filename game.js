@@ -44,6 +44,7 @@ const Game = {};
     if (e.key === "Escape") declineOffer();
     if (e.key.toLowerCase() === "m") { S.muted = !S.muted; toast(S.muted ? "Sound off" : "Sound on"); }
     if (e.key.toLowerCase() === "v") toggleView();
+    if (e.key.toLowerCase() === "r") toggleRetro();
     if (e.key.toLowerCase() === "e") interact();
   });
   addEventListener("keyup", e => keys[e.key.toLowerCase()] = false);
@@ -1659,6 +1660,14 @@ const Game = {};
   function toggleView() {
     setView(S.view === "3d" ? "ride" : S.view === "ride" ? "north" : "3d");
   }
+  function setRetro(on) {
+    S.retroOn = on;
+    try { localStorage.setItem("cominginhot-retro", on ? "1" : ""); } catch (e) {}
+    if (typeof R3 !== "undefined") R3.retro = on;
+    $("retro-btn").textContent = on ? "👾 retro: on" : "👾 retro: off";
+  }
+  function toggleRetro() { setRetro(!S.retroOn); }
+  setRetro(!!localStorage.getItem("cominginhot-retro"));
   {
     let v = localStorage.getItem("cominginhot-view") || "3d";
     if (!VIEW_LABEL[v]) v = "3d";
@@ -1675,6 +1684,7 @@ const Game = {};
   document.getElementById("decline-btn").addEventListener("click", declineOffer);
   document.getElementById("view-btn").addEventListener("click", toggleView);
   document.getElementById("tut-skip").addEventListener("click", () => tutEnd(true));
+  document.getElementById("retro-btn").addEventListener("click", toggleRetro);
   document.getElementById("tut-btn").addEventListener("click", () => { S.forceTut = true; startShift(); });
   document.getElementById("about-btn").addEventListener("click", () => $("about-pop").classList.toggle("hidden"));
   document.getElementById("about-close").addEventListener("click", () => $("about-pop").classList.add("hidden"));

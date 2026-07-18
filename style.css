@@ -208,12 +208,13 @@ body.touch .offer-btn .kh { display: none; }
 .meter-unit { font-size: 10px; color: var(--paper-dim); }
 .bar { width: 110px; height: 9px; background: rgba(255,255,255,.14); border-radius: 2px; overflow: hidden; box-shadow: 0 0 0 1px rgba(0,0,0,.5); }
 #food-bar { height: 100%; width: 100%; background: linear-gradient(90deg, #e0a13c, #ffd28a); transition: width .4s; }
-#view-btn {
-  pointer-events: auto; margin-top: 10px; cursor: pointer;
+#view-btn, #retro-btn {
+  pointer-events: auto; margin-top: 10px; cursor: pointer; display: block;
   background: rgba(18,16,24,.75); color: var(--paper-dim); border: 1px solid rgba(247,241,227,.3);
   font-family: var(--mono); font-size: 11px; padding: 5px 10px; border-radius: 4px; letter-spacing: .04em;
 }
-#view-btn:hover { color: var(--paper); border-color: rgba(247,241,227,.6); }
+#retro-btn { margin-top: 6px; }
+#view-btn:hover, #retro-btn:hover { color: var(--paper); border-color: rgba(247,241,227,.6); }
 @keyframes blink { 50% { opacity: .4; } }
 
 /* Minimap */
