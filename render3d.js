@@ -145,7 +145,7 @@ function init3D() {
     // rich color instead of washed linear output
     R3.renderer.outputEncoding = THREE.sRGBEncoding;
     R3.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    R3.renderer.toneMappingExposure = 0.78;
+    R3.renderer.toneMappingExposure = 0.7;
     R3.scene = new THREE.Scene();
     R3.scene.background = col3(0x0d0b16);
     R3.scene.fog = new THREE.Fog(0x0d0b16, 70, 340);
@@ -153,7 +153,7 @@ function init3D() {
     R3.camPos = new THREE.Vector3(0, 8, 0);
     R3.camLook = new THREE.Vector3(0, 0, 0);
 
-    R3.scene.add(new THREE.AmbientLight(0x8888b0, 0.5));
+    R3.scene.add(new THREE.AmbientLight(0x8888b0, 0.42));
     const sun = new THREE.DirectionalLight(0xffd9a8, 0.75);
     sun.position.set(120, 220, -80);
     R3.scene.add(sun);
@@ -280,6 +280,44 @@ function buildSky3D() {
   moon.position.set(650, 420, -700);
   R3.moon = moon;
   R3.scene.add(moon);
+
+  // Manhattan on the northern horizon: skyglow + silhouette with lit windows
+  const glow = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: glowTexture(), color: 0xff8a45, fog: false, opacity: 0.5,
+  }));
+  glow.scale.set(3200, 700, 1);
+  R3.skyglow = glow;
+  R3.scene.add(glow);
+  const skyTexC = document.createElement("canvas");
+  skyTexC.width = 512; skyTexC.height = 64;
+  const sg = skyTexC.getContext("2d");
+  sg.fillStyle = "#151228"; sg.fillRect(0, 0, 512, 64);
+  for (let i = 0; i < 520; i++) {
+    sg.fillStyle = "rgba(255,214,140," + (0.25 + Math.random() * 0.6) + ")";
+    sg.fillRect((Math.random() * 510) | 0, (Math.random() * 62) | 0, 1, 1);
+  }
+  const skyTex = new THREE.CanvasTexture(skyTexC);
+  skyTex.magFilter = THREE.NearestFilter;
+  const skyGroup = new THREE.Group();
+  const skyMat = new THREE.MeshBasicMaterial({ map: skyTex, fog: false });
+  let sxx = -1400;
+  let iSky = 0;
+  while (sxx < 1400) {
+    const w = 60 + Math.random() * 130;
+    // lower manhattan wall + a couple of spires
+    const spire = iSky === 9 || iSky === 16;
+    const h = spire ? 380 + Math.random() * 90 : 90 + Math.random() * 190;
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, 40), skyMat);
+    m.position.set(sxx + w / 2, h / 2, 0);
+    skyGroup.add(m);
+    sxx += w + 8 + Math.random() * 40;
+    iSky++;
+  }
+  const northZ = W.bounds.minY - 1500;
+  skyGroup.position.set(-200, 0, northZ);
+  glow.position.set(0, 60, northZ - 60);
+  R3.skyline = skyGroup;
+  R3.scene.add(skyGroup);
 }
 
 /* ---------- static world ---------- */
@@ -296,7 +334,7 @@ function buildStatic3D() {
   // ground
   const ground = new THREE.Mesh(
     new THREE.PlaneGeometry(7000, 7000),
-    new THREE.MeshLambertMaterial({ color: 0x2b2533 })
+    new THREE.MeshLambertMaterial({ color: 0x211c29 })
   );
   ground.rotation.x = -Math.PI / 2;
   ground.position.y = -0.08;
@@ -305,9 +343,9 @@ function buildStatic3D() {
   // roads + sidewalks
   const ribbon = new THREE.PlaneGeometry(1, 1);
   ribbon.rotateX(-Math.PI / 2);
-  const sidewalks = makeInstanced(ribbon, W.segs.length, { color: 0x474050 });
-  const curbs = makeInstanced(ribbon.clone(), W.segs.length, { color: 0x5c5765 });
-  const roads = makeInstanced(ribbon.clone(), W.segs.length, { color: 0x232028 });
+  const sidewalks = makeInstanced(ribbon, W.segs.length, { color: 0x3a3542 });
+  const curbs = makeInstanced(ribbon.clone(), W.segs.length, { color: 0x4c4756 });
+  const roads = makeInstanced(ribbon.clone(), W.segs.length, { color: 0x1b1a21 });
   W.segs.forEach((s, i) => {
     const pa = W.nodes[s.a], pb = W.nodes[s.b];
     const mx = (pa[0] + pb[0]) / 2, my = (pa[1] + pb[1]) / 2;
@@ -387,10 +425,33 @@ function buildStatic3D() {
   const boxGeo = new THREE.BoxGeometry(1, 1, 1);
   boxGeo.translate(0, 0.5, 0);
   const roofMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
-  const lotSets = [[], []];
-  W.lots.forEach((lot, i) => lotSets[(i * 7 + (lot.si || 0)) % 2].push([lot, i]));
+  // lamp lookup grid for baking warm light onto nearby facades
+  const lampGrid = new Map();
+  const LG = 40;
+  const lgKey = (cx, cy) => cx * 100000 + cy;
+  W.lamps.forEach(l => {
+    const k = lgKey(Math.floor(l.x / LG), Math.floor(l.y / LG));
+    if (!lampGrid.has(k)) lampGrid.set(k, []);
+    lampGrid.get(k).push(l);
+  });
+  const lampWarmth = (x, y) => {
+    const cx = Math.floor(x / LG), cy = Math.floor(y / LG);
+    let best = 1e9;
+    for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) {
+      const arr = lampGrid.get(lgKey(cx + i, cy + j));
+      if (arr) for (const l of arr) {
+        const d = Math.hypot(l.x - x, l.y - y);
+        if (d < best) best = d;
+      }
+    }
+    return Math.max(0, 1 - best / 26);
+  };
+  const AMBER = new THREE.Color(0xffB273);
+
+  const lotSets = [[], [], []];
+  W.lots.forEach((lot, i) => lotSets[(i * 7 + (lot.si || 0)) % 3].push([lot, i]));
   lotSets.forEach((set, vi) => {
-    const { mapT, emT } = facadeTextures(vi ? 4241 : 977);
+    const { mapT, emT } = facadeTextures([977, 4241, 8087][vi]);
     const facadeMat = new THREE.MeshLambertMaterial({
       map: mapT, emissive: 0xffb060, emissiveIntensity: 0.85, emissiveMap: emT,
     });
@@ -403,10 +464,69 @@ function buildStatic3D() {
       dummy.scale.set(lot.w, h, lot.depth);
       dummy.updateMatrix();
       im.setMatrixAt(i, dummy.matrix);
-      im.setColorAt(i, col3(lot.col).multiplyScalar(2.1));
+      // streetlamp warmth bakes onto facades near a lamp; others sink into the dark
+      const nx = -Math.sin(lot.ang), ny = Math.cos(lot.ang);
+      const fx = lot.x - nx * lot.side * (lot.depth / 2), fy = lot.y - ny * lot.side * (lot.depth / 2);
+      const warm = lampWarmth(fx, fy);
+      const c = col3(lot.col).multiplyScalar(1.7 + ((li * 41) % 10) / 10 * 0.5);
+      c.lerp(AMBER, warm * 0.4);
+      im.setColorAt(i, c);
     });
     im.instanceColor.needsUpdate = true;
     R3.scene.add(im);
+  });
+
+  // rooftop clutter: chimneys, bulkheads, TV antennas
+  const chimLots = [], bulkLots = [], antLots = [];
+  W.lots.forEach((lot, i) => {
+    const hsh = ((lot.si || 0) * 11 + i * 23) % 100;
+    if (hsh < 45) chimLots.push([lot, i]);
+    if (hsh >= 45 && hsh < 68) bulkLots.push([lot, i]);
+    if (hsh >= 80 && hsh < 94) antLots.push([lot, i]);
+  });
+  const lotHh = (lot, li) => {
+    const rowSeed = (((lot.si || 0) * 2 + (lot.side + 3) / 2) * 2654435761 % 100) / 100;
+    return 11.5 + rowSeed * 2 + ((li * 97) % 10) / 10 * 0.3;
+  };
+  const roofSpot = (lot, li, frac) => {
+    const ux = Math.cos(lot.ang), uy = Math.sin(lot.ang);
+    const nx = -Math.sin(lot.ang), ny = Math.cos(lot.ang);
+    const du = (((li * 37) % 10) / 10 - 0.5) * lot.w * 0.6;
+    const dv = (frac - 0.5) * lot.depth * 0.5;
+    return [lot.x + ux * du + nx * dv, lot.y + uy * du + ny * dv];
+  };
+  const chimGeo = new THREE.BoxGeometry(0.55, 1.3, 0.55);
+  chimGeo.translate(0, 0.65, 0);
+  const chimIM = makeInstanced(chimGeo, chimLots.length, { color: 0x4a352a });
+  chimLots.forEach(([lot, li], i) => {
+    const [sx, sy] = roofSpot(lot, li, 0.25);
+    dummy.position.set(sx, lotHh(lot, li), sy);
+    dummy.rotation.set(0, -lot.ang, 0);
+    dummy.scale.set(1, 1, 1);
+    dummy.updateMatrix();
+    chimIM.setMatrixAt(i, dummy.matrix);
+  });
+  const bulkGeo = new THREE.BoxGeometry(2.2, 1.7, 1.8);
+  bulkGeo.translate(0, 0.85, 0);
+  const bulkIM = makeInstanced(bulkGeo, bulkLots.length, { color: 0x3a3340 });
+  bulkLots.forEach(([lot, li], i) => {
+    const [sx, sy] = roofSpot(lot, li, 0.7);
+    dummy.position.set(sx, lotHh(lot, li), sy);
+    dummy.rotation.set(0, -lot.ang, 0);
+    dummy.scale.set(1, 1, 1);
+    dummy.updateMatrix();
+    bulkIM.setMatrixAt(i, dummy.matrix);
+  });
+  const antGeo = new THREE.CylinderGeometry(0.025, 0.025, 2.6, 4);
+  antGeo.translate(0, 1.3, 0);
+  const antIM = makeInstanced(antGeo, antLots.length, { color: 0x8a8578 });
+  antLots.forEach(([lot, li], i) => {
+    const [sx, sy] = roofSpot(lot, li, 0.5);
+    dummy.position.set(sx, lotHh(lot, li), sy);
+    dummy.rotation.set(0, 0, 0);
+    dummy.scale.set(1, 1, 1);
+    dummy.updateMatrix();
+    antIM.setMatrixAt(i, dummy.matrix);
   });
 
   // sidewalk sheds: scaffolding over a few storefronts (it is New York)
@@ -534,6 +654,75 @@ function buildStatic3D() {
     dummy.updateMatrix(); twRoofIM.setMatrixAt(i, dummy.matrix);
   });
 
+  // street grunge: manholes, asphalt patches, oil stains
+  const manholes = [];
+  const patches = [];
+  {
+    let seed = 313;
+    const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+    W.segs.forEach(s => {
+      if (s.len < 36) return;
+      const pa = W.nodes[s.a], pb = W.nodes[s.b];
+      const ux = (pb[0] - pa[0]) / s.len, uy = (pb[1] - pa[1]) / s.len;
+      const nx = -uy, ny = ux;
+      const n = 1 + (rnd() * 2 | 0);
+      for (let k = 0; k < n; k++) {
+        const d = 10 + rnd() * (s.len - 20);
+        const off = (rnd() - 0.5) * ROAD_HALF[s.cls] * 0.9;
+        manholes.push({ x: pa[0] + ux * d + nx * off, y: pa[1] + uy * d + ny * off });
+      }
+      if (rnd() < 0.6) {
+        const d = 8 + rnd() * (s.len - 16);
+        const off = (rnd() - 0.5) * ROAD_HALF[s.cls];
+        patches.push({
+          x: pa[0] + ux * d + nx * off, y: pa[1] + uy * d + ny * off,
+          w: 2.5 + rnd() * 4, h: 1.8 + rnd() * 2.5,
+          ang: s.ang + (rnd() - 0.5) * 0.3,
+          dark: rnd() < 0.6,
+        });
+      }
+    });
+  }
+  const mhGeo = new THREE.CircleGeometry(0.7, 10);
+  mhGeo.rotateX(-Math.PI / 2);
+  const mhIM = makeInstanced(mhGeo, manholes.length, { color: 0x17151c });
+  manholes.forEach((m, i) => {
+    dummy.position.set(m.x, 0.032, m.y);
+    dummy.rotation.set(0, 0, 0);
+    dummy.scale.set(1, 1, 1);
+    dummy.updateMatrix();
+    mhIM.setMatrixAt(i, dummy.matrix);
+  });
+  const patchGeo = new THREE.PlaneGeometry(1, 1);
+  patchGeo.rotateX(-Math.PI / 2);
+  const patchIM = new THREE.InstancedMesh(patchGeo, new THREE.MeshLambertMaterial({ color: 0xffffff }), patches.length);
+  patches.forEach((p, i) => {
+    dummy.position.set(p.x, 0.026, p.y);
+    dummy.rotation.set(0, -p.ang, 0);
+    dummy.scale.set(p.w, 1, p.h);
+    dummy.updateMatrix();
+    patchIM.setMatrixAt(i, dummy.matrix);
+    patchIM.setColorAt(i, col3(p.dark ? 0x1d1b23 : 0x2e2c36));
+  });
+  patchIM.instanceColor.needsUpdate = true;
+  R3.scene.add(patchIM);
+
+  // steam drifting up from a few manholes
+  R3.steam = [];
+  const steamTex = glowTexture();
+  for (let i = 0; i < 10; i++) {
+    const m = manholes[(i * 97) % manholes.length];
+    if (!m) break;
+    for (let k = 0; k < 3; k++) {
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: steamTex, color: 0xb8b4c8, transparent: true, opacity: 0, depthWrite: false,
+      }));
+      sp.position.set(m.x, 0.5, m.y);
+      R3.scene.add(sp);
+      R3.steam.push({ sp, x: m.x, y: m.y, k, i });
+    }
+  }
+
   // curbside trash-bag piles + fire hydrants
   const trash = [];
   const hydrants = [];
@@ -615,11 +804,11 @@ function buildStatic3D() {
     trunks.setMatrixAt(i, dummy.matrix);
   });
 
-  // parked cars: rounded body + dark glass cabin
-  const pcarGeo = roundedSlab(4.3, 1.82, 0.62, 0.5, 0.28);
+  // parked cars: rounded body + glass cabin
+  const pcarGeo = roundedSlab(4.3, 1.78, 0.6, 0.32, 0.28);
   const parked = new THREE.InstancedMesh(pcarGeo, new THREE.MeshLambertMaterial({ color: 0xffffff }), W.parked.length);
-  const pcabGeo = roundedSlab(2.15, 1.58, 0.42, 0.42, 1.06);
-  const parkedCabs = makeInstanced(pcabGeo, W.parked.length, { color: 0x1a1822 });
+  const pcabGeo = roundedSlab(2.0, 1.5, 0.38, 0.28, 1.02);
+  const parkedCabs = makeInstanced(pcabGeo, W.parked.length, { color: 0x2b2a3a });
   W.parked.forEach((pc, i) => {
     dummy.position.set(pc.x, 0, pc.y);
     dummy.rotation.set(0, -pc.ang, 0);
@@ -680,19 +869,28 @@ function buildStatic3D() {
     sp.position.set(r.fx, 3.6, r.fy);
     R3.scene.add(sp);
   });
-  // warm storefront glass under each awning
+  // warm storefront glass under each awning + a neon sign strip above it
   const shopGeo = new THREE.PlaneGeometry(3.3, 1.8);
   const shopIM = new THREE.InstancedMesh(shopGeo, new THREE.MeshBasicMaterial({
     color: 0xffd9a0, transparent: true, opacity: 0.75, side: THREE.DoubleSide,
   }), rests.length);
+  const NEON = [0xff5fa8, 0x2ee8c8, 0xb8e82e, 0xff9a3a, 0x4aa8ff, 0xff4d4d];
+  const signGeo = new THREE.BoxGeometry(2.7, 0.5, 0.22);
+  const signIM = new THREE.InstancedMesh(signGeo, new THREE.MeshBasicMaterial({ color: 0xffffff }), rests.length);
   rests.forEach((r, i) => {
     dummy.position.set(r.fx, 1.15, r.fy);
     dummy.rotation.set(0, -r.fang, 0);
     dummy.scale.set(1, 1, 1);
     dummy.updateMatrix();
     shopIM.setMatrixAt(i, dummy.matrix);
+    dummy.position.set(r.fx, 3.05, r.fy);
+    dummy.updateMatrix();
+    signIM.setMatrixAt(i, dummy.matrix);
+    signIM.setColorAt(i, col3(NEON[(i * 13) % 6]));
   });
+  signIM.instanceColor.needsUpdate = true;
   R3.scene.add(shopIM);
+  R3.scene.add(signIM);
 
   // route line + destination pin
   const routeGeo = new THREE.BufferGeometry();
@@ -888,9 +1086,10 @@ function buildPools3D() {
   };
   const dark = new THREE.MeshLambertMaterial({ color: 0x15121c });
 
-  // cars: rounded body + rounded cabin + wheels + mirrors + head/tail lights
-  const carBody = roundedSlab(4.45, 1.86, 0.68, 0.52, 0.3);
-  const carCab = roundedSlab(2.25, 1.6, 0.46, 0.45, 1.12);
+  // cars: rounded body + glass cabin + wheels + mirrors + head/tail lights
+  const carBody = roundedSlab(4.45, 1.82, 0.66, 0.34, 0.3);
+  const carCab = roundedSlab(2.1, 1.52, 0.42, 0.28, 1.08);
+  const glassMat = new THREE.MeshLambertMaterial({ color: 0x2b2a3a });
   const wheelGeo = new THREE.CylinderGeometry(0.36, 0.36, 0.24, 10);
   wheelGeo.rotateX(Math.PI / 2);
   const hubGeo = new THREE.CylinderGeometry(0.16, 0.16, 0.26, 8);
@@ -900,7 +1099,7 @@ function buildPools3D() {
     const g = new THREE.Group();
     const m = new THREE.MeshLambertMaterial({ color: 0xffffff });
     g.add(new THREE.Mesh(carBody, m));
-    g.add(new THREE.Mesh(carCab, dark));
+    g.add(new THREE.Mesh(carCab, glassMat));
     for (const [wx, wz] of [[1.42, 0.88], [1.42, -0.88], [-1.42, 0.88], [-1.42, -0.88]]) {
       const wh = new THREE.Mesh(wheelGeo, dark);
       wh.position.set(wx, 0.36, wz);
@@ -1165,6 +1364,25 @@ function render3D(P, S, tp) {
   R3.camera.position.copy(R3.camPos);
   R3.camLook.lerp(new THREE.Vector3(P.x + hx * 9, 1.2, P.y + hy * 9), 0.14);
   R3.camera.lookAt(R3.camLook);
+  // lean into turns, widen with speed
+  R3.camera.rotateZ(-(P.steer || 0) * 0.05);
+  const fovT = 62 + Math.min(1, Math.abs(P.speed) / 12.5) * 7;
+  R3.camera.fov += (fovT - R3.camera.fov) * 0.06;
+  R3.camera.updateProjectionMatrix();
+  // manhole steam
+  if (R3.steam) {
+    for (const st of R3.steam) {
+      const near = Math.abs(st.x - P.x) < 220 && Math.abs(st.y - P.y) < 220;
+      st.sp.visible = near;
+      if (near) {
+        const t = (S.t * 0.35 + st.k / 3 + st.i * 0.37) % 1;
+        st.sp.position.set(st.x + t * 1.4, 0.4 + t * 3.4, st.y);
+        const sc = 1.2 + t * 3.2;
+        st.sp.scale.set(sc, sc, 1);
+        st.sp.material.opacity = (1 - t) * t * 4 * 0.13;
+      }
+    }
+  }
   if (R3.stars) R3.stars.position.set(P.x, 0, P.y);
   if (R3.moon) R3.moon.position.set(P.x + 650, 420, P.y - 700);
   if (R3.shadows) {

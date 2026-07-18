@@ -42,7 +42,11 @@ const Game = {};
     keys[e.key.toLowerCase()] = true;
     if (e.key === "Enter") acceptOffer();
     if (e.key === "Escape") declineOffer();
-    if (e.key.toLowerCase() === "m") { S.muted = !S.muted; toast(S.muted ? "Sound off" : "Sound on"); }
+    if (e.key.toLowerCase() === "m") {
+      S.muted = !S.muted;
+      if (master) master.gain.value = S.muted ? 0 : 0.25;
+      toast(S.muted ? "Sound off" : "Sound on");
+    }
     if (e.key.toLowerCase() === "v") toggleView();
     if (e.key.toLowerCase() === "r") toggleRetro();
     if (e.key.toLowerCase() === "e") interact();
@@ -87,6 +91,45 @@ const Game = {};
     o.connect(g); g.connect(master);
     o.start(AC.currentTime + (when || 0)); o.stop(AC.currentTime + (when || 0) + dur + 0.05);
   }
+  let ambienceOn = false;
+  function startAmbience() {
+    if (ambienceOn || !AC) return;
+    ambienceOn = true;
+    // low city rumble: looping brown noise through a lowpass
+    const len = AC.sampleRate * 3;
+    const buf = AC.createBuffer(1, len, AC.sampleRate);
+    const d = buf.getChannelData(0);
+    let last = 0;
+    for (let i = 0; i < len; i++) {
+      const white = Math.random() * 2 - 1;
+      last = (last + 0.02 * white) / 1.02;
+      d[i] = last * 3.2;
+    }
+    const src = AC.createBufferSource();
+    src.buffer = buf; src.loop = true;
+    const f = AC.createBiquadFilter();
+    f.type = "lowpass"; f.frequency.value = 200;
+    const g = AC.createGain(); g.gain.value = 0.16;
+    src.connect(f); f.connect(g); g.connect(master);
+    src.start();
+  }
+  function distantSiren() {
+    if (S.muted || !AC) return;
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = "triangle";
+    const t0 = AC.currentTime;
+    for (let i = 0; i < 6; i++) {
+      o.frequency.setValueAtTime(640, t0 + i * 0.9);
+      o.frequency.linearRampToValueAtTime(930, t0 + i * 0.9 + 0.45);
+      o.frequency.linearRampToValueAtTime(640, t0 + i * 0.9 + 0.9);
+    }
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(0.016, t0 + 1.4);
+    g.gain.linearRampToValueAtTime(0, t0 + 5.4);
+    o.connect(g); g.connect(master);
+    o.start(t0); o.stop(t0 + 5.5);
+  }
+
   function noise(dur, vol) {
     if (S.muted || !AC) return;
     const len = AC.sampleRate * dur, buf = AC.createBuffer(1, len, AC.sampleRate);
@@ -1624,6 +1667,9 @@ const Game = {};
     Traffic.strollerP = shiftT() < 110 ? 0.16 : 0.03;
     // dinner rush: the streets crawl with other deliveristas, thinning late
     Traffic.riderTarget = shiftT() < 240 ? 13 : 6;
+    // somewhere, always, a siren
+    S.sirenT = (S.sirenT || 60) - dt;
+    if (S.sirenT <= 0) { S.sirenT = 55 + Math.random() * 90; distantSiren(); }
     if (shiftT() >= SHIFT_LEN) { endShift(); }
   }
   function tick(ts) {
@@ -1679,6 +1725,8 @@ const Game = {};
     $("hud").classList.remove("hidden");
     if (isTouch) $("touch-ui").classList.remove("hidden");
     audio();
+    startAmbience();
+    S.sirenT = 30 + Math.random() * 60;
     toast(S.rain ? "Rain tonight — tips run hot, brakes run long" : "Clear night. Dinner rush is on.");
   }
 
