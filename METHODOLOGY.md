@@ -30,7 +30,13 @@ The raw Overpass responses and the processing script are in `data/`.
 - **Order types**: standard, rush, big and fragile orders vary the payout, deadline and food-damage multipliers. The mix is invented.
 - **The economy**: base fee ($3 plus a per-distance component) and tips (a base drawn at random, scaled by order subtotal, delivery speed against the quote and food condition, with a rain bonus) are loosely modeled on published reporting about NYC app-delivery pay, but every number is invented. Nothing in the game reflects any real restaurant's order volume, wait times or customers.
 - **Navigation**: the turn-by-turn GPS runs A* over the real street graph, respecting one-way directions. Distances and ETAs derive from that graph, not from any routing service.
-- **Kitchen waits, crash physics, tickets, driving assists**: all invented for gameplay. A gentle lane-assist nudges the bike along the street when the player isn't steering.
+- **Kitchen waits, crash physics, tickets, driving assists**: all invented for gameplay. A gentle lane-assist nudges the bike along the street when the player isn't steering, and a brake assist slows the bike near vehicles and doors (not pedestrians).
+- **Minimum-pay top-up**: New York City guarantees app delivery workers a minimum of $22.13 per hour of active trip time, tips excluded, as of April 1, 2026 (NYC Department of Consumer and Worker Protection rate). Because the game compresses eight hours into eight minutes, the shift receipt scores each completed delivery as roughly 30 minutes of trip time and tops up base fees to that standard. The rate is real; the 30-minute assumption is a game simplification.
+- **Stacked orders and bike theft**: apps do stack multiple orders on one courier, and bike theft is widespread (54% of surveyed couriers in the reporting linked below). The game's versions of both are simplified dramatizations.
+
+## Sources on real working conditions
+
+The in-game "the real deliveristas" panel draws on reporting from the Vision Zero Cities Journal and Streetsblog NYC (both verified directly) and links to Curbed and Thrillist coverage. Base pay of $2 to $5 per trip and the tips-dominant income structure come from that reporting.
 - **The clock**: one real second equals one game minute; a shift runs 6:00 PM to 2:00 AM in eight real minutes.
 
 ## Known simplifications

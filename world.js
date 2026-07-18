@@ -157,19 +157,23 @@ function buildParkedCars() {
   });
 }
 
-/* ---- street lamps: at nodes + spaced along segments ---- */
+/* ---- street lamps: on the curb line, alternating sides ---- */
 function buildLamps() {
   const rand = mulberry(42);
-  const seen = new Set();
-  W.segs.forEach(s => {
-    if (!seen.has(s.a)) { seen.add(s.a); const p = W.nodes[s.a]; W.lamps.push({ x: p[0], y: p[1], r: 15 + rand() * 5 }); }
-    if (s.len > 70) {
-      const pa = W.nodes[s.a], pb = W.nodes[s.b];
-      const steps = Math.floor(s.len / 55);
-      for (let i = 1; i <= steps; i++) {
-        const f = i / (steps + 1);
-        W.lamps.push({ x: pa[0] + (pb[0] - pa[0]) * f, y: pa[1] + (pb[1] - pa[1]) * f, r: 12 + rand() * 5 });
-      }
+  W.segs.forEach((s, si) => {
+    if (s.len < 18) return;
+    const pa = W.nodes[s.a], pb = W.nodes[s.b];
+    const ux = (pb[0] - pa[0]) / s.len, uy = (pb[1] - pa[1]) / s.len;
+    const nx = -uy, ny = ux;
+    const off = ROAD_HALF[s.cls] + SIDEWALK * 0.35;
+    let k = si % 2 ? -1 : 1;
+    for (let d = 9 + rand() * 6; d < s.len - 6; d += 48 + rand() * 14) {
+      W.lamps.push({
+        x: pa[0] + ux * d + nx * off * k,
+        y: pa[1] + uy * d + ny * off * k,
+        r: 13 + rand() * 5,
+      });
+      k = -k;
     }
   });
 }
@@ -206,7 +210,7 @@ const LOT_COLORS = ["#4e382e", "#59402f", "#61452f", "#523e40", "#493a46", "#5c4
 function lotKey(cx, cy) { return ((cx + 1024) << 11) | (cy + 1024); }
 function buildLots() {
   const rand = mulberry(505);
-  W.segs.forEach(s => {
+  W.segs.forEach((s, si) => {
     if (s.len < 24) return;
     const pa = W.nodes[s.a], pb = W.nodes[s.b];
     const ux = (pb[0] - pa[0]) / s.len, uy = (pb[1] - pa[1]) / s.len;
@@ -223,7 +227,7 @@ function buildLots() {
         const lot = {
           x: cx, y: cy, ang: s.ang, w: fw - 0.6, depth,
           col: LOT_COLORS[(rand() * LOT_COLORS.length) | 0],
-          lit: rand() < 0.65, side,
+          lit: rand() < 0.65, side, si, cls: s.cls,
         };
         W.lots.push(lot);
         const k = lotKey(Math.floor(cx / W.LOTGRID), Math.floor(cy / W.LOTGRID));

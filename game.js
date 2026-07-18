@@ -222,10 +222,11 @@ const Game = {};
     return ORDER_TYPES[0];
   }
 
-  function makeOffer(nearby) {
+  function makeOffer(nearby, origin) {
+    const from = origin || P;
     for (let tries = 0; tries < 30; tries++) {
       const r = W.restaurants[(Math.random() * W.restaurants.length) | 0];
-      const dToR = Math.hypot(r.x - P.x, r.y - P.y);
+      const dToR = Math.hypot(r.x - from.x, r.y - from.y);
       if (dToR > (nearby ? 380 : 700)) continue;
       const rNode = nearestNode(r.x, r.y);
       const dNode = (Math.random() * W.nodes.length) | 0;
@@ -301,9 +302,20 @@ const Game = {};
 
   function acceptOffer() {
     if (!S.offer || !S.running) return;
+    if (S.order) {
+      // stacking: queue it behind the current drop
+      S.queued = S.offer;
+      S.offer = null;
+      $("offer-card").classList.add("hidden");
+      toast("Stacked — " + S.queued.rest.name + " is next");
+      updateTicket();
+      tone(660, 0.1, "sine", 0.12);
+      return;
+    }
     S.order = S.offer;
     S.offer = null;
     $("offer-card").classList.add("hidden");
+    S.stackT = 20 + Math.random() * 18;
     S.order.deadline = S.t + S.order.est * S.order.type.dlMult;
     S.order.acceptT = S.t;
     S.phase = "topickup";
@@ -339,6 +351,7 @@ const Game = {};
        <div class="t-rule"></div>
        <div class="t-row"><span>To</span><b class="t-addr">${o.addr}</b></div>
        <div class="t-row"><span>Clock</span><b>${clockStr}</b></div>
+       ${S.queued ? `<div class="t-row"><span>Stacked next</span><b>${S.queued.rest.name}</b></div>` : ""}
        <div class="t-rule"></div>
        <div class="t-status">${status}</div>`;
     $("order-ticket").classList.remove("hidden");
@@ -528,8 +541,21 @@ const Game = {};
       else if (P.food < 0.6) toast("Food arrived shaken up — tip took a hit", "bad");
     }
     S.order = null; S.phase = "idle"; S.route = null; P.carrying = false;
+    if (S.queued) {
+      // straight into the stacked job
+      S.order = S.queued;
+      S.queued = null;
+      S.order.acceptT = S.t;
+      S.order.deadline = S.t + S.order.est * S.order.type.dlMult;
+      S.phase = "topickup";
+      P.food = 1;
+      S.stackT = 35 + Math.random() * 25;
+      computeRoute();
+      toast("Next up: " + S.order.rest.name);
+    } else {
+      S.nextOfferT = 5 + Math.random() * 9;
+    }
     updateTicket();
-    S.nextOfferT = 5 + Math.random() * 9;
   }
 
   /* ---------- interactions ---------- */
@@ -1488,9 +1514,13 @@ const Game = {};
   /* ---------- shift end ---------- */
   function endShift() {
     S.running = false; S.over = true;
+    // NYC minimum pay: $22.13 per active hour (April 2026 rate), tips excluded.
+    // The game compresses time, so each delivery is scored as ~30 min of trip time.
+    const MIN_PAY_RATE = 22.13;
+    const topUp = Math.max(0, MIN_PAY_RATE * S.deliveries * 0.5 - S.fees);
+    S.earned += topUp;
     const best = Math.max(S.earned, +(localStorage.getItem("cominginhot-best") || 0));
     localStorage.setItem("cominginhot-best", best);
-    const perHr = S.earned / (SHIFT_LEN / 3600) / 60; // per game-hour ≈ per real 60s… show per shift instead
     const grade = S.earned >= 120 ? "S" : S.earned >= 85 ? "A" : S.earned >= 55 ? "B" : S.earned >= 30 ? "C" : "D";
     $("shift-summary").innerHTML =
       `<div class="t-head">SHIFT RECEIPT · 6:00 PM – 2:00 AM</div>
@@ -1498,6 +1528,7 @@ const Game = {};
        <div class="t-rule"></div>
        <div class="t-row"><span>Deliveries</span><b>${S.deliveries}</b></div>
        <div class="t-row"><span>Base fees</span><b>${fmtMoney(S.fees)}</b></div>
+       <div class="t-row"><span>Min-pay top-up*</span><b>${fmtMoney(topUp)}</b></div>
        <div class="t-row"><span>Tips</span><b>${fmtMoney(S.tips)}</b></div>
        <div class="t-row"><span>Best tip</span><b>${fmtMoney(S.bestTip)}</b></div>
        <div class="t-row"><span>Miles ridden</span><b>${(P.dist / 1609).toFixed(1)}</b></div>
@@ -1507,7 +1538,8 @@ const Game = {};
        <div class="t-rule"></div>
        <div class="t-row"><span><b>TOTAL</b></span><span class="t-money">${fmtMoney(S.earned)}</span></div>
        <div class="t-row"><span>Personal best</span><b>${fmtMoney(best)}</b></div>
-       <div class="t-rule"></div>`;
+       <div class="t-rule"></div>
+       <div style="font-size:10px;color:#6b6353;line-height:1.4">*NYC law guarantees app couriers $22.13 per active hour, tips excluded (April 2026 rate). The game scores each delivery as ~30 minutes of trip time.</div>`;
     $("shift-end").classList.remove("hidden");
     $("hud").classList.add("hidden");
   }
@@ -1533,6 +1565,29 @@ const Game = {};
     updateDoors(dt, { ...P, riding: P.riding });
     updateOrders(dt);
     updateTutorial(dt);
+    // active (on-order) time, for the minimum-pay top-up
+    if (S.order) S.activeT = (S.activeT || 0) + dt;
+    // stacked offers: the apps pile a second job on mid-delivery
+    if (S.order && !S.offer && !S.queued && S.phase !== "walking" && !Tut.active) {
+      S.stackT -= dt;
+      if (S.stackT <= 0) {
+        S.stackT = 45 + Math.random() * 30;
+        if (Math.random() < 0.6) makeOffer(true, { x: S.order.destX, y: S.order.destY });
+      }
+    }
+    // leave the bike too long and Brooklyn happens
+    if (!P.riding && Math.hypot(bike.x - P.x, bike.y - P.y) > 25) {
+      P.bikeRisk = (P.bikeRisk || 0) + dt;
+      if (P.bikeRisk > 26 && !P.bikeWarned) { P.bikeWarned = true; toast("Someone's eyeing your bike…", "bad"); }
+      if (P.bikeRisk > 50) {
+        P.bikeRisk = 0; P.bikeWarned = false;
+        burst(bike.x, bike.y - 2, "BIKE GONE!", "#ff5a5a", 3.2);
+        const st2 = closestStreet(bike.x + (Math.random() - 0.5) * 240, bike.y + (Math.random() - 0.5) * 240);
+        if (st2) { bike.x = st2.px; bike.y = st2.py; }
+        toast("Your bike got grabbed — someone dumped it up the block. Go find it", "bad");
+        tone(196, 0.6, "square", 0.12, 0, 120);
+      }
+    } else { P.bikeRisk = 0; P.bikeWarned = false; }
     // stroller hour: the early-evening sidewalks belong to families
     Traffic.strollerP = shiftT() < 110 ? 0.16 : 0.03;
     // dinner rush: the streets crawl with other deliveristas, thinning late
@@ -1572,6 +1627,7 @@ const Game = {};
       running: true, over: false, t: 0, earned: 0, tips: 0, fees: 0,
       deliveries: 0, crashes: 0, tickets: 0, bestTip: 0, sidewalkFines: 0,
       order: null, offer: null, nextOfferT: 3.5, phase: "idle", route: null,
+      queued: null, stackT: 0, activeT: 0,
       rain: Math.random() < 0.3,
     });
     Traffic.cars = []; Traffic.peds = [];
@@ -1626,7 +1682,7 @@ const Game = {};
   document.getElementById("real-close").addEventListener("click", () => $("real-pop").classList.add("hidden"));
 
   Game.debug = () => ({ t: S.t, running: S.running, phase: S.phase, x: P.x, y: P.y, speed: P.speed, cars: Traffic.cars.length, peds: Traffic.peds.length, offer: !!S.offer, order: !!S.order });
-  Game.S = S; Game.P = P;
+  Game.S = S; Game.P = P; Game.bike = bike;
 
   const CUISINE_EMOJI = [
     ["pizza", "🍕"], ["mexican", "🌮"], ["japanese", "🍣"], ["sushi", "🍣"], ["chinese", "🥡"],
