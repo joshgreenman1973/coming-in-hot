@@ -414,7 +414,8 @@ const Game = {};
       return d;
     };
     const rem = distTo(r.length - 1) + near.d;
-    const dest = S.phase === "topickup" || S.phase === "waiting" ? "pickup" : "the drop";
+    const o = S.order;
+    const dest = S.phase === "topickup" || S.phase === "waiting" ? o.rest.name : o.addr;
     const eta = Math.max(1, Math.round(rem / 7 / 60 * 10) / 10);
     // walk forward looking for the next real turn
     for (let i = near.i + 1; i < r.length - 1; i++) {
@@ -439,7 +440,7 @@ const Game = {};
     const endP = W.nodes[r[r.length - 1]];
     return {
       arrow: "⚑",
-      main: (dest === "pickup" ? "Pickup ahead" : "Drop ahead"),
+      main: (S.phase === "topickup" || S.phase === "waiting" ? "Pickup ahead — " : "Drop ahead — ") + dest,
       sub: fmtDist(rem) + " · straight shot",
       cls: "arrive", man: { x: endP[0], y: endP[1] },
     };
@@ -449,7 +450,19 @@ const Game = {};
     let show = false, arrow = "⬆", main = "", sub = "", cls = "";
     navManeuver = null;
     const tp = targetPoint();
-    if (S.running && S.order && tp) {
+    if (S.running && !S.order && !Tut.active) {
+      // always tell the player what's happening, even between orders
+      show = true;
+      if (S.offer) {
+        arrow = "🔔"; main = "New order — " + S.offer.rest.name;
+        sub = isTouch ? "Tap ACCEPT or PASS on the ticket" : "Enter to accept · Esc to pass";
+        cls = "offroute";
+      } else {
+        arrow = "🛵"; main = "Waiting for the next order…";
+        sub = "Cruise — the app will ping you";
+        cls = "idle";
+      }
+    } else if (S.running && S.order && tp) {
       show = true;
       if (!P.riding) {
         const d = Math.hypot(tp.x - P.x, tp.y - P.y);
@@ -595,7 +608,26 @@ const Game = {};
       const d1 = normAng(seg.ang - P.ang);
       const d2 = normAng(seg.ang + Math.PI - P.ang);
       const dmin = Math.abs(d1) < Math.abs(d2) ? d1 : d2;
-      if (Math.abs(dmin) < 0.55) P.ang += dmin * Math.min(1, dt * 2.6);
+      if (Math.abs(dmin) < 0.75) P.ang += dmin * Math.min(1, dt * 3.6);
+    }
+
+    // co-pilot brake assist: ease off before you plow into something ahead
+    if (Math.abs(P.speed) > 1.8) {
+      const hx = Math.cos(P.ang), hy = Math.sin(P.ang);
+      const reach = 4.5 + Math.abs(P.speed) * 0.9;
+      const capFor = (ox, oy, latW, rch) => {
+        const dx = ox - P.x, dy = oy - P.y;
+        if (dx > rch || dx < -rch || dy > rch || dy < -rch) return;
+        const ahead = dx * hx + dy * hy;
+        if (ahead < 0.5 || ahead > rch) return;
+        if (Math.abs(-dy * hx + dx * hy) > latW) return;
+        P.speed = Math.min(P.speed, Math.max(1.6, (ahead - 1.4) * 1.8));
+      };
+      for (const car of Traffic.cars) { const cp = carPos(car); capFor(cp.x, cp.y, 1.7, reach); }
+      for (const bus of Buses.list) { const bp = busPos(bus); capFor(bp.x, bp.y, 2.5, reach + 2); }
+      for (const pc of openDoors) capFor(pc.x - Math.sin(pc.ang) * -2.0, pc.y + Math.cos(pc.ang) * -2.0, 1.6, reach);
+      for (const ped of Traffic.peds) { if (ped.cross) { const pp = pedPos(ped); capFor(pp.x, pp.y, 1.5, reach); } }
+      for (const pc of W.parked) capFor(pc.x, pc.y, 1.3, 6);
     }
     if (onSidewalk) P.wobble = Math.min(1, P.wobble + dt * 2); else P.wobble *= (1 - dt * 3);
 
@@ -629,8 +661,8 @@ const Game = {};
         const dx = nx - px, dy = ny - py;
         const dd = Math.hypot(dx, dy) || 1;
         P.x = px + dx / dd * lim; P.y = py + dy / dd * lim;
-        if (P.speed > 5) { P.food = Math.max(0, P.food - 0.05); thud(); }
-        P.speed *= Math.abs(P.speed) > 3 ? 0.55 : 0.93;
+        if (P.speed > 7) { P.food = Math.max(0, P.food - 0.04); thud(); }
+        P.speed *= Math.abs(P.speed) > 6 ? 0.7 : 0.95;
       } else { P.x = nx; P.y = ny; }
     } else { P.x = nx; P.y = ny; }
 
@@ -648,10 +680,10 @@ const Game = {};
       for (const car of Traffic.cars) {
         const cp = carPos(car);
         const d = Math.hypot(cp.x - P.x, cp.y - P.y);
-        if (d < 2.0) {
+        if (d < 1.9) {
           const closing = Math.abs(P.speed) + car.speed;
-          if (closing > 4.5) crash("Clipped by a car", 0.25);
-          else { P.speed *= 0.4; }
+          if (closing > 7) crash("Clipped by a car", 0.2);
+          else { P.speed *= 0.5; }
           break;
         }
       }
@@ -663,20 +695,20 @@ const Game = {};
         // oriented check against the 11m bus body
         const hx = Math.cos(bp.ang), hy = Math.sin(bp.ang);
         const lon = Math.abs(dx * hx + dy * hy), lat = Math.abs(-dx * hy + dy * hx);
-        if (lon < 6.2 && lat < 2.1) {
+        if (lon < 6.2 && lat < 2.0) {
           const rn = W.busRoutes[bus.route].name;
-          if (Math.abs(P.speed) + bus.speed > 3) crash("Clipped by the " + rn, 0.3);
-          else P.speed *= 0.2;
+          if (Math.abs(P.speed) + bus.speed > 6) crash("Clipped by the " + rn, 0.25);
+          else P.speed *= 0.3;
           break;
         }
       }
       // parked cars
-      if (Math.abs(P.speed) > 3.5) {
+      if (Math.abs(P.speed) > 5) {
         for (const pc of W.parked) {
           const dx = pc.x - P.x, dy = pc.y - P.y;
-          if (dx * dx + dy * dy < 3.4) {
-            if (pc.door > 0) crash("DOORED", 0.38);
-            else crash("Hit a parked car", 0.1);
+          if (dx * dx + dy * dy < 3.0) {
+            if (pc.door > 0) crash("DOORED", 0.32);
+            else crash("Hit a parked car", 0.08);
             break;
           }
         }
@@ -685,12 +717,12 @@ const Game = {};
       for (const pc of openDoors) {
         const doorX = pc.x - Math.sin(pc.ang) * -2.0, doorY = pc.y + Math.cos(pc.ang) * -2.0;
         const d = Math.hypot(doorX - P.x, doorY - P.y);
-        if (d < 1.7 && Math.abs(P.speed) > 3.5) { crash("DOORED", 0.38); break; }
+        if (d < 1.6 && Math.abs(P.speed) > 5) { crash("DOORED", 0.32); break; }
       }
       // pedestrians
       for (const ped of Traffic.peds) {
         const pp = pedPos(ped);
-        if (Math.hypot(pp.x - P.x, pp.y - P.y) < 1.3 && Math.abs(P.speed) > 2.8) {
+        if (Math.hypot(pp.x - P.x, pp.y - P.y) < 1.2 && Math.abs(P.speed) > 4) {
           if (ped.stroller) {
             crash("YOU HIT A STROLLER", 0.35);
             S.earned = Math.max(0, S.earned - 15);
@@ -724,7 +756,7 @@ const Game = {};
 
     function crash(msg, dmg) {
       S.crashes++;
-      P.crashCd = 1.8; P.knock = 0.7;
+      P.crashCd = 2.6; P.knock = 0.45;
       P.speed = Math.min(P.speed, 1.2);
       const frag = S.order ? S.order.type.frag : 1;
       if (P.carrying) P.food = Math.max(0, P.food - dmg * frag);
@@ -1080,19 +1112,39 @@ const Game = {};
       if (ped.dog) { ctx.fillStyle = "#8a6f52"; ctx.beginPath(); ctx.arc(pp.x + 1.1, pp.y + 0.4, 0.32, 0, 7); ctx.fill(); }
     }
 
-    // restaurant + destination markers
+    // restaurant + destination markers: big labeled map pin
     const tp = targetPoint();
     if (tp) {
+      const isDrop = S.phase === "todrop" || S.phase === "walking";
+      const col = isDrop ? "#5fd685" : "#ff4d2e";
       const pulse = 1 + Math.sin(S.t * 5) * 0.18;
-      ctx.strokeStyle = S.phase === "todrop" || S.phase === "walking" ? "rgba(111,224,138,.8)" : "rgba(255,77,46,.8)";
-      ctx.lineWidth = 0.7;
+      ctx.strokeStyle = isDrop ? "rgba(111,224,138,.85)" : "rgba(255,77,46,.85)";
+      ctx.lineWidth = 0.8;
       ctx.beginPath(); ctx.arc(tp.x, tp.y, 7 * pulse, 0, 7); ctx.stroke();
-      ctx.beginPath(); ctx.arc(tp.x, tp.y, 2.2, 0, 7); ctx.stroke();
+      ctx.strokeStyle = isDrop ? "rgba(111,224,138,.3)" : "rgba(255,77,46,.3)";
+      ctx.beginPath(); ctx.arc(tp.x, tp.y, 11 * pulse, 0, 7); ctx.stroke();
       upright(tp.x, tp.y, () => {
-        ctx.font = "600 3.2px 'IBM Plex Mono'";
-        ctx.textAlign = "center";
-        ctx.fillStyle = "rgba(244,239,228,.95)";
-        ctx.fillText(tp.label, 0, -9 * pulse);
+        const bounce = Math.abs(Math.sin(S.t * 3)) * 1.3;
+        ctx.translate(0, -bounce);
+        // pin
+        ctx.strokeStyle = "rgba(20,16,24,.8)"; ctx.lineWidth = 0.9;
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -4.6); ctx.stroke();
+        ctx.strokeStyle = col; ctx.lineWidth = 0.55;
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -4.6); ctx.stroke();
+        ctx.fillStyle = col;
+        ctx.beginPath(); ctx.arc(0, -6, 2.4, 0, 7); ctx.fill();
+        ctx.strokeStyle = "rgba(20,16,24,.8)"; ctx.lineWidth = 0.35; ctx.stroke();
+        ctx.fillStyle = "#16121c";
+        ctx.font = "2.6px sans-serif";
+        ctx.fillText(isDrop ? "🏠" : "🍜", 0, -5.1);
+        // label chip
+        ctx.font = "700 2.6px 'IBM Plex Mono'";
+        const tw = ctx.measureText(tp.label).width;
+        ctx.fillStyle = "rgba(18,15,24,.88)";
+        roundRect(-tw / 2 - 1.4, -12.4, tw + 2.8, 3.6, 0.9); ctx.fill();
+        ctx.strokeStyle = col; ctx.lineWidth = 0.22; ctx.stroke();
+        ctx.fillStyle = "#f7f1e3";
+        ctx.fillText(tp.label, 0, -9.8);
       });
     }
 
@@ -1438,7 +1490,10 @@ const Game = {};
     try { wantTut = !localStorage.getItem("cominginhot-tut"); } catch (e) {}
     if (S.forceTut) { wantTut = true; S.forceTut = false; }
     if (wantTut) tutStart();
-    else { Tut.active = false; $("tut").classList.add("hidden"); }
+    else {
+      Tut.active = false; $("tut").classList.add("hidden");
+      setTimeout(() => { if (S.running && !S.order) toast("Wait for a ticket, ACCEPT it, then follow the cyan line"); }, 1200);
+    }
     $("title-screen").classList.add("fading");
     $("shift-end").classList.add("hidden");
     $("hud").classList.remove("hidden");

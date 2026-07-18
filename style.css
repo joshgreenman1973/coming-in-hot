@@ -147,6 +147,8 @@ body.touch .desktop-only { display: none; }
 #nav-sub { font-size: 12px; color: #b8e6d9; margin-top: 1px; }
 #nav-banner.arrive { background: #14522c; }
 #nav-banner.offroute { background: #6b4a12; }
+#nav-banner.idle { background: #333a4d; }
+#nav-banner.idle #nav-sub { color: #b9c2d6; }
 
 /* Receipt tickets */
 .ticket {

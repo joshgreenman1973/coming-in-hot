@@ -2,7 +2,7 @@
 "use strict";
 
 const Traffic = {
-  cars: [], peds: [], MAX_CARS: 40, MAX_PEDS: 54,
+  cars: [], peds: [], MAX_CARS: 34, MAX_PEDS: 54,
   doorTimer: 0,
 };
 
@@ -290,7 +290,7 @@ const openDoors = [];
 function updateDoors(dt, player) {
   Traffic.doorTimer -= dt;
   if (Traffic.doorTimer <= 0 && player.riding && player.speed > 4) {
-    Traffic.doorTimer = 7 + Math.random() * 9;
+    Traffic.doorTimer = 10 + Math.random() * 12;
     // find parked car ahead of player within door-zone
     const hx = Math.cos(player.ang), hy = Math.sin(player.ang);
     let cand = null;
