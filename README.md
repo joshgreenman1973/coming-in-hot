@@ -1,6 +1,6 @@
 # Coming In Hot
 
-A night as an ebike deliverista on the real streets of Brownstone Brooklyn: real one-way streets, real traffic signals, 14 real MTA bus lines, 526 real restaurants across Carroll Gardens, Boerum Hill, Gowanus and Park Slope. Take orders, follow the turn-by-turn GPS through traffic, park, walk the food to the door and collect the tip before the quote runs out.
+A night as an ebike deliverista on the real streets of Brownstone Brooklyn: real one-way streets, real traffic signals, 14 real MTA bus lines and 746 restaurants at their real locations (with invented punny names) across Carroll Gardens, Boerum Hill, Gowanus and Park Slope — 5th Avenue included. Take orders, follow the turn-by-turn GPS through traffic, park, walk the food to the door and collect the tip before the quote runs out. A guided tutorial runs on your first ride.
 
 **Play it:** https://joshgreenman1973.github.io/coming-in-hot/
 
@@ -21,7 +21,8 @@ Works on phones (touch controls appear automatically) and desktops.
 - The GPS gives Google Maps-style turn-by-turn. Straying reroutes you.
 - Cars brake and honk, but they will hit you. Buses are bigger than you.
 - Parked cars open doors. The door zone is real.
-- Riding the sidewalk is slow, wobbly and hard on pedestrians.
+- Riding the sidewalk is slow, wobbly and eventually a $3 fine. Pedestrians cross everywhere, and some push strollers.
+- Beat the quote with the food intact: "perfect delivery" bonus. Blow the deadline: cold food, no tip.
 - Running a red works until it doesn't.
 - Rain nights: better tips, worse brakes.
 

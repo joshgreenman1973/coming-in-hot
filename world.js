@@ -6,6 +6,7 @@ const W = {
   restaurants: [], signals: new Set(), lights: [], nodeLight: {},
   grid: new Map(), GRID: 40,
   parked: [], lamps: [], trees: [], busRoutes: [],
+  lots: [], lotGrid: new Map(), LOTGRID: 80, crosswalks: [], labels: [],
   paths: {}, bikePaths: null, dashPaths: {},
   minimapCanvas: null, bounds: { minX: 0, minY: 0, maxX: 0, maxY: 0 },
   ready: false,
@@ -83,6 +84,9 @@ async function loadWorld() {
   buildParkedCars();
   buildLamps();
   buildTrees();
+  buildLots();
+  buildCrosswalks();
+  buildLabels();
   buildPaths();
   buildMinimap();
   W.ready = true;
@@ -192,6 +196,96 @@ function buildTrees() {
           });
         }
         d += 13 + rand() * 9;
+      }
+    }
+  });
+}
+
+/* ---- building lots: brownstone rows aligned to each street's frontage ---- */
+const LOT_COLORS = ["#4e382e", "#59402f", "#61452f", "#523e40", "#493a46", "#5c483a", "#553f30", "#5e4343", "#473b42", "#66503c", "#513c35", "#443847"];
+function lotKey(cx, cy) { return ((cx + 1024) << 11) | (cy + 1024); }
+function buildLots() {
+  const rand = mulberry(505);
+  W.segs.forEach(s => {
+    if (s.len < 24) return;
+    const pa = W.nodes[s.a], pb = W.nodes[s.b];
+    const ux = (pb[0] - pa[0]) / s.len, uy = (pb[1] - pa[1]) / s.len;
+    const nx = -uy, ny = ux;
+    const setback = ROAD_HALF[s.cls] + SIDEWALK;
+    for (const side of [-1, 1]) {
+      let d = 6 + rand() * 4;
+      while (d < s.len - 12) {
+        const fw = 7.5 + rand() * 6;          // frontage width
+        if (d + fw > s.len - 5) break;
+        const depth = 11 + rand() * 7;
+        const cx = pa[0] + ux * (d + fw / 2) + nx * (setback + depth / 2) * side;
+        const cy = pa[1] + uy * (d + fw / 2) + ny * (setback + depth / 2) * side;
+        const lot = {
+          x: cx, y: cy, ang: s.ang, w: fw - 0.6, depth,
+          col: LOT_COLORS[(rand() * LOT_COLORS.length) | 0],
+          lit: rand() < 0.65, side,
+        };
+        W.lots.push(lot);
+        const k = lotKey(Math.floor(cx / W.LOTGRID), Math.floor(cy / W.LOTGRID));
+        if (!W.lotGrid.has(k)) W.lotGrid.set(k, []);
+        W.lotGrid.get(k).push(lot);
+        d += fw + 0.5;
+      }
+    }
+  });
+}
+function lotsNear(x0, y0, x1, y1) {
+  const out = [];
+  const cx0 = Math.floor(x0 / W.LOTGRID), cx1 = Math.floor(x1 / W.LOTGRID);
+  const cy0 = Math.floor(y0 / W.LOTGRID), cy1 = Math.floor(y1 / W.LOTGRID);
+  for (let cx = cx0; cx <= cx1; cx++) for (let cy = cy0; cy <= cy1; cy++) {
+    const arr = W.lotGrid.get(lotKey(cx, cy));
+    if (arr) out.push(...arr);
+  }
+  return out;
+}
+
+/* ---- crosswalks at signalized approaches ---- */
+function buildCrosswalks() {
+  const seen = new Set();
+  W.lights.forEach(light => {
+    for (const si of nearbySegs(light.x, light.y)) {
+      const s = W.segs[si];
+      for (const [nid, other] of [[s.a, s.b], [s.b, s.a]]) {
+        const p = W.nodes[nid];
+        if (Math.hypot(p[0] - light.x, p[1] - light.y) > 15) continue;
+        const key = nid + ":" + si;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        const q = W.nodes[other];
+        const L = Math.hypot(q[0] - p[0], q[1] - p[1]);
+        if (L < 16) continue;
+        const ux = (q[0] - p[0]) / L, uy = (q[1] - p[1]) / L;
+        W.crosswalks.push({
+          x: p[0] + ux * 7.5, y: p[1] + uy * 7.5,
+          ang: Math.atan2(uy, ux), half: ROAD_HALF[s.cls],
+        });
+      }
+    }
+  });
+}
+
+/* ---- street name labels along the centerline, OSM-style ---- */
+function buildLabels() {
+  W.ways.forEach(way => {
+    if (!way.name) return;
+    let sinceLabel = 90; // meters since the last label on this way
+    for (let i = 0; i < way.n.length - 1; i++) {
+      const pa = W.nodes[way.n[i]], pb = W.nodes[way.n[i + 1]];
+      const len = Math.hypot(pb[0] - pa[0], pb[1] - pa[1]);
+      sinceLabel += len;
+      if (len > 42 && sinceLabel > 130) {
+        sinceLabel = 0;
+        W.labels.push({
+          x: (pa[0] + pb[0]) / 2, y: (pa[1] + pb[1]) / 2,
+          ang: Math.atan2(pb[1] - pa[1], pb[0] - pa[0]),
+          name: way.name,
+        });
       }
     }
   });

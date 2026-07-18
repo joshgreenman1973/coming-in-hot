@@ -6,8 +6,8 @@ Projection: local equirectangular, meters, origin at bbox center, +x east, +y SO
 """
 import json, math
 
-CENTER_LAT = (40.671 + 40.690) / 2
-CENTER_LON = (-74.001 + -73.972) / 2
+CENTER_LAT = (40.662 + 40.690) / 2
+CENTER_LON = (-74.001 + -73.968) / 2
 M_PER_DEG_LAT = 111132.0
 M_PER_DEG_LON = 111320.0 * math.cos(math.radians(CENTER_LAT))
 

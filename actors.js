@@ -150,24 +150,43 @@ function spawnPed(px, py) {
     const d = Math.hypot(pa[0] - px, pa[1] - py);
     if (d < 60 || d > 380) continue;
     const side = Math.random() < 0.5 ? -1 : 1;
+    const stroller = Math.random() < (Traffic.strollerP || 0);
     Traffic.peds.push({
       seg: si, t: Math.random(), side, dir: Math.random() < 0.5 ? -1 : 1,
-      speed: 1.1 + Math.random() * 0.7,
-      col: ["#c9b8a0", "#8a92a8", "#a87878", "#7f9a80", "#b0a34e", "#9a86b8"][(Math.random() * 6) | 0],
-      crossing: 0, dog: Math.random() < 0.12,
+      speed: stroller ? 0.9 + Math.random() * 0.4 : 1.1 + Math.random() * 0.7,
+      col: ["#e2cfae", "#96a2bc", "#c08484", "#88ac8a", "#c4b558", "#ab94cc", "#d89a6a", "#7ab8b0"][(Math.random() * 8) | 0],
+      cross: null, dog: !stroller && Math.random() < 0.12, stroller,
+      hx: 1, hy: 0,
     });
     return true;
   }
   return false;
 }
 
-function pedPos(ped) {
+function sidewalkPos(ped, side) {
   const s = W.segs[ped.seg];
   const pa = W.nodes[s.a], pb = W.nodes[s.b];
   const x = pa[0] + (pb[0] - pa[0]) * ped.t, y = pa[1] + (pb[1] - pa[1]) * ped.t;
   const ux = (pb[0] - pa[0]) / s.len, uy = (pb[1] - pa[1]) / s.len;
-  const off = (ROAD_HALF[s.cls] + SIDEWALK * 0.55) * ped.side * (1 - ped.crossing) ;
+  const off = (ROAD_HALF[s.cls] + SIDEWALK * 0.55) * side;
   return { x: x - uy * off, y: y + ux * off };
+}
+
+function pedPos(ped) {
+  if (ped.cross) {
+    const c = ped.cross;
+    return { x: c.x0 + (c.x1 - c.x0) * c.p, y: c.y0 + (c.y1 - c.y0) * c.p };
+  }
+  return sidewalkPos(ped, ped.side);
+}
+
+/* step off the curb and cross the roadway to the other sidewalk */
+function startCross(ped) {
+  ped.t = Math.max(0.03, Math.min(0.97, ped.t));
+  const a = sidewalkPos(ped, ped.side);
+  const b = sidewalkPos(ped, -ped.side);
+  const len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+  ped.cross = { x0: a.x, y0: a.y, x1: b.x, y1: b.y, p: 0, len };
 }
 
 function updatePeds(dt, px, py) {
@@ -179,16 +198,24 @@ function updatePeds(dt, px, py) {
     if (!spawnPed(px, py)) break;
   }
   for (const ped of Traffic.peds) {
+    if (ped.cross) {
+      ped.cross.p += ped.speed * dt / ped.cross.len;
+      ped.hx = (ped.cross.x1 - ped.cross.x0) / ped.cross.len;
+      ped.hy = (ped.cross.y1 - ped.cross.y0) / ped.cross.len;
+      if (ped.cross.p >= 1) { ped.side *= -1; ped.cross = null; }
+      continue;
+    }
     const s = W.segs[ped.seg];
+    const pa2 = W.nodes[s.a], pb2 = W.nodes[s.b];
+    ped.hx = (pb2[0] - pa2[0]) / s.len * ped.dir;
+    ped.hy = (pb2[1] - pa2[1]) / s.len * ped.dir;
     ped.t += ped.dir * ped.speed * dt / s.len;
-    // occasionally cross the street
-    if (ped.crossing > 0) {
-      ped.crossing = Math.max(0, ped.crossing - dt * 0.25);
-      if (ped.crossing === 0) ped.side *= -1;
-    } else if (Math.random() < dt * 0.012) ped.crossing = 1;
+    // the occasional mid-block jaywalk
+    if (Math.random() < dt * 0.006) { startCross(ped); continue; }
     if (ped.t < 0 || ped.t > 1) {
-      // hop to adjacent segment
       const node = ped.t < 0 ? s.a : s.b;
+      // corners: many peds cross the street they're on before continuing
+      if (Math.random() < 0.4) { startCross(ped); continue; }
       const opts = W.adjBike[node];
       if (!opts.length) { ped.dead = true; continue; }
       const e = opts[(Math.random() * opts.length) | 0];

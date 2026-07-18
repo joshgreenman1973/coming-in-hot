@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=6">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
 </head>
 <body>
@@ -22,6 +22,7 @@
     <div class="title-sub">Pick up. Ride hard. Park legal-ish. Get the tip.</div>
     <div class="title-map-note" id="title-map-note">Loading the real street grid…</div>
     <button id="start-btn" class="start-btn" disabled>CLOCK IN</button>
+    <div><button id="tut-btn" class="tut-link">first time? ride the tutorial</button></div>
     <div class="title-controls desktop-only">
       <div><b>W/↑</b> throttle &nbsp; <b>S/↓</b> brake &nbsp; <b>A/D</b> steer</div>
       <div><b>E</b> park / mount / interact &nbsp; <b>Enter</b> accept order &nbsp; <b>M</b> sound</div>
@@ -51,6 +52,13 @@
   <div id="hud-top-left">
     <div id="clock">6:00 PM</div>
     <div id="earnings">$0.00</div>
+  </div>
+
+  <div id="tut" class="hidden">
+    <div id="tut-step">FIRST RIDE · 1/10</div>
+    <div id="tut-main">Hold W to get rolling</div>
+    <div id="tut-sub"></div>
+    <button id="tut-skip">skip ✕</button>
   </div>
 
   <div id="nav-banner" class="hidden">
@@ -113,8 +121,8 @@
   </div>
 </div>
 
-<script src="world.js"></script>
-<script src="actors.js"></script>
-<script src="game.js"></script>
+<script src="world.js?v=6"></script>
+<script src="actors.js?v=6"></script>
+<script src="game.js?v=6"></script>
 </body>
 </html>

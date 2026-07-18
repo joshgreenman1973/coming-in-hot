@@ -20,7 +20,7 @@ const Game = {};
     x: 0, y: 0, ang: -Math.PI / 2, speed: 0, steer: 0,
     riding: true, walkX: 0, walkY: 0,
     battery: 1, food: 1, carrying: false,
-    knock: 0, crashCd: 0, dist: 0, wobble: 0,
+    knock: 0, crashCd: 0, dist: 0, wobble: 0, sidewalkT: 0,
   };
   const bike = { x: 0, y: 0, ang: 0 }; // where the bike is parked when walking
 
@@ -132,8 +132,9 @@ const Game = {};
     setTimeout(() => el.remove(), 3200);
   }
   const fmtMoney = v => "$" + v.toFixed(2);
+  const shiftT = () => S.t - (S.tutConsumed || 0);
   function fmtClock() {
-    const mins = 18 * 60 + Math.floor(S.t);
+    const mins = 18 * 60 + Math.floor(shiftT());
     let h = Math.floor(mins / 60) % 24, m = mins % 60;
     const ap = h >= 12 ? "PM" : "AM";
     h = h % 12 || 12;
@@ -179,6 +180,21 @@ const Game = {};
   ];
   const DEFAULT_ITEMS = ["dinner special", "house salad", "seltzer", "dessert of the day", "side of fries"];
 
+  /* plausible menu pricing by item category, rounded like a real menu */
+  const PRICE_DRINK = ["latte", "brew", "coffee", "matcha", "chai", "seltzer", "soda", "oj", "juice", "lassi", "horchata", "smoothie", "ginger shot", "cappuccino", "tea"];
+  const PRICE_DESSERT = ["tiramisu", "cookie", "cake", "baklava", "babka", "sundae", "split", "pint", "sticky rice", "cannoli", "rugelach", "banana bread", "croissant", "dessert"];
+  const PRICE_SIDE = ["fries", "knots", "spring rolls", "edamame", "samosas", "naan", "pita", "hummus", "guac", "elote", "salad", "soup", "scallion pancakes", "gyoza", "onion rings", "seaweed", "focaccia", "caprese", "bagel", "toast", "side"];
+  function itemPrice(name) {
+    const n = name.toLowerCase();
+    let lo = 13, hi = 21; // mains
+    if (PRICE_DRINK.some(k => n.includes(k))) { lo = 3; hi = 7; }
+    else if (PRICE_DESSERT.some(k => n.includes(k))) { lo = 5; hi = 10; }
+    else if (PRICE_SIDE.some(k => n.includes(k))) { lo = 5; hi = 9; }
+    else if (n.includes("milkshake") || n.includes("shake")) { lo = 7; hi = 10; }
+    const raw = lo + Math.random() * (hi - lo);
+    const cents = [0, 0.5, 0.95][(Math.random() * 3) | 0];
+    return Math.max(2, Math.floor(raw)) + cents;
+  }
   function itemsFor(cuisine, type) {
     const c = (cuisine || "").toLowerCase();
     let pool = DEFAULT_ITEMS;
@@ -192,7 +208,7 @@ const Game = {};
       if (used.has(it)) continue;
       used.add(it);
       const q = Math.random() < 0.25 ? 2 : 1;
-      const price = (3.5 + Math.random() * 9.5) * q;
+      const price = itemPrice(it) * q;
       subtotal += price;
       out.push({ q, name: it, price });
     }
@@ -205,17 +221,16 @@ const Game = {};
     return ORDER_TYPES[0];
   }
 
-  function makeOffer() {
+  function makeOffer(nearby) {
     for (let tries = 0; tries < 30; tries++) {
       const r = W.restaurants[(Math.random() * W.restaurants.length) | 0];
       const dToR = Math.hypot(r.x - P.x, r.y - P.y);
-      if (dToR > 700) continue;
+      if (dToR > (nearby ? 380 : 700)) continue;
       const rNode = nearestNode(r.x, r.y);
-      // destination 300–1600m away
       const dNode = (Math.random() * W.nodes.length) | 0;
       const dp = W.nodes[dNode];
       const crow = Math.hypot(dp[0] - r.x, dp[1] - r.y);
-      if (crow < 300 || crow > 1600) continue;
+      if (nearby ? (crow < 200 || crow > 480) : (crow < 300 || crow > 1600)) continue;
       const path = astar(rNode, dNode, true);
       if (!path || path.length < 2) continue;
       const len = pathLength(path);
@@ -227,14 +242,27 @@ const Game = {};
       const estSec = dToR / 7 + len / 7.5 + 40;
       const fee = 3 + len * 0.0016 + type.feeAdd + Math.random() * 1.2;
       const tipBase = (1.5 + Math.random() * 4.5 + len * 0.0018 + order.subtotal * 0.04) * type.tipMult;
+      // the door sits on a building frontage near the corner, not in the intersection
+      let doorX = dp[0], doorY = dp[1];
+      const de = W.adjBike[dNode][0];
+      if (de) {
+        const ds = W.segs[de.seg];
+        const dpa = W.nodes[ds.a], dpb = W.nodes[ds.b];
+        const dux = (dpb[0] - dpa[0]) / ds.len, duy = (dpb[1] - dpa[1]) / ds.len;
+        const dSide = Math.random() < 0.5 ? -1 : 1;
+        const along = Math.min(14, ds.len * 0.35) * (de.rev ? -1 : 1);
+        const dOff = ROAD_HALF[ds.cls] + SIDEWALK + 1.2;
+        doorX = dp[0] + dux * along - duy * dOff * dSide;
+        doorY = dp[1] + duy * along + dux * dOff * dSide;
+      }
       S.offer = {
         rest: r, restNode: rNode, destNode: dNode, pickX, pickY,
-        destX: dp[0], destY: dp[1], addr: addressFor(dNode),
+        destX: doorX, destY: doorY, addr: addressFor(dNode),
         fee, tipBase: tipBase * (S.rain ? 1.35 : 1),
         est: estSec, deadline: 0, routeLen: len,
         type, items: order.list, subtotal: order.subtotal,
       };
-      S.offerT = 12;
+      S.offerT = nearby ? 45 : 12;
       renderOffer();
       $("offer-card").classList.remove("hidden");
       if (isTouch && tE) tE.classList.remove("attn");
@@ -453,18 +481,37 @@ const Game = {};
   function deliverPayout() {
     const o = S.order;
     const elapsed = S.t - o.acceptT;
-    const timeFactor = elapsed <= o.est ? 1.15 : Math.max(0.25, 1.15 - (elapsed - o.est) / o.est * 1.3);
+    const quote = o.est * o.type.dlMult;
+    const late = S.t > o.deadline;
     const foodFactor = 0.35 + 0.65 * P.food;
-    const tip = Math.max(0, o.tipBase * timeFactor * foodFactor + (Math.random() - 0.35));
+    let tip, verdict;
+    if (late) {
+      tip = 0;
+      verdict = "cold";
+    } else {
+      const timeFactor = elapsed <= quote * 0.85 ? 1.3 : 1.1 - (elapsed / quote) * 0.35;
+      tip = Math.max(0, o.tipBase * timeFactor * foodFactor + (Math.random() - 0.35));
+      verdict = elapsed < quote * 0.85 && P.food > 0.85 ? "perfect" : "ok";
+    }
     const total = o.fee + tip;
     S.earned += total; S.fees += o.fee; S.tips += tip; S.deliveries++;
     S.bestTip = Math.max(S.bestTip, tip);
-    cashSound();
-    burst(P.x, P.y - 3, "+" + fmtMoney(total), "#4fdf7d", 3.2);
     $("earnings").classList.remove("bump"); void $("earnings").offsetWidth; $("earnings").classList.add("bump");
-    toast(`Delivered · ${fmtMoney(o.fee)} fee + ${fmtMoney(tip)} tip`, "cash");
-    if (tip < 1) toast("Stiffed on the tip. It happens.", "bad");
-    else if (P.food < 0.6) toast("Food arrived shaken up — tip took a hit", "bad");
+    if (verdict === "cold") {
+      tone(220, 0.35, "square", 0.1, 0, 140);
+      burst(P.x, P.y - 3, "FOOD COLD · NO TIP!", "#ff5a5a", 3.2);
+      toast(`Past the quote — food went cold. Fee only: ${fmtMoney(o.fee)}`, "bad");
+    } else if (verdict === "perfect") {
+      cashSound();
+      burst(P.x, P.y - 3, "PERFECT! +" + fmtMoney(total), "#ffd24d", 3.4);
+      toast(`Perfect delivery · ${fmtMoney(o.fee)} fee + ${fmtMoney(tip)} tip`, "cash");
+    } else {
+      cashSound();
+      burst(P.x, P.y - 3, "+" + fmtMoney(total), "#4fdf7d", 3.2);
+      toast(`Delivered · ${fmtMoney(o.fee)} fee + ${fmtMoney(tip)} tip`, "cash");
+      if (tip < 1) toast("Stiffed on the tip. It happens.", "bad");
+      else if (P.food < 0.6) toast("Food arrived shaken up — tip took a hit", "bad");
+    }
     S.order = null; S.phase = "idle"; S.route = null; P.carrying = false;
     updateTicket();
     S.nextOfferT = 5 + Math.random() * 9;
@@ -552,6 +599,23 @@ const Game = {};
     }
     if (onSidewalk) P.wobble = Math.min(1, P.wobble + dt * 2); else P.wobble *= (1 - dt * 3);
 
+    // sidewalk riding: warnings first, then fines
+    if (onSidewalk && Math.abs(P.speed) > 2.5) {
+      P.sidewalkT += dt;
+      if (P.sidewalkT > 4) {
+        P.sidewalkT = 0;
+        if (Math.random() < 0.45) {
+          S.sidewalkFines++;
+          S.earned = Math.max(0, S.earned - 3);
+          burst(P.x, P.y - 2.5, "SIDEWALK FINE!", "#ff5a5a", 2.8);
+          toast("-$3.00 · riding on the sidewalk", "bad");
+          tone(740, 0.4, "square", 0.09, 0, 500);
+        } else {
+          toast("Pedestrians glaring — get off the sidewalk", "bad");
+        }
+      }
+    } else P.sidewalkT = Math.max(0, P.sidewalkT - dt * 2);
+
     const nx = P.x + Math.cos(P.ang) * P.speed * dt;
     const ny = P.y + Math.sin(P.ang) * P.speed * dt;
 
@@ -627,9 +691,15 @@ const Game = {};
       for (const ped of Traffic.peds) {
         const pp = pedPos(ped);
         if (Math.hypot(pp.x - P.x, pp.y - P.y) < 1.3 && Math.abs(P.speed) > 2.8) {
-          crash("You clipped a pedestrian", 0.25);
-          S.earned = Math.max(0, S.earned - 5);
-          toast("-$5.00 · watch the sidewalk", "bad");
+          if (ped.stroller) {
+            crash("YOU HIT A STROLLER", 0.35);
+            S.earned = Math.max(0, S.earned - 15);
+            toast("-$15.00 · a stroller. Seriously.", "bad");
+          } else {
+            crash("You clipped a pedestrian", 0.25);
+            S.earned = Math.max(0, S.earned - 5);
+            toast("-$5.00 · watch where you're going", "bad");
+          }
           break;
         }
       }
@@ -671,9 +741,9 @@ const Game = {};
       S.offerT -= dt;
       $("offer-timer-bar").style.width = Math.max(0, S.offerT / 12 * 100) + "%";
       if (S.offerT <= 0) declineOffer();
-    } else if (!S.order && S.phase === "idle") {
+    } else if (!S.order && S.phase === "idle" && (!Tut.active || Tut.wantOffer)) {
       S.nextOfferT -= dt;
-      if (S.nextOfferT <= 0 && S.t < SHIFT_LEN - 60) makeOffer();
+      if (S.nextOfferT <= 0 && shiftT() < SHIFT_LEN - 60) makeOffer(Tut.active);
     }
 
     prompt = null;
@@ -799,14 +869,27 @@ const Game = {};
     // draws a glyph/text upright regardless of camera rotation
     const upright = (x, y, fn) => { ctx.save(); ctx.translate(x, y); ctx.rotate(rot); fn(); ctx.restore(); };
 
-    // rooftops base
+    // block-interior base
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.fillStyle = "#2a2430"; ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = "#332b38"; ctx.fillRect(0, 0, w, h);
     ctx.translate(ax, ay); ctx.scale(z, z); ctx.rotate(-rot); ctx.translate(-cam.x, -cam.y);
-    if (roofPattern) {
-      ctx.save(); ctx.fillStyle = roofPattern;
-      const sc = 0.55; ctx.scale(sc, sc);
-      ctx.fillRect(vx0 / sc, vy0 / sc, vw / sc, vh / sc);
+
+    // brownstone rows, aligned to each street like a real map
+    for (const lot of lotsNear(vx0, vy0, vx0 + vw, vy0 + vh)) {
+      ctx.save();
+      ctx.translate(lot.x, lot.y);
+      ctx.rotate(lot.ang);
+      const hw = lot.w / 2, hd = lot.depth / 2;
+      ctx.fillStyle = lot.col;
+      ctx.fillRect(-hw, -hd, lot.w, lot.depth);
+      // lighter facade edge on the street side
+      ctx.fillStyle = "rgba(255,220,170,.12)";
+      if (lot.side === 1) ctx.fillRect(-hw, -hd, lot.w, 0.9);
+      else ctx.fillRect(-hw, hd - 0.9, lot.w, 0.9);
+      if (lot.lit) {
+        ctx.fillStyle = "rgba(255,205,120,.5)";
+        ctx.fillRect(-hw + lot.w * 0.3, lot.side === 1 ? -hd + 1.6 : hd - 2.4, 0.8, 0.8);
+      }
       ctx.restore();
     }
 
@@ -829,6 +912,16 @@ const Game = {};
     ctx.setLineDash([4, 6]);
     for (const c of [3, 2]) ctx.stroke(W.dashPaths[c]);
     ctx.setLineDash([]);
+    // crosswalks at signalized corners
+    ctx.fillStyle = "rgba(238,235,225,.16)";
+    for (const cw of W.crosswalks) {
+      if (cw.x < vx0 - 10 || cw.x > vx0 + vw + 10 || cw.y < vy0 - 10 || cw.y > vy0 + vh + 10) continue;
+      ctx.save();
+      ctx.translate(cw.x, cw.y);
+      ctx.rotate(cw.ang);
+      for (let yy = -cw.half + 0.7; yy <= cw.half - 0.5; yy += 1.15) ctx.fillRect(-1.15, yy, 2.3, 0.55);
+      ctx.restore();
+    }
     // bike lanes
     ctx.strokeStyle = "rgba(72,190,110,.42)";
     ctx.lineWidth = 1.6;
@@ -871,12 +964,38 @@ const Game = {};
       ctx.beginPath(); ctx.arc(tr.x - tr.r * 0.3, tr.y - tr.r * 0.3, tr.r * 0.45, 0, 7); ctx.fill();
     }
 
-    // restaurant storefronts
-    ctx.font = "2.6px sans-serif";
+    // street name labels along the centerline, flipped to stay readable
+    ctx.font = "600 2.1px 'IBM Plex Mono'";
+    ctx.textAlign = "center";
+    for (const lb of W.labels) {
+      if (lb.x < vx0 - 30 || lb.x > vx0 + vw + 30 || lb.y < vy0 - 30 || lb.y > vy0 + vh + 30) continue;
+      let a = lb.ang;
+      if (Math.cos(a - rot) < 0) a += Math.PI;
+      ctx.save();
+      ctx.translate(lb.x, lb.y);
+      ctx.rotate(a);
+      ctx.strokeStyle = "rgba(20,16,24,.75)";
+      ctx.lineWidth = 0.45;
+      ctx.strokeText(lb.name, 0, 0.7);
+      ctx.fillStyle = "rgba(238,232,215,.62)";
+      ctx.fillText(lb.name, 0, 0.7);
+      ctx.restore();
+    }
+
+    // restaurant storefronts: awning + emoji on the street frontage
     ctx.textAlign = "center";
     for (const r of W.restaurants) {
-      if (r.x < vx0 - 4 || r.x > vx0 + vw + 4 || r.y < vy0 - 4 || r.y > vy0 + vh + 4) continue;
-      upright(r.x, r.y, () => ctx.fillText(r.emoji || "🍴", 0, 0.9));
+      if (r.fx === undefined) continue;
+      if (r.fx < vx0 - 5 || r.fx > vx0 + vw + 5 || r.fy < vy0 - 5 || r.fy > vy0 + vh + 5) continue;
+      ctx.save();
+      ctx.translate(r.fx, r.fy);
+      ctx.rotate(r.fang);
+      ctx.fillStyle = r.awn;
+      roundRect(-2, -1.15, 4, 2.3, 0.5); ctx.fill();
+      ctx.fillStyle = "rgba(255,255,255,.3)";
+      ctx.fillRect(-2, -1.15, 4, 0.5);
+      ctx.restore();
+      upright(r.fx, r.fy, () => { ctx.font = "2.2px sans-serif"; ctx.fillText(r.emoji || "🍴", 0, 0.8); });
     }
 
     // parked cars (culled)
@@ -943,12 +1062,22 @@ const Game = {};
       });
     }
 
-    // pedestrians
+    // pedestrians (crossers pop a little more; some push strollers early on)
     for (const ped of Traffic.peds) {
       const pp = pedPos(ped);
+      if (ped.stroller) {
+        ctx.save();
+        ctx.translate(pp.x + ped.hx * 0.95, pp.y + ped.hy * 0.95);
+        ctx.rotate(Math.atan2(ped.hy, ped.hx));
+        ctx.fillStyle = "#d8d4c8";
+        roundRect(-0.5, -0.32, 1.0, 0.64, 0.2); ctx.fill();
+        ctx.strokeStyle = "rgba(20,16,24,.6)"; ctx.lineWidth = 0.12; ctx.stroke();
+        ctx.restore();
+      }
       ctx.fillStyle = ped.col;
-      ctx.beginPath(); ctx.arc(pp.x, pp.y, 0.55, 0, 7); ctx.fill();
-      if (ped.dog) { ctx.fillStyle = "#8a6f52"; ctx.beginPath(); ctx.arc(pp.x + 1.1, pp.y + 0.4, 0.3, 0, 7); ctx.fill(); }
+      ctx.beginPath(); ctx.arc(pp.x, pp.y, ped.cross ? 0.68 : 0.6, 0, 7); ctx.fill();
+      ctx.strokeStyle = "rgba(20,16,24,.6)"; ctx.lineWidth = 0.16; ctx.stroke();
+      if (ped.dog) { ctx.fillStyle = "#8a6f52"; ctx.beginPath(); ctx.arc(pp.x + 1.1, pp.y + 0.4, 0.32, 0, 7); ctx.fill(); }
     }
 
     // restaurant + destination markers
@@ -1155,6 +1284,66 @@ const Game = {};
     } else pw.classList.add("hidden");
   }
 
+  /* ---------- tutorial: guided first ride ---------- */
+  const Tut = { active: false, step: 0, timer: 0, steered: 0, brakeArm: false, braked: false, wantOffer: false };
+  const TUT_STEPS = [
+    { main: () => isTouch ? "Hold ▲ to get rolling" : "Hold W or ↑ to get rolling", sub: () => "Your ebike tops out at 28 mph", done: () => P.speed > 6 },
+    { main: () => isTouch ? "Steer with ◀ and ▶" : "Steer with A and D", sub: () => "Carve a turn or two", done: () => Tut.steered > 0.9 },
+    { main: () => isTouch ? "Brake with ▼" : "Brake with S or ↓", sub: () => "Get moving, then stop hard", done: () => Tut.braked },
+    { main: () => "The green banner is your GPS", sub: () => "It'll call the turns; the cyan line marks the way", timer: 5 },
+    { main: () => "Order coming in — take it", sub: () => isTouch ? "Tap ACCEPT" : "Press Enter to accept", enter: () => { Tut.wantOffer = true; S.nextOfferT = 1; }, done: () => !!S.order },
+    { main: () => "Ride the cyan line to the restaurant", sub: () => "Stop inside the red ring", done: () => S.phase === "waiting" || P.carrying },
+    { main: () => "Kitchen's finishing up", sub: () => "Hold tight", done: () => P.carrying },
+    { main: () => "Now deliver it", sub: () => "Dodge cars, buses, doors + walkers — shaken food shrinks the tip", done: () => S.order && Math.hypot(S.order.destX - P.x, S.order.destY - P.y) < 30 },
+    { main: () => isTouch ? "Stop, then tap P to park" : "Stop, then press E to park", sub: () => "Bikes don't fit through doors", done: () => !P.riding },
+    { main: () => "Walk it to the door", sub: () => "Fast + intact = fat tip", done: () => S.deliveries > 0 },
+  ];
+  function tutStart() {
+    Object.assign(Tut, { active: true, step: 0, timer: 0, steered: 0, brakeArm: false, braked: false, wantOffer: false });
+    S.tutConsumed = 0;
+    $("tut").classList.remove("hidden");
+    tutShow();
+  }
+  function tutShow() {
+    const st = TUT_STEPS[Tut.step];
+    $("tut-step").textContent = "FIRST RIDE · " + (Tut.step + 1) + "/" + TUT_STEPS.length;
+    $("tut-main").textContent = st.main();
+    $("tut-sub").textContent = st.sub ? st.sub() : "";
+    if (st.enter) st.enter();
+  }
+  function tutEnd(skipped) {
+    Tut.active = false;
+    $("tut").classList.add("hidden");
+    try { localStorage.setItem("cominginhot-tut", "1"); } catch (e) {}
+    if (!skipped) {
+      burst(P.x, P.y - 3, "YOU'RE HIRED!", "#4fdf7d", 3.6);
+      toast("That's the job. Shift starts now — the clock is running");
+    }
+    S.nextOfferT = 4;
+  }
+  function updateTutorial(dt) {
+    if (!Tut.active) return;
+    S.tutConsumed = (S.tutConsumed || 0) + dt;
+    if (keys.a || keys.d || keys.arrowleft || keys.arrowright || touch.left || touch.right) {
+      if (P.speed > 2) Tut.steered += dt;
+    }
+    if (P.speed > 4.5) Tut.brakeArm = true;
+    if (Tut.brakeArm && (keys.s || keys.arrowdown || touch.brake) && P.speed < 1.2) Tut.braked = true;
+    const st = TUT_STEPS[Tut.step];
+    let adv = false;
+    if (st.timer !== undefined) {
+      Tut.timer += dt;
+      adv = Tut.timer >= st.timer;
+    } else adv = st.done();
+    if (adv) {
+      Tut.timer = 0;
+      tone(880, 0.1, "sine", 0.12); tone(1175, 0.16, "sine", 0.1, 0.09);
+      Tut.step++;
+      if (Tut.step >= TUT_STEPS.length) tutEnd(false);
+      else tutShow();
+    }
+  }
+
   /* ---------- shift end ---------- */
   function endShift() {
     S.running = false; S.over = true;
@@ -1173,6 +1362,7 @@ const Game = {};
        <div class="t-row"><span>Miles ridden</span><b>${(P.dist / 1609).toFixed(1)}</b></div>
        <div class="t-row"><span>Crashes</span><b>${S.crashes}</b></div>
        <div class="t-row"><span>Tickets</span><b>${S.tickets}</b></div>
+       <div class="t-row"><span>Sidewalk fines</span><b>${S.sidewalkFines}</b></div>
        <div class="t-rule"></div>
        <div class="t-row"><span><b>TOTAL</b></span><span class="t-money">${fmtMoney(S.earned)}</span></div>
        <div class="t-row"><span>Personal best</span><b>${fmtMoney(best)}</b></div>
@@ -1200,7 +1390,10 @@ const Game = {};
     updatePeds(dt, P.x, P.y);
     updateDoors(dt, { ...P, riding: P.riding });
     updateOrders(dt);
-    if (S.t >= SHIFT_LEN) { endShift(); }
+    updateTutorial(dt);
+    // stroller hour: the early-evening sidewalks belong to families
+    Traffic.strollerP = shiftT() < 110 ? 0.16 : 0.03;
+    if (shiftT() >= SHIFT_LEN) { endShift(); }
   }
   function tick(ts) {
     if (!W.ready) return;
@@ -1233,7 +1426,7 @@ const Game = {};
     P.dist = 0; P.knock = 0;
     Object.assign(S, {
       running: true, over: false, t: 0, earned: 0, tips: 0, fees: 0,
-      deliveries: 0, crashes: 0, tickets: 0, bestTip: 0,
+      deliveries: 0, crashes: 0, tickets: 0, bestTip: 0, sidewalkFines: 0,
       order: null, offer: null, nextOfferT: 3.5, phase: "idle", route: null,
       rain: Math.random() < 0.3,
     });
@@ -1241,6 +1434,11 @@ const Game = {};
     initBuses();
     cam.x = P.x; cam.y = P.y;
     cam.z = (isTouch ? 4.6 : 5.8) * DPR;
+    let wantTut = false;
+    try { wantTut = !localStorage.getItem("cominginhot-tut"); } catch (e) {}
+    if (S.forceTut) { wantTut = true; S.forceTut = false; }
+    if (wantTut) tutStart();
+    else { Tut.active = false; $("tut").classList.add("hidden"); }
     $("title-screen").classList.add("fading");
     $("shift-end").classList.add("hidden");
     $("hud").classList.remove("hidden");
@@ -1262,6 +1460,8 @@ const Game = {};
   document.getElementById("accept-btn").addEventListener("click", acceptOffer);
   document.getElementById("decline-btn").addEventListener("click", declineOffer);
   document.getElementById("view-btn").addEventListener("click", toggleView);
+  document.getElementById("tut-skip").addEventListener("click", () => tutEnd(true));
+  document.getElementById("tut-btn").addEventListener("click", () => { S.forceTut = true; startShift(); });
   document.getElementById("about-btn").addEventListener("click", () => $("about-pop").classList.toggle("hidden"));
   document.getElementById("about-close").addEventListener("click", () => $("about-pop").classList.add("hidden"));
 
@@ -1283,12 +1483,113 @@ const Game = {};
     return "🍴";
   }
 
-  makeRoofPattern(); makeLampSprite();
+  /* invented names — locations are real, the shingles are ours */
+  const CLEVER = [
+    ["pizza", ["Crust Almighty", "Slice Slice Baby", "Pie Hard", "Rolling in Dough", "The Upper Crust", "Saucy by Nature", "Dough or Die", "The Marinara Trench", "Fold Finger", "Grandma's Square Deal", "Brick Oven Broadcast", "The Pepperoni Papers"]],
+    ["mexican", ["Juan in a Million", "Taco 'Bout It", "Holy Guacamole", "Nacho Average Spot", "The Quesadilla Question", "Elote in Common", "Al Pastor Presente", "Salsa Non Grata", "Frijole Fantastic"]],
+    ["chinese", ["Wok This Way", "Dim Sum & Then Some", "Wok and Roll", "The Dumpling Precinct", "Lo Mein Event", "Fortune Favors", "Chopstick Symphony", "The Szechuan Solution"]],
+    ["japanese", ["Roll Models", "Miso Hungry", "Tuna Turner", "Nori or Never", "The Wasabi Method", "Rice Rice Baby", "Tempura Tantrum", "Big in Gowanus"]],
+    ["sushi", ["Roll Models", "Raw Deal", "The Maki Marker", "Nigiri, Please", "Uni & Only", "Sashimi Sashimi"]],
+    ["thai", ["Thai Me Over", "Basil Instinct", "Thai Breaker", "Curry Up Slowly", "The Lemongrass Ceiling", "Pad Thai Fighter", "Tom Yum Tom"]],
+    ["coffee", ["Brewed Awakening", "The Daily Grind", "Deja Brew", "Pour Decisions", "Grounds for Appeal", "Bean There", "Steamed & Esteemed", "The Percolator", "Cream of the Crop", "Latte da Brooklyn", "Central Perk Slope", "Sufficient Grounds"]],
+    ["cafe", ["The Slow Sip", "Crumb & Get It", "The Morning Person", "Toast of the Town", "The Sit & Stay", "Butter Believe It", "The Long Table"]],
+    ["burger", ["Bun Intended", "Grill Seekers", "Well Done, Brooklyn", "The Medium Rare", "Smash Hit", "Patty Season", "The Burger Bureau"]],
+    ["american", ["The Blue Plate Special", "Fork in the Road", "The Regular", "Comfort Zone", "The House Special", "Gravy Train", "The Standing Reservation"]],
+    ["italian", ["Pasta La Vista", "Penne for Your Thoughts", "Basta Pasta", "The Al Dente Social", "Gnocchi on Wood", "Vodka Sauce Vinny's", "Parm & Ready", "The Rigatoni Report", "Carbonara Copy"]],
+    ["indian", ["Naan Negotiable", "Curry Favor", "Naan of Your Business", "The Tikka Ticker", "Biryani & Sons", "The Paneer Frontier", "Ghee Whiz"]],
+    ["seafood", ["The Codfather", "Oh My Cod", "Squid Pro Quo", "Holy Mackerel", "Shell Game", "A Fish Called Gowanus", "Clam & Prejudice", "The Lobster Lobby"]],
+    ["middle eastern", ["Pita Pan", "The Hummus Among Us", "Shawarma Karma", "Falafel So Good", "Za'atar Manner", "The Tahini Treaty", "Laffa Riot"]],
+    ["greek", ["Feta Compli", "The Gyro Next Door", "Olive You Too", "Opa Doncha Know", "The Acropolis Annex"]],
+    ["korean", ["Seoul Food", "Seoul Train", "Kimchi Confidential", "Gochujang Gang", "Bibim Bop City", "The Banchan Branch"]],
+    ["bakery", ["Flour Power", "Bread Winners", "Knead to Know", "Against the Grain", "Loafing Around", "Crumb Together", "The Proofing Ground", "Rise & Slope", "Babka to the Future"]],
+    ["bagel", ["The Hole Story", "Schmear Campaign", "Everything & Then Some", "Lox in Translation", "The Boiled & the Beautiful"]],
+    ["ice cream", ["The Cold Shoulder", "Churn Baby Churn", "Scoop Dreams", "Floats Your Boat", "The Sundae Times"]],
+    ["dessert", ["Just Desserts", "The Sugar Rush", "Sweet Nothings", "The Last Course"]],
+    ["juice", ["Juice Springsteen", "Squeeze the Day", "The Pulp Section", "Kale Me Maybe", "Blend It Like Brooklyn"]],
+    ["sandwich", ["Between the Breads", "Hero Worship", "The Reuben Hood", "Wrap Sheet", "Club Sandwich Club"]],
+    ["deli", ["The Corner Counter", "Cold Cut Committee", "Pastrami Mommy", "The Pickle Clause", "Sliced & Diced"]],
+    ["breakfast", ["Sunny Side Up", "Hash It Out", "The Early Bird", "Egged On", "The Benedict Arnold", "Waffle House Rules"]],
+    ["chicken", ["Wing It", "The Coop", "Bird Is the Word", "Cluck & Cover", "The Pecking Order"]],
+    ["barbecue", ["License to Grill", "Low & Slow", "The Brisket Case", "Smoke Signals", "Rub It In"]],
+    ["vegan", ["Romaine Calm", "The Beet Goes On", "Lettuce Entertain You", "Turnip the Volume", "Plant B"]],
+    ["vegetarian", ["Romaine Calm", "The Beet Goes On", "Herbivore Society", "The Garden Variety"]],
+    ["french", ["Crepe Expectations", "Baguette About It", "The French Correction", "Beurre It All", "Quiche Me Quick"]],
+    ["ramen", ["Broth in Translation", "The Noodle Incident", "Slurp Slope", "Ramen Holiday"]],
+    ["noodle", ["The Noodle Incident", "Use Your Noodle", "Slurp's Up"]],
+    ["steak", ["Raising the Steaks", "The Rare Occasion", "Prime Time"]],
+    ["donut", ["Hole Foods", "The Glaze District", "Donut Disturb", "Sprinkle Sprinkle"]],
+    ["smoothie", ["Squeeze the Day", "The Blender Bender", "Smooth Operator"]],
+    ["spanish", ["The Tapas Agenda", "Paella by Starlight", "Jamon Around"]],
+    ["caribbean", ["Jerk of All Trades", "The Island Hop", "Oxtail of Two Cities"]],
+    ["vietnamese", ["Pho Sure", "What the Pho", "Banh Mi & You", "Pho Real", "The Banh Mi Boys"]],
+  ];
+  const CLEVER_GENERIC = ["The Hungry Local", "Fork & Dagger", "The Corner Table", "The Midnight Special", "Gowanus Gourmet", "The Brownstone Bite", "Second Helping", "The Late Plate", "Dinner Bell", "The Neighborhood Standard", "Off the Menu", "The Usual Spot", "Stoop Supper", "The Slope Social", "Canal Street Eats", "The Double Shift", "House Rules", "The Open Sign", "Two Wheels Tavern", "The Last Bite"];
+  const CLEVER_SUFFIX = ["Kitchen", "Canteen", "Counter", "Table", "Spot", "Provisions", "Social", "Diner", "Club", "Grubhouse", "Larder", "Commissary", "Hideout", "Standby", "Supper Club", "Lunch Counter", "Hangout", "Galley", "Mess Hall", "Pantry"];
+  const CLEVER_ADJ = ["Hungry", "Rolling", "Crooked", "Lucky", "Smiling", "Wandering", "Copper", "Velvet", "Rusty", "Golden", "Midnight", "Sunday", "Patient", "Borrowed", "Humming", "Peckish", "Double-Parked", "Off-Duty", "Second-Story", "Well-Fed"];
+  const CLEVER_NOUN = ["Spoon", "Fork", "Ladle", "Kettle", "Radish", "Pigeon", "Anchor", "Lantern", "Stoop", "Turnstile", "Hydrant", "Fire Escape", "Dumbwaiter", "Icebox", "Percolator", "Rooftop", "Water Tower", "Bodega Cat", "Tomato", "Meatball"];
+
+  function assignCleverNames() {
+    const rand = mulberry(9001);
+    const used = new Set();
+    W.restaurants.forEach(r => {
+      const c = (r.cuisine || "").toLowerCase().replace(/_/g, " ");
+      let pool = CLEVER_GENERIC;
+      for (const [k, v] of CLEVER) if (c.includes(k)) { pool = v.concat(CLEVER_GENERIC); break; }
+      let name = null;
+      for (let tries = 0; tries < 12; tries++) {
+        const cand = pool[(rand() * pool.length) | 0];
+        if (!used.has(cand)) { name = cand; break; }
+      }
+      if (!name) {
+        const st = (r.street || r.stName || "Brooklyn").replace(/ (Street|Avenue|Place|Road|Court|Boulevard)$/i, "");
+        for (let tries = 0; tries < 4 && !name; tries++) {
+          const cand = "The " + st + " " + CLEVER_SUFFIX[(rand() * CLEVER_SUFFIX.length) | 0];
+          if (!used.has(cand)) name = cand;
+        }
+        for (let tries = 0; tries < 14 && !name; tries++) {
+          const cand = "The " + CLEVER_ADJ[(rand() * CLEVER_ADJ.length) | 0] + " " + CLEVER_NOUN[(rand() * CLEVER_NOUN.length) | 0];
+          if (!used.has(cand)) name = cand;
+        }
+        if (!name) {
+          const base = "The " + st + " " + CLEVER_SUFFIX[(rand() * CLEVER_SUFFIX.length) | 0];
+          let n = 2;
+          name = base + " No. " + n;
+          while (used.has(name)) { n++; name = base + " No. " + n; }
+        }
+      }
+      used.add(name);
+      r.name = name;
+    });
+  }
+
+  const AWNING_COLORS = ["#b8443a", "#3a7a52", "#3a5f9a", "#a86a2a", "#7a4a8a", "#2a7a7a", "#9a3a5f"];
+  function assignFrontages() {
+    const rand = mulberry(717);
+    W.restaurants.forEach(r => {
+      const st = closestStreet(r.x, r.y);
+      if (!st) return;
+      const seg = W.segs[st.seg];
+      let vx = r.x - st.px, vy = r.y - st.py;
+      const L = Math.hypot(vx, vy);
+      if (L < 0.5) { vx = -Math.sin(seg.ang); vy = Math.cos(seg.ang); }
+      else { vx /= L; vy /= L; }
+      const off = ROAD_HALF[seg.cls] + SIDEWALK + 1.6;
+      r.fx = st.px + vx * off;
+      r.fy = st.py + vy * off;
+      r.fang = seg.ang;
+      r.stName = seg.name;
+      r.awn = AWNING_COLORS[(rand() * AWNING_COLORS.length) | 0];
+    });
+  }
+
+  makeLampSprite();
   loadWorld().then(() => {
     W.restaurants.forEach(r => r.emoji = emojiFor(r.cuisine));
+    assignFrontages();
+    assignCleverNames();
     const nBus = new Set(W.busRoutes.map(r => r.name)).size;
     $("title-map-note").textContent =
-      W.restaurants.length + " real restaurants · " + (nBus ? nBus + " real bus lines · " : "") +
+      W.restaurants.length + " restaurants (real spots, invented names) · " + (nBus ? nBus + " real bus lines · " : "") +
       "the real streets of Carroll Gardens, Boerum Hill, Gowanus + Park Slope";
     const btn = document.getElementById("start-btn");
     btn.disabled = false;

@@ -2,11 +2,50 @@
   "version": 0.6,
   "generator": "Overpass API 0.7.62.11 87bfad18",
   "osm3s": {
-    "timestamp_osm_base": "2026-07-17T19:58:25Z",
+    "timestamp_osm_base": "2026-07-17T20:57:30Z",
     "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
   },
   "elements": [
 
+{
+  "type": "node",
+  "id": 403524005,
+  "lat": 40.6805189,
+  "lon": -73.9689812,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "643",
+    "addr:postcode": "11238",
+    "addr:state": "NY",
+    "addr:street": "Dean Street",
+    "alt_name": "Canteen at Chelsea Piers Fitness",
+    "amenity": "fast_food",
+    "cuisine": "sandwich;health_food",
+    "drink:coffee": "yes",
+    "drink:tea": "yes",
+    "name": "Canteen",
+    "opening_hours": "Mo-Fr 07:00-19:00; Sa-Su 08:00-16:00",
+    "operator": "Chelsea Piers Fitness",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 419360003,
+  "lat": 40.6647239,
+  "lon": -73.9895334,
+  "tags": {
+    "alt_name": "M.C. Loncheonette",
+    "amenity": "fast_food",
+    "cuisine": "mexican",
+    "name": "M.C. Luncheonette",
+    "opening_hours": "Mo-Su 11:00-23:00",
+    "outdoor_seating": "sidewalk",
+    "phone": "+1-917-818-8475",
+    "takeaway": "yes",
+    "website": "https://mcluncheonettenyc.com/"
+  }
+},
 {
   "type": "node",
   "id": 419364748,
@@ -23,6 +62,25 @@
     "opening_hours": "Mo-Fr 06:30-17:30, Sa-Su 07:00-17:00",
     "takeaway": "yes",
     "website": "https://www.blankstreet.com/locations/new-york/LDBX6YWQTJ180-lafayette-and-s-elliot-pl"
+  }
+},
+{
+  "type": "node",
+  "id": 1123921439,
+  "lat": 40.6708061,
+  "lon": -73.9847592,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "383",
+    "addr:postcode": "11215",
+    "addr:street": "5th Avenue",
+    "amenity": "fast_food",
+    "cuisine": "caribbean",
+    "drink:beer": "bottled",
+    "drink:wine": "yes",
+    "name": "Peppa's Jerk Chicken",
+    "takeaway": "yes",
+    "website": "https://peppaschicken.com/"
   }
 },
 {
@@ -181,6 +239,32 @@
 },
 {
   "type": "node",
+  "id": 1795796594,
+  "lat": 40.6777429,
+  "lon": -73.9686298,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "645",
+    "addr:postcode": "11238",
+    "addr:state": "NY",
+    "addr:street": "Vanderbilt Avenue",
+    "amenity": "cafe",
+    "capacity": "7",
+    "cuisine": "bagel;sandwich",
+    "diet:gluten_free": "yes",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "name": "Olde Brooklyn Bagel Shoppe",
+    "opening_hours": "Mo-Su 07:00-17:00",
+    "payment:cash": "only",
+    "phone": "+1-718-622-6227",
+    "shop": "bakery",
+    "takeaway": "yes",
+    "website": "http://oldebrooklynbagelshoppe645.com"
+  }
+},
+{
+  "type": "node",
   "id": 2015849773,
   "lat": 40.6871791,
   "lon": -73.9934192,
@@ -210,6 +294,23 @@
     "phone": "+1-718-624-2361",
     "takeaway": "yes",
     "website": "http://laylajones.com"
+  }
+},
+{
+  "type": "node",
+  "id": 2139124594,
+  "lat": 40.6896097,
+  "lon": -73.9698285,
+  "tags": {
+    "alt_name": "Luanne's Wild Ginger",
+    "amenity": "restaurant",
+    "cuisine": "asian",
+    "diet:vegan": "only",
+    "indoor_seating": "yes",
+    "name": "Luanne's",
+    "outdoor_seating": "no",
+    "phone": "+1-718-638-8868",
+    "website": "http://www.luanneswildgingernyc.com"
   }
 },
 {
@@ -357,6 +458,35 @@
 },
 {
   "type": "node",
+  "id": 2460552261,
+  "lat": 40.6680649,
+  "lon": -73.9877252,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "318",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "11th Street",
+    "amenity": "cafe",
+    "branch": "Park Slope",
+    "cocktails": "yes",
+    "cuisine": "coffee_shop",
+    "drink:beer": "yes",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "drink:wine": "yes",
+    "name": "Casita of Brooklyn",
+    "opening_hours": "Mo-Fr 06:30-18:00, Sa-Su 07:00-18:00",
+    "outdoor_seating": "sidewalk;street",
+    "phone": "+1-347-889-5849",
+    "takeaway": "yes",
+    "website": "https://casitaofbk.com",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
   "id": 2491417530,
   "lat": 40.6832996,
   "lon": -73.9793255,
@@ -431,6 +561,22 @@
     "opening_hours": "Tu-Sa 17:30-23:00",
     "phone": "+1-718-766-1112",
     "website": "https://6restaurant.com"
+  }
+},
+{
+  "type": "node",
+  "id": 2494187891,
+  "lat": 40.6707561,
+  "lon": -73.9785495,
+  "tags": {
+    "addr:housenumber": "210",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "amenity": "restaurant",
+    "cuisine": "japanese",
+    "name": "Katsuei",
+    "opening_hours": "Mo,We-Su 16:00-21:30",
+    "outdoor_seating": "sidewalk"
   }
 },
 {
@@ -618,6 +764,23 @@
     "opening_hours": "Mo-Fr 16:00-22:00; Sa-Su 11:00-22:00",
     "outdoor_seating": "yes",
     "website": "https://www.babylucs.com"
+  }
+},
+{
+  "type": "node",
+  "id": 2494256149,
+  "lat": 40.6896593,
+  "lon": -73.9710073,
+  "tags": {
+    "addr:housenumber": "211",
+    "addr:postcode": "11205",
+    "addr:street": "DeKalb Avenue",
+    "amenity": "restaurant",
+    "cuisine": "italian;brunch",
+    "indoor_seating": "yes",
+    "name": "Evelina",
+    "outdoor_seating": "yes",
+    "website": "https://www.evelinabk.com"
   }
 },
 {
@@ -838,6 +1001,65 @@
 },
 {
   "type": "node",
+  "id": 2547733468,
+  "lat": 40.6632151,
+  "lon": -73.9916903,
+  "tags": {
+    "addr:housenumber": "628",
+    "addr:postcode": "11215",
+    "addr:street": "5th Avenue",
+    "amenity": "fast_food",
+    "cuisine": "health_food;juice",
+    "drink:coffee": "yes",
+    "name": "Baya Bar",
+    "opening_hours": "Mo-Fr 07:30-20:00; Sa-Su 09:00-20:00",
+    "phone": "+1-347-889-5012"
+  }
+},
+{
+  "type": "node",
+  "id": 2547733495,
+  "lat": 40.6624580,
+  "lon": -73.9924717,
+  "tags": {
+    "amenity": "cafe",
+    "cuisine": "breakfast;sandwich;mexican",
+    "delivery": "yes",
+    "drink:espresso": "yes",
+    "name": "Sunrise Espresso & Bar",
+    "opening_hours": "07:00-22:00",
+    "phone": "+1-347-294-0359",
+    "takeaway": "yes",
+    "website": "https://www.sunriseespressobar.com"
+  }
+},
+{
+  "type": "node",
+  "id": 2547733511,
+  "lat": 40.6620793,
+  "lon": -73.9928775,
+  "tags": {
+    "addr:housenumber": "672",
+    "addr:postcode": "11232",
+    "addr:street": "5th Avenue",
+    "amenity": "restaurant",
+    "cocktails": "yes",
+    "cuisine": "salvadoran",
+    "delivery": "yes",
+    "drink:beer": "yes",
+    "drink:coffee": "yes",
+    "drink:liquor": "yes",
+    "drink:tea": "yes",
+    "drink:wine": "yes",
+    "fax": "+1-718-832-1725",
+    "name": "El Continental",
+    "opening_hours": "Mo,We-Su 10:00-24:00",
+    "phone": "+1-718-832-1327",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
   "id": 2549896907,
   "lat": 40.6878726,
   "lon": -73.9956517,
@@ -874,6 +1096,24 @@
 },
 {
   "type": "node",
+  "id": 2549911944,
+  "lat": 40.6789942,
+  "lon": -73.9681778,
+  "tags": {
+    "amenity": "cafe",
+    "cuisine": "pastry",
+    "diet:gluten_free": "yes",
+    "drink:coffee": "no",
+    "drink:tea": "only",
+    "name": "Brooklyn High Low",
+    "opening_hours": "Fr 12:00-15:30; Sa,Su 10:00-15:30",
+    "phone": "+1-646-907-9467",
+    "reservation": "required",
+    "website": "https://www.brooklynhighlow.com"
+  }
+},
+{
+  "type": "node",
   "id": 2549918806,
   "lat": 40.6894847,
   "lon": -73.9725415,
@@ -888,6 +1128,66 @@
     "name": "Bittersweet",
     "outdoor_seating": "only",
     "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 2549918826,
+  "lat": 40.6893950,
+  "lon": -73.9704066,
+  "tags": {
+    "addr:housenumber": "224",
+    "addr:postcode": "11205",
+    "addr:street": "DeKalb Avenue",
+    "amenity": "fast_food",
+    "atm": "yes",
+    "check_date": "2023-09-03",
+    "cuisine": "pizza",
+    "delivery": "yes",
+    "name": "Mario's Pizzeria",
+    "opening_hours": "Mo-Su 11:00-23:00",
+    "outdoor_seating": "only",
+    "phone": "+1-718-260-9520",
+    "takeaway": "yes",
+    "walkup_window": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 2549918829,
+  "lat": 40.6893919,
+  "lon": -73.9703166,
+  "tags": {
+    "addr:housenumber": "228",
+    "addr:postcode": "11205",
+    "addr:street": "DeKalb Avenue",
+    "amenity": "restaurant",
+    "check_date": "2023-09-03",
+    "name": "Sailor"
+  }
+},
+{
+  "type": "node",
+  "id": 2549918862,
+  "lat": 40.6893996,
+  "lon": -73.9709433,
+  "tags": {
+    "addr:housenumber": "271",
+    "addr:postcode": "11205",
+    "addr:street": "Adelphi Street",
+    "amenity": "restaurant",
+    "catering": "yes",
+    "cocktails": "yes",
+    "cuisine": "caribbean",
+    "drink:beer": "yes",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "indoor_seating": "yes",
+    "name": "Mango Bay",
+    "opening_hours": "Tu-Th 17:00-22:00; Fr 17:00-23:00; Sa  11:30-16:00, 17:00-23:00; Su 11:30-16:00, 17:00-22:00",
+    "outdoor_seating": "yes",
+    "phone": "+1-347-223-4141",
+    "website": "http://www.themangobay.com"
   }
 },
 {
@@ -1763,6 +2063,39 @@
 },
 {
   "type": "node",
+  "id": 2550101355,
+  "lat": 40.6696268,
+  "lon": -73.9927350,
+  "tags": {
+    "addr:housenumber": "520",
+    "addr:postcode": "11215",
+    "addr:street": "3rd Avenue",
+    "amenity": "fast_food",
+    "cuisine": "breakfast;sandwich;pizza",
+    "name": "Bombolona Bakehouse",
+    "opening_hours": "Mo-Su 10:00-18:00"
+  }
+},
+{
+  "type": "node",
+  "id": 2550101361,
+  "lat": 40.6692193,
+  "lon": -73.9930751,
+  "tags": {
+    "addr:housenumber": "536",
+    "addr:postcode": "11215",
+    "addr:street": "3rd Avenue",
+    "amenity": "fast_food",
+    "check_date": "2023-10-12",
+    "cuisine": "sandwich;breakfast",
+    "drink:coffee": "yes",
+    "name": "Breakhouse Cafe",
+    "phone": "+1-718-788-1846",
+    "toilets": "yes"
+  }
+},
+{
+  "type": "node",
   "id": 2550565259,
   "lat": 40.6732806,
   "lon": -73.9830685,
@@ -1849,6 +2182,298 @@
 },
 {
   "type": "node",
+  "id": 2550581346,
+  "lat": 40.6684203,
+  "lon": -73.9867356,
+  "tags": {
+    "addr:housenumber": "461",
+    "addr:postcode": "11215",
+    "addr:street": "5th Avenue",
+    "amenity": "fast_food",
+    "atm": "yes",
+    "capacity": "12",
+    "cuisine": "bagel;coffee_shop;breakfast;sandwich",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:smoothie": "yes",
+    "name": "Bagel House",
+    "phone": "+1-718-768-8300"
+  }
+},
+{
+  "type": "node",
+  "id": 2550581361,
+  "lat": 40.6691315,
+  "lon": -73.9894619,
+  "tags": {
+    "addr:housenumber": "463",
+    "addr:postcode": "11215",
+    "addr:street": "4th Avenue",
+    "amenity": "restaurant",
+    "cuisine": "mexican",
+    "drink:beer": "yes",
+    "drink:liquor": "yes",
+    "name": "Macario",
+    "opening_hours": "Tu-Th 11:00-20:00, Fr-Sa 11:00-21:00, Su 11:00-19:00",
+    "phone": "+1-716-350-4095",
+    "website": "https://macario-ny.com"
+  }
+},
+{
+  "type": "node",
+  "id": 2550585190,
+  "lat": 40.6663833,
+  "lon": -73.9855132,
+  "tags": {
+    "addr:housenumber": "486",
+    "addr:postcode": "11215",
+    "addr:street": "6th Avenue",
+    "amenity": "restaurant",
+    "bar": "yes",
+    "cocktails": "yes",
+    "cuisine": "pizza",
+    "drink:beer": "draught",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "name": "Crosta",
+    "opening_hours": "Mo,We,Th 16:30-22:00; Fr 16:30-22:30; Sa 11:00-22:30; Su 11:00-22:00",
+    "outdoor_seating": "yes",
+    "phone": "+1-929-295-0008",
+    "website": "https://www.crostany.com"
+  }
+},
+{
+  "type": "node",
+  "id": 2550589896,
+  "lat": 40.6662200,
+  "lon": -73.9856804,
+  "tags": {
+    "addr:housenumber": "492",
+    "addr:postcode": "11215",
+    "addr:street": "6th Avenue",
+    "alt_name": "Mariella",
+    "amenity": "restaurant",
+    "bar": "yes",
+    "cuisine": "italian",
+    "drink:beer": "bottled",
+    "drink:wine": "yes",
+    "name": "Locanda Mariella",
+    "outdoor_seating": "patio;street",
+    "phone": "+1-718-499-2132"
+  }
+},
+{
+  "type": "node",
+  "id": 2550589959,
+  "lat": 40.6651889,
+  "lon": -73.9865191,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "italian;brunch",
+    "delivery": "Mo-Su 17:00-22:00",
+    "drink:beer": "bottled",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:wine": "yes",
+    "name": "Piccoli Trattoria",
+    "opening_hours": "Mo-Th 16:30-23:00; Fr 16:30-23:30; Sa 11:00-15:00, 16:30-23:30; Su 11:00-15:00, 16:30-23:00",
+    "outdoor_seating": "sidewalk;street",
+    "phone": "+1-718-788-0066",
+    "takeaway": "Mo-Su 17:00-22:00",
+    "website": "https://www.piccoliny.com"
+  }
+},
+{
+  "type": "node",
+  "id": 2550604125,
+  "lat": 40.6621872,
+  "lon": -73.9965353,
+  "tags": {
+    "addr:housenumber": "710",
+    "addr:postcode": "11232",
+    "addr:street": "4th Avenue",
+    "amenity": "fast_food",
+    "cuisine": "sandwich;breakfast",
+    "diet:halal": "only",
+    "name": "Alnoor Halal Deli",
+    "phone": "+1-718-788-7080"
+  }
+},
+{
+  "type": "node",
+  "id": 2562118647,
+  "lat": 40.6631297,
+  "lon": -73.9845191,
+  "tags": {
+    "addr:housenumber": "441",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "amenity": "restaurant",
+    "cocktails": "yes",
+    "cuisine": "american;indian",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "indoor_seating": "yes",
+    "name": "Lore",
+    "opening_hours": "Tu-Fr 18:00-22:00; Sa 11:00-14:00, 18:00-22:00; Su 11:00-14:00, 18:00-21:00",
+    "outdoor_seating": "yes",
+    "phone": "+1-347-599-0300",
+    "website": "https://www.lorebrooklyn.com"
+  }
+},
+{
+  "type": "node",
+  "id": 2562123858,
+  "lat": 40.6649648,
+  "lon": -73.9930498,
+  "tags": {
+    "addr:housenumber": "597",
+    "addr:postcode": "11215",
+    "addr:street": "4th Avenue",
+    "alt_name": "Yassine Halal Food Corp",
+    "amenity": "fast_food",
+    "cuisine": "bagel;breakfast;sandwich;middle_eastern",
+    "diet:halal": "yes",
+    "name": "Bagels Mini Muffins Cafe",
+    "outdoor_seating": "bench",
+    "phone": "+1-718-344-6555",
+    "takeaway": "only"
+  }
+},
+{
+  "type": "node",
+  "id": 2562125765,
+  "lat": 40.6654963,
+  "lon": -73.9895910,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "554",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "5th Avenue",
+    "amenity": "fast_food",
+    "brand": "Domino's",
+    "brand:wikidata": "Q839466",
+    "cuisine": "pizza",
+    "delivery": "yes",
+    "name": "Domino's",
+    "opening_hours": "Mo-Th 10:30-24:00, Fr-Sa 10:30-01:00, Su 10:30-24:00",
+    "phone": "+1 718-972-3733",
+    "ref": "3650",
+    "takeaway": "only",
+    "website": "https://pizza.dominos.com/new-york/brooklyn/554-5th-ave"
+  }
+},
+{
+  "type": "node",
+  "id": 2562126671,
+  "lat": 40.6663224,
+  "lon": -73.9923591,
+  "tags": {
+    "addr:housenumber": "568",
+    "addr:postcode": "11215",
+    "addr:street": "4th Avenue",
+    "amenity": "restaurant",
+    "bar": "yes",
+    "cuisine": "american;latin_american;chinese",
+    "drink:beer": "yes",
+    "drink:coffee": "yes",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "name": "Luo's Burgers",
+    "opening_hours": "Mo-Th 11:00-22:00, Fr-Sa 11:00-01:00, Su 11:00-21:00",
+    "website": "https://luosburgers.com"
+  }
+},
+{
+  "type": "node",
+  "id": 2562131733,
+  "lat": 40.6706983,
+  "lon": -73.9914759,
+  "tags": {
+    "addr:housenumber": "473",
+    "addr:postcode": "11215",
+    "addr:street": "3rd Avenue",
+    "amenity": "restaurant",
+    "bar": "yes",
+    "cocktails": "yes",
+    "cuisine": "pizza;italian",
+    "drink:beer": "draught",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "happy_hours": "Mo-Su 10:00-18:00",
+    "name": "Table 87 Coal Oven Pizza",
+    "opening_hours": "Mo-Th 11:00-22:00; Fr-Sa 11:00-23:00; Su 11:00-22:00",
+    "outdoor_seating": "sidewalk",
+    "phone": "+1-718-965-8400",
+    "website": "https://www.table87.com/pages/menu"
+  }
+},
+{
+  "type": "node",
+  "id": 2562136780,
+  "lat": 40.6637848,
+  "lon": -73.9806686,
+  "tags": {
+    "addr:housenumber": "1201",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "8th Avenue",
+    "amenity": "cafe",
+    "cuisine": "middle_eastern",
+    "diet:dairy_free": "yes",
+    "diet:gluten_free": "yes",
+    "diet:nut_free": "yes",
+    "diet:vegan": "yes",
+    "diet:vegetarian": "yes",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "internet_access": "yes",
+    "internet_access:fee": "no",
+    "name": "Zatar",
+    "opening_hours": "Mo-Fr 07:00-22:00; Sa-Su 08:00-22:00",
+    "phone": "+1-929-252-1287",
+    "website": "https://zatar.nyc"
+  }
+},
+{
+  "type": "node",
+  "id": 2562140908,
+  "lat": 40.6645751,
+  "lon": -73.9799855,
+  "tags": {
+    "addr:housenumber": "1021",
+    "addr:postcode": "11215",
+    "addr:street": "8th Avenue",
+    "amenity": "restaurant",
+    "cuisine": "italian",
+    "drink:beer": "yes",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:wine": "yes",
+    "name": "Flora",
+    "opening_hours": "Tu-Fr 17:30-21:30, Sa 11:00-21:30, Su 11:00-16:00",
+    "outdoor_seating": "sidewalk"
+  }
+},
+{
+  "type": "node",
+  "id": 2562140910,
+  "lat": 40.6639550,
+  "lon": -73.9805265,
+  "tags": {
+    "addr:housenumber": "1123",
+    "addr:postcode": "11215",
+    "addr:street": "8th Avenue",
+    "amenity": "restaurant",
+    "cuisine": "italian;pizza",
+    "name": "Ottava",
+    "outdoor_seating": "yes",
+    "website": "https://ottavabrooklyn.com"
+  }
+},
+{
+  "type": "node",
   "id": 2565391670,
   "lat": 40.6775421,
   "lon": -73.9795355,
@@ -1900,6 +2525,25 @@
 },
 {
   "type": "node",
+  "id": 2568252726,
+  "lat": 40.6893431,
+  "lon": -73.9688785,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "vietnamese",
+    "drink:beer": "draught",
+    "drink:espresso": "yes",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "happy_hours": "Tu-Fr 16:00-19:00",
+    "indoor_seating": "yes",
+    "name": "Mekong BK",
+    "opening_hours": "Tu-Th 13:00-23:00; Fr 13:00-23:30; Sa 12:30-23:30; Su 12:30-23:00",
+    "outdoor_seating": "yes"
+  }
+},
+{
+  "type": "node",
   "id": 2568270469,
   "lat": 40.6859799,
   "lon": -73.9732185,
@@ -1915,6 +2559,305 @@
     "indoor_seating": "yes",
     "name": "BOM with the Wind",
     "outdoor_seating": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 2568698362,
+  "lat": 40.6633264,
+  "lon": -73.9814448,
+  "tags": {
+    "addr:housenumber": "1302",
+    "addr:postcode": "11215",
+    "addr:street": "8th Avenue",
+    "amenity": "restaurant",
+    "bar": "yes",
+    "cocktails": "yes",
+    "cuisine": "italian",
+    "drink:beer": "draught",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "happy_hours": "Mo-Fr 16:00-18:30",
+    "name": "Provini",
+    "opening_hours": "Mo-Th 11:00-23:00; Fr 11:00-24:00; Sa 10:00-24:00; Su 10:00-23:00",
+    "outdoor_seating": "yes",
+    "phone": "+1-718-369-2154",
+    "website": "https://www.provini.us/"
+  }
+},
+{
+  "type": "node",
+  "id": 2568698380,
+  "lat": 40.6663245,
+  "lon": -73.9818623,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "347",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "7th Avenue",
+    "amenity": "cafe",
+    "contact:facebook": "https://www.facebook.com/brooklynbreadcafe/",
+    "cuisine": "breakfast;sandwich;health_food;pastry",
+    "description": "Brooklyn Bread offers bagels, gourmet sandwiches, and catering services in Tribeca, Court St, and Park Slope.",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "email": "bkbread@bkbreadcafe.com",
+    "name": "Brooklyn Bread",
+    "opening_hours": "Mo-Su 07:00-17:45",
+    "outdoor_seating": "sidewalk",
+    "phone": "+1-929-491-0700",
+    "website": "https://www.brooklynbread.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 2568710174,
+  "lat": 40.6661369,
+  "lon": -73.9820222,
+  "tags": {
+    "addr:housenumber": "349",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "amenity": "restaurant",
+    "cuisine": "japanese;ramen",
+    "delivery": "yes",
+    "happy_hours": "Mo-Fr 14:30-16:30",
+    "name": "Toyo Ramen Bar",
+    "opening_hours": "Mo-Th 11:30-21:30, Sa-Su 11:30-22:00, Mo 11:30-22:00",
+    "phone": "+1-718-799-7199",
+    "takeaway": "yes",
+    "website": "https://www.toyoramen.com"
+  }
+},
+{
+  "type": "node",
+  "id": 2568710180,
+  "lat": 40.6657195,
+  "lon": -73.9823690,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "367",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "7th Avenue",
+    "amenity": "cafe",
+    "craft": "bakery",
+    "cuisine": "chicken;coffee_shop;sandwich",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "email": "info@winner.nyc",
+    "indoor_seating": "no",
+    "name": "WINNER",
+    "opening_hours": "Mo-Su 07:30-19:00",
+    "outdoor_seating": "yes",
+    "takeaway": "yes",
+    "website": "https://www.winner.nyc"
+  }
+},
+{
+  "type": "node",
+  "id": 2568724676,
+  "lat": 40.6678131,
+  "lon": -73.9839027,
+  "tags": {
+    "addr:housenumber": "374",
+    "addr:postcode": "11215",
+    "addr:street": "9th Street",
+    "amenity": "cafe",
+    "craft": "bakery",
+    "cuisine": "coffee_shop;breakfast;sandwich",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "name": "Colson Patisserie",
+    "opening_hours": "Mo-Th 07:30-16:00; Fr-Su 07:30-17:30",
+    "phone": "+1 718 965 6400",
+    "takeaway": "yes",
+    "website": "https://www.colsonpastries.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 2568724706,
+  "lat": 40.6652547,
+  "lon": -73.9831438,
+  "tags": {
+    "addr:housenumber": "390",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "amenity": "restaurant",
+    "cuisine": "diner",
+    "drink:coffee": "yes",
+    "name": "Little Purity",
+    "outdoor_seating": "street",
+    "phone": "+1-718-369-1722"
+  }
+},
+{
+  "type": "node",
+  "id": 2568724754,
+  "lat": 40.6668505,
+  "lon": -73.9847174,
+  "tags": {
+    "addr:housenumber": "411",
+    "addr:postcode": "11215",
+    "addr:street": "11th Street",
+    "amenity": "restaurant",
+    "bar": "yes",
+    "cuisine": "italian",
+    "drink:beer": "draught",
+    "drink:espresso": "yes",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "name": "Bar Toto",
+    "opening_hours": "Mo-Th 12:00-22:30; Fr 12:00-24:00; Sa 11:00-24:00; Su 11:00-22:30",
+    "outdoor_seating": "sidewalk",
+    "phone": "+1-718-768-4698",
+    "website": "https://www.bartoto.com/",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 2568752274,
+  "lat": 40.6679500,
+  "lon": -73.9804983,
+  "tags": {
+    "addr:housenumber": "289",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "amenity": "restaurant",
+    "contact:instagram": "puritydiner",
+    "cuisine": "diner",
+    "drink:beer": "bottled",
+    "drink:coffee": "yes",
+    "drink:wine": "yes",
+    "fax": "+1-718-840-0882",
+    "name": "Purity Diner",
+    "opening_hours": "Mo-Sa 08:00-22:00; Su 08:00-16:00",
+    "outdoor_seating": "street",
+    "phone": "+1-718-840-0881",
+    "takeaway": "yes",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 2568752281,
+  "lat": 40.6676775,
+  "lon": -73.9807412,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "301",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "7th Avenue",
+    "amenity": "fast_food",
+    "cuisine": "pizza",
+    "delivery": "yes",
+    "diet:vegan": "yes",
+    "name": "La Casa del Panuozzo",
+    "opening_hours": "Mo-Su 09:00-23:00",
+    "phone": "+1-917-909-1234"
+  }
+},
+{
+  "type": "node",
+  "id": 2568752298,
+  "lat": 40.6676702,
+  "lon": -73.9811411,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "312",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "7th Avenue",
+    "alt_name": "Variety Coffee",
+    "amenity": "cafe",
+    "capacity:seats": "30+",
+    "cuisine": "coffee_shop",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "internet_access": "yes",
+    "internet_access:fee": "no",
+    "name": "Variety Coffee Roasters",
+    "opening_hours": "Mo-Su 07:00-21:00",
+    "outdoor_seating": "limited",
+    "phone": "+1-718-788-1891",
+    "short_name": "Variety",
+    "website": "https://varietycoffeeroasters.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 2568783158,
+  "lat": 40.6703017,
+  "lon": -73.9785398,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "207",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "7th Avenue",
+    "amenity": "fast_food",
+    "branch": "Park Slope",
+    "cuisine": "juice;health_food",
+    "drink:juice": "yes",
+    "drink:smoothie": "yes",
+    "drive_through": "no",
+    "indoor_seating": "yes",
+    "internet_access": "wlan",
+    "internet_access:fee": "no",
+    "name": "Juice Press",
+    "opening_hours": "Mo-Fr 08:30-20:30; Sa-Su 09:30-20:30",
+    "outdoor_seating": "pedestrian_zone",
+    "website": "https://order.juicepress.com/park-slope/menu"
+  }
+},
+{
+  "type": "node",
+  "id": 2568783161,
+  "lat": 40.6701609,
+  "lon": -73.9786601,
+  "tags": {
+    "addr:housenumber": "213",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "amenity": "cafe",
+    "cocktails": "non-alcoholic",
+    "cuisine": "charcuterie;snack",
+    "name": "Mockingbird",
+    "opening_hours": "Tu-Th 17:00-22:00; Fr 17:00-24:00; Sa 08:00-00:00; Su 08:00-22:00",
+    "phone": "+1-347-687-0087",
+    "website": "https://mockingbird.nyc"
+  }
+},
+{
+  "type": "node",
+  "id": 2568783163,
+  "lat": 40.6699174,
+  "lon": -73.9788574,
+  "tags": {
+    "addr:housenumber": "225",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "amenity": "restaurant",
+    "capacity": "75",
+    "cocktails": "yes",
+    "cuisine": "italian;brunch",
+    "delivery": "yes",
+    "drink:coffee": "yes",
+    "drink:liquor": "yes",
+    "drink:tea": "yes",
+    "drink:wine": "yes",
+    "name": "Sotto Voce",
+    "outdoor_seating": "sidewalk",
+    "phone": "+1-718-369-9322",
+    "takeaway": "yes",
+    "website": "http://www.sottovocerestaurant.com",
+    "wheelchair": "yes"
   }
 },
 {
@@ -2193,6 +3136,46 @@
 },
 {
   "type": "node",
+  "id": 2573098408,
+  "lat": 40.6801088,
+  "lon": -73.9681963,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "552",
+    "addr:postcode": "11238",
+    "addr:state": "NY",
+    "addr:street": "Vanderbilt Avenue",
+    "amenity": "restaurant",
+    "cocktails": "yes",
+    "cuisine": "mexican",
+    "drink:beer": "yes",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "happy_hours": "Mo-Fr 15:00-19:00; Sa-Su 11:00-17:00",
+    "name": "Alta Calidad",
+    "opening_hours": "Mo-Th 11:00-23:00; Fr 11:00-24:00; Sa 11:00-24:00; Su 11:00-22:30",
+    "opening_hours:kitchen": "Mo-Th 11:00-15:00, 17:00-23:00; Fr 11:00-15:00, 17:00-24:00; Sa 11:00-15:30, 17:00-24:00; Su 11:00-15:30, 17:00-22:30",
+    "outdoor_seating": "sidewalk",
+    "phone": "+1-718-622-1111",
+    "website": "https://altacalidadbk.com"
+  }
+},
+{
+  "type": "node",
+  "id": 2573098463,
+  "lat": 40.6793508,
+  "lon": -73.9684666,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "thai",
+    "name": "The Nuaa Table",
+    "opening_hours": "Mo-Su 17:00-22:00",
+    "phone": "+1-718-623-6395",
+    "website": "https://www.thenuaatable.com"
+  }
+},
+{
+  "type": "node",
   "id": 2573115154,
   "lat": 40.6787149,
   "lon": -73.9733548,
@@ -2211,6 +3194,60 @@
     "phone": "+1-347-295-2856",
     "takeaway": "yes",
     "website": "https://jetspizza.com/stores/new-york/brooklyn/305-flatbush-ave/"
+  }
+},
+{
+  "type": "node",
+  "id": 2573115164,
+  "lat": 40.6784658,
+  "lon": -73.9687739,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "598",
+    "addr:postcode": "11238",
+    "addr:state": "NY",
+    "addr:street": "Vanderbilt Avenue",
+    "amenity": "cafe",
+    "branch": "Vanderbilt Ave",
+    "cuisine": "pastry;breakfast;coffee_shop",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "internet_access": "wlan",
+    "internet_access:fee": "no",
+    "name": "Little Cupcake Bakeshop",
+    "opening_hours": "Mo-Th 09:00-22:00; Fr-Sa 09:00-23:00; Su 09:00-22:00",
+    "phone": "+1-718-783-0770",
+    "shop": "pastry",
+    "website": "http://www.littlecupcakebakeshop.com"
+  }
+},
+{
+  "type": "node",
+  "id": 2573115170,
+  "lat": 40.6790513,
+  "lon": -73.9716118,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "605",
+    "addr:postcode": "11238",
+    "addr:state": "NY",
+    "addr:street": "Carlton Avenue",
+    "amenity": "restaurant",
+    "bar": "yes",
+    "catering": "yes",
+    "cocktails": "yes",
+    "cuisine": "american;jewish;seafood",
+    "drink:beer": "yes",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "name": "Gertrude's",
+    "opening_hours": "Mo,We-Fr 17:00-22:00; Sa-Su 09:30-15:00,17:00-23:00",
+    "outdoor_seating": "sidewalk;street",
+    "phone": "+1-718-269-0043",
+    "takeaway": "yes",
+    "website": "https://www.gertrudes.nyc",
+    "wheelchair": "yes"
   }
 },
 {
@@ -2252,6 +3289,34 @@
 },
 {
   "type": "node",
+  "id": 2664396742,
+  "lat": 40.6693981,
+  "lon": -73.9829869,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "396",
+    "addr:postcode": "11215",
+    "addr:street": "6th Avenue",
+    "amenity": "restaurant",
+    "bar": "yes",
+    "cocktails": "yes",
+    "cuisine": "mexican",
+    "diet:vegan": "yes",
+    "drink:beer": "draught",
+    "drink:liquor": "yes",
+    "drink:sangria": "yes",
+    "drink:wine": "yes",
+    "happy_hours": "Mo-Th 15:00-22:00",
+    "name": "Mexico Authentico",
+    "old_name": "Haab",
+    "opening_hours": "Mo-Th 15:00-22:30; Fr 13:00-23:00; Sa 11:00-23:00; Su 11:00-22:00",
+    "outdoor_seating": "sidewalk;street",
+    "phone": "+1-718-369-0849",
+    "website": "https://mexicoautenticonyc.com"
+  }
+},
+{
+  "type": "node",
   "id": 2692607521,
   "lat": 40.6873283,
   "lon": -73.9896984,
@@ -2280,6 +3345,33 @@
 },
 {
   "type": "node",
+  "id": 2701626574,
+  "lat": 40.6764810,
+  "lon": -73.9716825,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "183",
+    "addr:postcode": "11238",
+    "addr:state": "NY",
+    "addr:street": "Sterling Place",
+    "amenity": "cafe",
+    "capacity": "8",
+    "cuisine": "breakfast;sandwich",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:kombucha": "draught",
+    "drink:tea": "yes",
+    "name": "Hungry Ghost",
+    "old_name": "Prospect Perk Cafe",
+    "opening_hours": "Mo-Su 07:00-17:00",
+    "outdoor_seating": "bench",
+    "phone": "+1-718-783-7375",
+    "website": "https://www.hungryghostcoffee.com/location/hungry-ghost-sterling-place/",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
   "id": 2701690248,
   "lat": 40.6775995,
   "lon": -73.9725192,
@@ -2301,6 +3393,29 @@
     "phone": "+1-718-484-7724",
     "takeaway": "yes",
     "website": "https://www.sweetchick.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 2701690257,
+  "lat": 40.6775852,
+  "lon": -73.9691008,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "622",
+    "addr:postcode": "11238",
+    "addr:state": "NY",
+    "addr:street": "Vanderbilt Avenue",
+    "amenity": "cafe",
+    "cuisine": "coffee_shop;pastry",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "name": "Mille-feuille",
+    "opening_hours": "Mo-Fr 07:30-17:00; Sa-Su 08:00-17:00",
+    "outdoor_seating": "sidewalk;street",
+    "phone": "+1-347-350-8838",
+    "shop": "bakery",
+    "website": "https://www.millefeuille-nyc.com"
   }
 },
 {
@@ -2548,6 +3663,30 @@
 },
 {
   "type": "node",
+  "id": 2808476708,
+  "lat": 40.6661931,
+  "lon": -73.9786401,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "803",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "8th Avenue",
+    "amenity": "restaurant",
+    "coffee": "yes",
+    "cuisine": "italian;ice_cream;pasta;sandwich",
+    "drink:espresso": "yes",
+    "indoor_seating": "minimal",
+    "name": "Pasta Louise Cafe",
+    "opening_hours": "Tu-Fr 08:00-21:00; Sa-Su 09:00-21:00",
+    "outdoor_seating": "sidewalk;street",
+    "phone": "+1-347-725-3883",
+    "takeaway": "yes",
+    "website": "https://www.pastalouise.com"
+  }
+},
+{
+  "type": "node",
   "id": 3030613439,
   "lat": 40.6773469,
   "lon": -73.9825112,
@@ -2628,6 +3767,19 @@
     "name": "Walters",
     "opening_hours": "Mo-Th 11:00-23:00; Fr 11:00-00:00; Sa 09:00-00:00; Su 09:00-22:00",
     "website": "https://www.waltersbrooklyn.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 3151672194,
+  "lat": 40.6896685,
+  "lon": -73.9713510,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "sushi",
+    "indoor_seating": "yes",
+    "name": "Sushi D",
+    "outdoor_seating": "yes"
   }
 },
 {
@@ -2762,6 +3914,62 @@
 },
 {
   "type": "node",
+  "id": 3154321756,
+  "lat": 40.6759728,
+  "lon": -73.9718163,
+  "tags": {
+    "amenity": "restaurant",
+    "bar": "yes",
+    "cocktails": "yes",
+    "cuisine": "italian",
+    "drink:beer": "yes",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "name": "Fausto",
+    "opening_hours": "Mo-Th 17:30-21:00, Fr 17:30-21:45, Sa 17:00-21:45, Su 17:00-21:00",
+    "phone": "+1-917-909-1427",
+    "website": "https://www.faustobrooklyn.com"
+  }
+},
+{
+  "type": "node",
+  "id": 3154321758,
+  "lat": 40.6761314,
+  "lon": -73.9714493,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "385",
+    "addr:postcode": "11238",
+    "addr:state": "NY",
+    "addr:street": "Flatbush Avenue",
+    "amenity": "restaurant",
+    "cuisine": "japanese;thai",
+    "delivery": "yes",
+    "fax": "+1 718 398 3288",
+    "name": "Kami",
+    "opening_hours": "Mo-Th 11:00-23:00; Fr-Sa 11:00-23:30; Su 12:00-23:00",
+    "phone": "+1 718 398 3888",
+    "takeaway": "yes",
+    "website": "http://kamiasian.com"
+  }
+},
+{
+  "type": "node",
+  "id": 3154322862,
+  "lat": 40.6765675,
+  "lon": -73.9717797,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "middle_eastern;sandwich",
+    "diet:halal": "yes",
+    "name": "Halal Munchies",
+    "opening_hours": "Mo-Su 11:00-03:00",
+    "phone": "+1-718-380-0100",
+    "website": "https://eathalalmunchies.com"
+  }
+},
+{
+  "type": "node",
   "id": 3154322864,
   "lat": 40.6769861,
   "lon": -73.9720720,
@@ -2814,6 +4022,70 @@
 },
 {
   "type": "node",
+  "id": 3671145141,
+  "lat": 40.6688126,
+  "lon": -73.9897325,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "469",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "4th Avenue",
+    "amenity": "restaurant",
+    "cocktails": "yes",
+    "contact:facebook": "https://www.facebook.com/Olivier-bistro-564649660256647/",
+    "cuisine": "french;breakfast;brunch",
+    "drink:coffee": "yes",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "name": "Olivier Bistro",
+    "opening_hours": "Mo-Th 17:00-22:30, Fr 11:00-23:00; Sa 10:00-23:00; Su 10:00-22:00",
+    "outdoor_seating": "sidewalk",
+    "phone": "+1-718-768-6600",
+    "takeaway": "yes",
+    "website": "https://olivierbistro.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 3671151695,
+  "lat": 40.6673954,
+  "lon": -73.9875825,
+  "tags": {
+    "addr:housenumber": "493",
+    "addr:postcode": "11215",
+    "addr:street": "5th Avenue",
+    "amenity": "fast_food",
+    "branch": "Park Slope",
+    "cuisine": "eclectic",
+    "delivery": "yes",
+    "name": "Wonder",
+    "takeaway": "yes",
+    "website": "https://www.wonder.com/food-delivery-locations/park-slope"
+  }
+},
+{
+  "type": "node",
+  "id": 3674112983,
+  "lat": 40.6676601,
+  "lon": -73.9873611,
+  "tags": {
+    "addr:housenumber": "483",
+    "addr:postcode": "11215",
+    "addr:street": "5th Avenue",
+    "amenity": "fast_food",
+    "atm": "yes",
+    "cuisine": "pizza",
+    "delivery": "yes",
+    "name": "Joe's Pizza of Park Slope",
+    "opening_hours": "Mo-We 09:00-04:00; Th-Sa 09:00-05:00; Su 09:00-04:00",
+    "phone": "+1-718-369-2634",
+    "takeaway": "yes",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
   "id": 3674126477,
   "lat": 40.6718133,
   "lon": -73.9839044,
@@ -2828,6 +4100,100 @@
     "delivery": "yes",
     "name": "Joe's Pizza",
     "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 3674126479,
+  "lat": 40.6634377,
+  "lon": -73.9842639,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "433",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "amenity": "fast_food",
+    "cuisine": "vietnamese",
+    "delivery": "yes",
+    "diet:vegetarian": "yes",
+    "drink:bubble_tea": "yes",
+    "name": "Henry's",
+    "opening_hours": "Mo,We-Su 11:00-21:00",
+    "phone": "+1-718-788-8882",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 3674126480,
+  "lat": 40.6633723,
+  "lon": -73.9843180,
+  "tags": {
+    "addr:housenumber": "435",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "amenity": "cafe",
+    "cocktails": "yes",
+    "cuisine": "coffee_shop;crepe",
+    "drink:beer": "bottled",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "internet_access": "wlan",
+    "name": "Couleur Café",
+    "opening_hours": "Mo-Su 08:00-18:00",
+    "outdoor_seating": "sidewalk",
+    "phone": "+1-718-788-6600",
+    "toilets": "yes",
+    "toilets:unisex": "yes",
+    "toilets:wheelchair": "no",
+    "website": "https://couleurcafeny.com",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 3674167025,
+  "lat": 40.6685782,
+  "lon": -73.9803757,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "284",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "7th Avenue",
+    "amenity": "fast_food",
+    "branch": "Park Slope",
+    "brand": "Five Guys",
+    "brand:wikidata": "Q1131810",
+    "check_date:opening_hours": "2022-09-04",
+    "cuisine": "burger",
+    "drive_through": "no",
+    "name": "Five Guys",
+    "official_name": "Five Guys Burgers and Fries",
+    "opening_hours": "Mo-Su 11:00-22:00",
+    "phone": "+1 718-499-9380",
+    "takeaway": "yes",
+    "website": "https://restaurants.fiveguys.com/284-7th-ave",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 3674170468,
+  "lat": 40.6685322,
+  "lon": -73.9804203,
+  "tags": {
+    "amenity": "cafe",
+    "cuisine": "bagel;breakfast;sandwich",
+    "drink:coffee": "yes",
+    "name": "La Bagel Delight",
+    "opening_hours": "Mo-Fr 05:30-17:00; Sa,Su 05:30-16:00",
+    "phone": "+1-718-768-6107",
+    "takeaway": "yes",
+    "website": "https://www.labageldelight.com",
+    "wheelchair": "yes"
   }
 },
 {
@@ -2851,6 +4217,174 @@
     "outdoor_seating": "yes",
     "phone": "+1-718-768-2613",
     "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 3677073034,
+  "lat": 40.6663654,
+  "lon": -73.9884470,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "525",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "5th Avenue",
+    "amenity": "fast_food",
+    "brand": "Subway",
+    "brand:wikidata": "Q244457",
+    "cuisine": "sandwich",
+    "delivery": "yes",
+    "name": "Subway",
+    "opening_hours": "Mo-Sa 08:30-21:30, Su 07:00-20:00",
+    "phone": "+1-718-499-2207",
+    "takeaway": "yes",
+    "website": "https://restaurants.subway.com/united-states/ny/brooklyn/525-5th-avenue"
+  }
+},
+{
+  "type": "node",
+  "id": 3677073035,
+  "lat": 40.6664089,
+  "lon": -73.9884126,
+  "tags": {
+    "addr:housenumber": "523",
+    "addr:postcode": "11215",
+    "addr:street": "5th Avenue",
+    "amenity": "fast_food",
+    "atm": "yes",
+    "cuisine": "breakfast;sandwich",
+    "drink:coffee": "yes",
+    "drink:juice": "yes",
+    "drink:smoothie": "yes",
+    "name": "Bagels and Wraps",
+    "opening_hours": "Mo-Sa 06:00-17:00, Su 06:30-16:00",
+    "phone": "+1-718-768-1052"
+  }
+},
+{
+  "type": "node",
+  "id": 3677076425,
+  "lat": 40.6678148,
+  "lon": -73.9876435,
+  "tags": {
+    "alt_name": "South Slope Eatery",
+    "amenity": "restaurant",
+    "bar": "yes",
+    "cocktails": "yes",
+    "cuisine": "diner",
+    "delivery": "yes",
+    "diet:gluten_free": "yes",
+    "diet:vegan": "yes",
+    "drink:beer": "yes",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:sangria": "yes",
+    "drink:smoothie": "yes",
+    "drink:tea": "yes",
+    "drink:wine": "yes",
+    "name": "South Slope Restaurant & Bar",
+    "opening_hours": "Mo-Sa 09:00-21:00; Su 09:00-19:00",
+    "outdoor_seating": "sidewalk;street",
+    "phone": "+1-718-499-0005",
+    "takeaway": "yes",
+    "website": "https://www.southslopeeatery486.com"
+  }
+},
+{
+  "type": "node",
+  "id": 3684593607,
+  "lat": 40.6691449,
+  "lon": -73.9866074,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "310",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "9th Street",
+    "amenity": "fast_food",
+    "capacity": "11",
+    "cuisine": "mexican",
+    "delivery": "yes",
+    "name": "Fatty Daddy Tacos",
+    "opening_hours": "Mo-Th 11:00-22:00; Fr-Sa 11:00-24:00; Su 11:00-22:00",
+    "phone": "+1 718-499-8226",
+    "takeaway": "yes",
+    "toilets": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 3684603514,
+  "lat": 40.6704599,
+  "lon": -73.9850412,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "399",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "5th Avenue",
+    "alt_name": "Food Lin",
+    "amenity": "fast_food",
+    "cuisine": "chinese",
+    "delivery": "yes",
+    "name": "C & Y",
+    "opening_hours": "Tu-Th 11:00-22:30; Fr-Sa 11:00-23:00; Su 11:00-22:30",
+    "phone": "+1-718-788-1188",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 3684645681,
+  "lat": 40.6684787,
+  "lon": -73.9940136,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "552",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "3rd Avenue",
+    "alt_name": "Dunkin' Donuts",
+    "amenity": "fast_food",
+    "brand": "Dunkin'",
+    "brand:wikidata": "Q847743",
+    "cuisine": "donut;coffee_shop",
+    "drive_through": "yes",
+    "name": "Dunkin'",
+    "opening_hours": "24/7",
+    "phone": "+1 718-788-7888",
+    "ref": "310177",
+    "takeaway": "yes",
+    "website": "https://locations.dunkindonuts.com/en/ny/brooklyn/552-3rd-ave/310177"
+  }
+},
+{
+  "type": "node",
+  "id": 3684645683,
+  "lat": 40.6683085,
+  "lon": -73.9941569,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "552",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "3rd Avenue",
+    "amenity": "fast_food",
+    "brand": "Popeyes",
+    "brand:wikidata": "Q1330910",
+    "cuisine": "chicken",
+    "delivery": "yes",
+    "drive_through": "yes",
+    "indoor_seating": "yes",
+    "internet_access": "wlan",
+    "name": "Popeyes",
+    "official_name": "Popeyes Louisiana Kitchen",
+    "opening_hours": "Mo-Su 10:00-23:00",
+    "outdoor_seating": "yes",
+    "phone": "+1 718-576-3092",
+    "takeaway": "yes",
+    "website": "https://www.popeyes.com/store-locator/store/restaurant_240111"
   }
 },
 {
@@ -3043,6 +4577,30 @@
 },
 {
   "type": "node",
+  "id": 3892789169,
+  "lat": 40.6652482,
+  "lon": -73.9827527,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "383",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "amenity": "cafe",
+    "branch": "Park Slope",
+    "brand": "Café Grumpy",
+    "cuisine": "coffee_shop",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "internet_access": "no",
+    "name": "Café Grumpy",
+    "opening_hours": "Mo-Fr 07:00-19:30; Sa, Su 07:30-19:30",
+    "outdoor_seating": "street",
+    "phone": "+1-718-349-7623",
+    "website": "https://cafegrumpy.com/locations/park-slope/"
+  }
+},
+{
+  "type": "node",
   "id": 3953943319,
   "lat": 40.6769217,
   "lon": -73.9862557,
@@ -3151,6 +4709,54 @@
     "shop": "pastry",
     "takeaway": "yes",
     "website": "https://birdsblack.com"
+  }
+},
+{
+  "type": "node",
+  "id": 4094809532,
+  "lat": 40.6708443,
+  "lon": -73.9847247,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "381",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "5th Avenue",
+    "amenity": "restaurant",
+    "cuisine": "sushi",
+    "drink:beer": "yes",
+    "drink:sake": "yes",
+    "drink:wine": "yes",
+    "name": "Sushi Yashin",
+    "opening_hours": "Mo-Su 14:30-21:15",
+    "phone": "+1-718-788-6789",
+    "website": "https://www.yashinsushibrooklyn.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 4096098991,
+  "lat": 40.6635858,
+  "lon": -73.9845425,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "434",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "7th Avenue",
+    "amenity": "restaurant",
+    "cocktails": "yes",
+    "cuisine": "mexican",
+    "drink:beer": "yes",
+    "drink:liquor": "yes",
+    "drink:sangria": "yes",
+    "drink:wine": "yes",
+    "happy_hours": "Mo 16:00-22:00; Tu-Fr 16:00-18:00",
+    "name": "Fonda",
+    "opening_hours": "Mo-Th 16:00-22:00; Fr 16:00-23:00; Sa 11:00-23:00; Su 12:00-21:00",
+    "outdoor_seating": "garden;street",
+    "phone": "+1-718-369-3144",
+    "website": "https://fondarestaurant.com/park-slope/"
   }
 },
 {
@@ -3494,6 +5100,71 @@
     "smoking": "no",
     "takeaway": "yes",
     "website": "https://www.lucali.com"
+  }
+},
+{
+  "type": "node",
+  "id": 4250503821,
+  "lat": 40.6664920,
+  "lon": -73.9817227,
+  "tags": {
+    "addr:housenumber": "341",
+    "addr:postcode": "11215",
+    "addr:street": "5th Avenue",
+    "amenity": "fast_food",
+    "cuisine": "mediterranean",
+    "diet:chicken": "yes",
+    "diet:non-vegetarian": "yes",
+    "diet:vegan": "yes",
+    "diet:vegetarian": "yes",
+    "name": "Taïm",
+    "opening_hours": "Mo-Su 11:00-21:00",
+    "phone": "+1-347-599-0119",
+    "website": "https://taimfalafel.com"
+  }
+},
+{
+  "type": "node",
+  "id": 4250507393,
+  "lat": 40.6642108,
+  "lon": -73.9807113,
+  "tags": {
+    "addr:housenumber": "1114",
+    "addr:postcode": "11215",
+    "addr:street": "8th Avenue",
+    "amenity": "restaurant",
+    "bar": "yes",
+    "cocktails": "yes",
+    "coffee": "yes",
+    "cuisine": "italian",
+    "happy_hours": "Tu-Th 17:00-18:00, 21:00-22:00",
+    "name": "Pasta Louise",
+    "opening_hours": "Tu-Fr 08:00-22:00, Sa-Su 09:00-22:00",
+    "outdoor_seating": "sidewalk",
+    "phone": "+1-347-725-3883",
+    "website": "https://www.pastalouise.com"
+  }
+},
+{
+  "type": "node",
+  "id": 4252832789,
+  "lat": 40.6634477,
+  "lon": -73.9846638,
+  "tags": {
+    "addr:housenumber": "440",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "amenity": "restaurant",
+    "cocktails": "yes",
+    "cuisine": "japanese",
+    "drink:beer": "yes",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "name": "Ten",
+    "opening_hours": "Mo,We,Th 14:30-22:00; Fr,Sa 14:30-22:30; Su 16:30-22:00",
+    "outdoor_seating": "sidewalk",
+    "phone": "+1-718-768-9888",
+    "website": "https://www.tensushibrooklyn.com/"
   }
 },
 {
@@ -3863,6 +5534,28 @@
 },
 {
   "type": "node",
+  "id": 4764328962,
+  "lat": 40.6705920,
+  "lon": -73.9783094,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "203",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "7th Avenue",
+    "amenity": "cafe",
+    "cuisine": "coffee_shop;sandwich",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "name": "Cafe by The Girls",
+    "outdoor_seating": "yes",
+    "phone": "+1-347-599-0175",
+    "website": "https://cafebythegirls.com"
+  }
+},
+{
+  "type": "node",
   "id": 4795043622,
   "lat": 40.6772425,
   "lon": -73.9797402,
@@ -3997,6 +5690,121 @@
 },
 {
   "type": "node",
+  "id": 5023063921,
+  "lat": 40.6703951,
+  "lon": -73.9788529,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "222",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "7th Avenue",
+    "air_conditioning": "yes",
+    "amenity": "restaurant",
+    "bar": "yes",
+    "branch": "Park Slope",
+    "cocktails": "yes",
+    "cuisine": "burger",
+    "delivery": "yes",
+    "diet:gluten_free": "yes",
+    "diet:vegan": "yes",
+    "diet:vegetarian": "yes",
+    "drink:beer": "draught",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "happy_hours": "Mo-Th 15:00-19:00",
+    "highchair": "yes",
+    "name": "Burger Village",
+    "opening_hours": "Mo-Su 11:00-22:00",
+    "outdoor_seating": "patio",
+    "phone": "+1-718-499-4165",
+    "takeaway": "yes",
+    "toilets": "yes",
+    "toilets:wheelchair": "yes",
+    "website": "https://www.burgervillage.com/brooklyn",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5043497797,
+  "lat": 40.6677987,
+  "lon": -73.9810194,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "306",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "7th Avenue",
+    "alt_name": "Dunkin' Donuts",
+    "amenity": "fast_food",
+    "brand": "Dunkin'",
+    "brand:wikidata": "Q847743",
+    "cuisine": "donut;coffee_shop",
+    "drink:coffee": "yes",
+    "drive_through": "no",
+    "name": "Dunkin'",
+    "opening_hours": "24/7",
+    "phone": "+1 347-529-5253",
+    "ref": "349980",
+    "takeaway": "yes",
+    "website": "https://locations.dunkindonuts.com/en/ny/brooklyn/306-7th-ave/349980"
+  }
+},
+{
+  "type": "node",
+  "id": 5043497799,
+  "lat": 40.6669746,
+  "lon": -73.9813174,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "323",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "7th Avenue",
+    "amenity": "fast_food",
+    "atm": "yes",
+    "cuisine": "pizza",
+    "delivery": "yes;Mo-Sa until midnight, Su until 22:00",
+    "name": "Smiling Pizza",
+    "phone": "+1-718-788-2137",
+    "takeaway": "yes",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5043497801,
+  "lat": 40.6668209,
+  "lon": -73.9818315,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "444",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "9th Street",
+    "amenity": "cafe",
+    "branch": "7th Avenue and 9th St",
+    "brand": "Starbucks",
+    "brand:wikidata": "Q37158",
+    "cuisine": "coffee_shop",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "internet_access": "wlan",
+    "internet_access:fee": "no",
+    "name": "Starbucks",
+    "official_name": "Starbucks Coffee",
+    "opening_hours": "Mo-Th 05:30-20:30; Fr 05:30-20:00; Sa 05:30-21:00; Su 06:00-21:00",
+    "outdoor_seating": "patio",
+    "phone": "+1 929-214-8871",
+    "takeaway": "yes",
+    "toilets": "no",
+    "website": "https://www.starbucks.com/store-locator/store/1015924/7th-ave-and-9th-st-444-ninth-st-brooklyn-ny-112158115-us"
+  }
+},
+{
+  "type": "node",
   "id": 5093561421,
   "lat": 40.6718642,
   "lon": -73.9776235,
@@ -4016,6 +5824,32 @@
 },
 {
   "type": "node",
+  "id": 5104099243,
+  "lat": 40.6693658,
+  "lon": -73.9898225,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "476",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "4th Avenue",
+    "amenity": "cafe",
+    "branch": "4th Avenue & 11th St.-Park Slope",
+    "brand": "Starbucks",
+    "brand:wikidata": "Q37158",
+    "cuisine": "coffee_shop",
+    "name": "Starbucks",
+    "official_name": "Starbucks Coffee",
+    "opening_hours": "Mo-Fr 05:30-21:00; Sa-Su 06:00-21:00",
+    "phone": "+1 929-214-9558",
+    "takeaway": "yes",
+    "toilets": "yes",
+    "toilets:access": "customers",
+    "website": "https://www.starbucks.com/store-locator/store/1016616/4th-ave-11-th-st-park-slope-476-4th-ave-brooklyn-ny-112153928-us"
+  }
+},
+{
+  "type": "node",
   "id": 5180910055,
   "lat": 40.6779261,
   "lon": -73.9792648,
@@ -4030,6 +5864,27 @@
     "phone": "+1-917-909-1015",
     "website": "https://www.kyuramen.com",
     "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5182335467,
+  "lat": 40.6640517,
+  "lon": -73.9841440,
+  "tags": {
+    "addr:housenumber": "422",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "amenity": "cafe",
+    "cuisine": "coffee_shop;sandwich",
+    "drink:coffee": "yes",
+    "drink:espresso": "no",
+    "drink:tea": "yes",
+    "name": "Miolin",
+    "opening_hours": "Tu-Fr 08:00-15:00, Sa-Su 08:00-12:00",
+    "shop": "bakery",
+    "toilets": "no",
+    "website": "https://www.miolinbakery.com"
   }
 },
 {
@@ -4074,6 +5929,51 @@
 },
 {
   "type": "node",
+  "id": 5202658095,
+  "lat": 40.6692363,
+  "lon": -73.9798350,
+  "tags": {
+    "addr:housenumber": "256",
+    "addr:street": "7th Avenue",
+    "amenity": "fast_food",
+    "atm": "yes",
+    "cuisine": "pizza",
+    "delivery": "yes",
+    "diet:gluten_free": "yes",
+    "disused:website": "http://labruschettapizza.com",
+    "fax": "+1-718-499-5412",
+    "name": "La Bruschetta",
+    "opening_hours": "Mo-Fr 10:00-21:00; Sa 11:00-21:00",
+    "outdoor_seating": "no",
+    "phone": "+1-718-499-4994",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5202658097,
+  "lat": 40.6672425,
+  "lon": -73.9814979,
+  "tags": {
+    "addr:housenumber": "324",
+    "addr:street": "7th Avenue",
+    "amenity": "restaurant",
+    "atm": "yes",
+    "cuisine": "diner;donut",
+    "delivery": "yes",
+    "drink:beer": "draught",
+    "drink:wine": "yes",
+    "name": "7th Avenue Donuts & Diner",
+    "opening_hours": "24/7",
+    "payment:cash": "only",
+    "phone": "+1-718-768-0748",
+    "toilets": "yes",
+    "toilets:unisex": "yes",
+    "website": "https://www.7thavedonutshop.com"
+  }
+},
+{
+  "type": "node",
   "id": 5203205582,
   "lat": 40.6723067,
   "lon": -73.9772577,
@@ -4106,6 +6006,36 @@
     "amenity": "cafe",
     "cuisine": "ice_cream;sandwich",
     "opening_hours": "Mo-Su 08:00-17:00"
+  }
+},
+{
+  "type": "node",
+  "id": 5206183426,
+  "lat": 40.6896357,
+  "lon": -73.9705674,
+  "tags": {
+    "addr:housenumber": "223",
+    "addr:street": "DeKalb Avenue",
+    "amenity": "fast_food",
+    "atm": "yes",
+    "name": "Bagel World",
+    "opening_hours": "Mo-Su 06:00-18:00"
+  }
+},
+{
+  "type": "node",
+  "id": 5206183427,
+  "lat": 40.6894000,
+  "lon": -73.9704766,
+  "tags": {
+    "addr:housenumber": "222",
+    "addr:street": "Dekalb Avenue",
+    "amenity": "restaurant",
+    "cuisine": "italian",
+    "indoor_seating": "yes",
+    "name": "Dino",
+    "outdoor_seating": "yes",
+    "website": "http://www.dinobk.com"
   }
 },
 {
@@ -4146,6 +6076,102 @@
     "phone": "+1-347-227-8004",
     "takeaway": "yes",
     "website": "https://www.hungrythirstynyc.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5236507097,
+  "lat": 40.6669271,
+  "lon": -73.9918474,
+  "tags": {
+    "addr:housenumber": "548",
+    "addr:postcode": "11215",
+    "addr:street": "4th Avenue",
+    "amenity": "cafe",
+    "cuisine": "eclectic;brunch",
+    "drink:beer": "yes",
+    "drink:coffee": "yes",
+    "drink:wine": "yes",
+    "name": "The Common",
+    "phone": "+1-718-971-9580",
+    "website": "https://www.thecommonbrooklyn.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5246547360,
+  "lat": 40.6641096,
+  "lon": -73.9841094,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "420",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "amenity": "restaurant",
+    "cuisine": "thai",
+    "delivery": "yes",
+    "name": "Jai Dee",
+    "opening_hours": "Mo-Su 11:00-15:00,16:00-22:30",
+    "phone": "+1-718-832-1544",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5246547361,
+  "lat": 40.6629551,
+  "lon": -73.9846643,
+  "tags": {
+    "amenity": "fast_food",
+    "capacity": "8",
+    "contact:website": "https://gnarlyeatstogo.com/",
+    "cuisine": "burger;sandwich",
+    "diet:gluten_free": "yes",
+    "diet:vegetarian": "yes",
+    "drink:beer": "no",
+    "drink:tea": "yes",
+    "drink:wine": "no",
+    "name": "Gnarly Eats",
+    "opening_hours": "Mo,We-Su 11:30-21:30",
+    "outdoor_seating": "sidewalk",
+    "phone": "+1-718-360-1661",
+    "toilets": "no",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 5246547363,
+  "lat": 40.6702295,
+  "lon": -73.9790008,
+  "tags": {
+    "addr:housenumber": "226",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "amenity": "cafe",
+    "cuisine": "mexican",
+    "name": "Vato",
+    "opening_hours": "Mo,Th-Su 07:00-15:00"
+  }
+},
+{
+  "type": "node",
+  "id": 5281241656,
+  "lat": 40.6780099,
+  "lon": -73.9685318,
+  "tags": {
+    "amenity": "fast_food",
+    "atm": "yes",
+    "cuisine": "mexican",
+    "delivery": "yes",
+    "diet:vegetarian": "yes",
+    "indoor_seating": "yes",
+    "name": "Maya Taqueria",
+    "opening_hours": "Mo-Su 11:00-24:00",
+    "outdoor_seating": "yes",
+    "phone": "+1-718-638-6292",
+    "takeaway": "yes",
+    "website": "https://www.mayataqueria.com"
   }
 },
 {
@@ -4539,6 +6565,38 @@
 },
 {
   "type": "node",
+  "id": 5455223692,
+  "lat": 40.6620497,
+  "lon": -73.9924927,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "argentinian;steak_house",
+    "drink:wine": "yes",
+    "name": "Raices Argentinas",
+    "opening_hours": "Tu-Fr 17:00-22:00; Sa 14:30-22:00; Su 13:00-21:00"
+  }
+},
+{
+  "type": "node",
+  "id": 5461549113,
+  "lat": 40.6896446,
+  "lon": -73.9707139,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "219",
+    "addr:postcode": "11205",
+    "addr:state": "NY",
+    "addr:street": "DeKalb Avenue",
+    "amenity": "restaurant",
+    "email": "tamyrofe@gmail.com",
+    "name": "Colonia Verde",
+    "outdoor_seating": "street",
+    "phone": "+1-347-689-4287",
+    "website": "https://www.coloniaverdenyc.com/"
+  }
+},
+{
+  "type": "node",
   "id": 5474081137,
   "lat": 40.6828823,
   "lon": -73.9821946,
@@ -4549,6 +6607,23 @@
     "delivery": "yes",
     "name": "Lano's Coffee Shop & Restaurant",
     "phone": "+1 718 643 3617"
+  }
+},
+{
+  "type": "node",
+  "id": 5476093789,
+  "lat": 40.6691202,
+  "lon": -73.9857970,
+  "tags": {
+    "addr:housenumber": "317",
+    "addr:street": "9th Street",
+    "amenity": "restaurant",
+    "cuisine": "latin_american",
+    "name": "El Viejo Yayo 2",
+    "opening_hours": "Mo-Su 07:00-23:00",
+    "outdoor_seating": "sidewalk;street",
+    "phone": "+1-718-965-7299",
+    "website": "https://www.yayo2.com"
   }
 },
 {
@@ -4604,6 +6679,19 @@
     "outdoor_seating": "yes",
     "phone": "+1 718 522 2110",
     "website": "https://www.meathookatthrees.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5494239445,
+  "lat": 40.6638024,
+  "lon": -73.9910869,
+  "tags": {
+    "amenity": "cafe",
+    "branch": "5th Ave",
+    "cuisine": "mexican",
+    "drink:espresso": "yes",
+    "name": "Coffee & Chisme"
   }
 },
 {
@@ -4718,6 +6806,26 @@
     "outdoor_seating": "garden",
     "phone": "+1-718-788-2285",
     "website": "https://www.terrebk.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5506774608,
+  "lat": 40.6702776,
+  "lon": -73.9855774,
+  "tags": {
+    "amenity": "restaurant",
+    "bar": "yes",
+    "check_date": "2024-01-09",
+    "cocktails": "yes",
+    "cuisine": "mexican",
+    "drink:beer": "draught",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "name": "Chela",
+    "opening_hours": "Mo-Th 11:00-23:00; Fr-Sa 11:00-24:00; Su 11:00-23:00",
+    "phone": "+1-718-701-1891",
+    "website": "https://chelaparkslope.com"
   }
 },
 {
@@ -4843,6 +6951,48 @@
     "drink:tea": "yes",
     "name": "Hungry Ghost",
     "opening_hours": "Mo-Su 07:00-17:00"
+  }
+},
+{
+  "type": "node",
+  "id": 5523537866,
+  "lat": 40.6722582,
+  "lon": -73.9682033,
+  "tags": {
+    "alt_name": "Emma's Torch at BPL",
+    "amenity": "cafe",
+    "cuisine": "coffee_shop;salad",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "internet_access": "wlan",
+    "level": "0",
+    "name": "Emma's Torch Cafe",
+    "opening_hours": "Mo-Fr 09:00-16:00",
+    "operator": "Emma's Torch",
+    "website": "https://emmastorch.org/emmas-torch-at-bpl-cafe",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5526341737,
+  "lat": 40.6662534,
+  "lon": -73.9852422,
+  "tags": {
+    "addr:housenumber": "497",
+    "addr:postcode": "11215",
+    "addr:street": "6th Avenue",
+    "amenity": "cafe",
+    "cuisine": "coffee_shop;breakfast;american",
+    "drink:beer": "yes",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "drink:wine": "yes",
+    "name": "Muse",
+    "opening_hours": "Mo-Fr 08:00-17:00; Sa-Su 08:00-19:00",
+    "phone": "+1 718 788 5800"
   }
 },
 {
@@ -5635,6 +7785,36 @@
 },
 {
   "type": "node",
+  "id": 5648649304,
+  "lat": 40.6706968,
+  "lon": -73.9887022,
+  "tags": {
+    "addr:housenumber": "440",
+    "addr:postcode": "11215",
+    "addr:street": "4th Avenue",
+    "amenity": "cafe",
+    "cuisine": "coffee_shop;juice",
+    "name": "Drip & Blend"
+  }
+},
+{
+  "type": "node",
+  "id": 5656772689,
+  "lat": 40.6709654,
+  "lon": -73.9850217,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "thai",
+    "delivery": "yes",
+    "drink:byob": "yes",
+    "name": "Luck Thai",
+    "opening_hours": "Mo-Th 11:30-22:00; Fr-Sa 11:30-22:30; Su 12:00-22:00",
+    "phone": "+1-718-499-1888",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
   "id": 5657099772,
   "lat": 40.6819509,
   "lon": -73.9764299,
@@ -5655,6 +7835,26 @@
     "takeaway": "yes",
     "website": "https://www.hirotosushi.com",
     "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 5657662132,
+  "lat": 40.6701163,
+  "lon": -73.9790899,
+  "tags": {
+    "alt_name": "Noodle Lane & Dumplings",
+    "amenity": "restaurant",
+    "cuisine": "chinese",
+    "drink:beer": "yes",
+    "drink:coffee": "yes",
+    "drink:tea": "yes",
+    "drink:wine": "yes",
+    "happy_hours": "Mo-Fr 15:00-18:00",
+    "name": "Noodle Lane",
+    "opening_hours": "Mo,We-Su 11:30-21:00",
+    "phone": "+1-347-599-2009",
+    "website": "https://www.noodlelane.com"
   }
 },
 {
@@ -5689,6 +7889,26 @@
     "phone": "+1-917-909-0589",
     "takeaway": "yes",
     "toilets": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 5673620486,
+  "lat": 40.6702652,
+  "lon": -73.9789672,
+  "tags": {
+    "amenity": "restaurant",
+    "branch": "Park Slope",
+    "cocktails": "yes",
+    "contact:instagram": "https://www.instagram.com/mariscoselsubmarino/",
+    "cuisine": "seafood;mexican",
+    "drink:beer": "yes",
+    "drink:liquor": "yes",
+    "name": "Mariscos El Submarino",
+    "opening_hours": "Mo-Su 12:00-22:00",
+    "toilets": "yes",
+    "website": "https://www.mariscoselsubmarinonyc.com/",
+    "website:menu": "https://www.mariscoselsubmarinonyc.com/menu/"
   }
 },
 {
@@ -5852,6 +8072,77 @@
 },
 {
   "type": "node",
+  "id": 5703390134,
+  "lat": 40.6695964,
+  "lon": -73.9795166,
+  "tags": {
+    "addr:housenumber": "244",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "alt_name": "Hawa Smoothies & Bubble Tea",
+    "amenity": "fast_food",
+    "capacity": "3",
+    "cuisine": "juice;health_food",
+    "description:es": "batidas y jugo",
+    "drink:bubble_tea": "yes",
+    "drink:coffee": "yes",
+    "drink:juice": "yes",
+    "drink:smoothie": "yes",
+    "drink:tea": "yes",
+    "name": "Bobo's Smoothies",
+    "opening_hours": "Mo-Fr 07:30-20:30; Sa 09:00-20:30; Su 10:00-20:00",
+    "phone": "+1-347-529-4461"
+  }
+},
+{
+  "type": "node",
+  "id": 5703390135,
+  "lat": 40.6694841,
+  "lon": -73.9796096,
+  "tags": {
+    "addr:housenumber": "252",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "amenity": "fast_food",
+    "brand": "Just Salad",
+    "brand:wikidata": "Q23091823",
+    "cuisine": "salad",
+    "drive_through": "no",
+    "name": "Just Salad",
+    "opening_hours": "Mo-Su 10:30-21:00",
+    "outdoor_seating": "street",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5703390137,
+  "lat": 40.6696923,
+  "lon": -73.9794371,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "240",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "7th Avenue",
+    "amenity": "cafe",
+    "cuisine": "coffee_shop",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "indoor_seating": "yes",
+    "internet_access": "yes",
+    "internet_access:fee": "no",
+    "internet_access:password": "poeticjustice",
+    "internet_access:ssid": "Poetica",
+    "name": "Poetica Coffee",
+    "opening_hours": "Mo-Su 07:00-17:00",
+    "outdoor_seating": "limited",
+    "website": "https://www.poeticacoffee.com"
+  }
+},
+{
+  "type": "node",
   "id": 5709849145,
   "lat": 40.6731143,
   "lon": -73.9832079,
@@ -5998,6 +8289,82 @@
 },
 {
   "type": "node",
+  "id": 5714112422,
+  "lat": 40.6768416,
+  "lon": -73.9719713,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "365",
+    "addr:postcode": "11238",
+    "addr:state": "NY",
+    "addr:street": "Flatbush Avenue",
+    "alt_name": "Dunkin' Donuts",
+    "amenity": "fast_food",
+    "brand": "Dunkin'",
+    "brand:wikidata": "Q847743",
+    "cuisine": "donut;coffee_shop",
+    "drink:coffee": "yes",
+    "drive_through": "no",
+    "internet_access": "wlan",
+    "internet_access:fee": "no",
+    "name": "Dunkin'",
+    "opening_hours": "Mo-Fr 05:00-19:00; Sa-Su 05:00-18:00",
+    "phone": "+1 718-622-2400",
+    "ref": "357260",
+    "takeaway": "yes",
+    "website": "https://locations.dunkindonuts.com/en/ny/brooklyn/365-flatbush-ave/357260",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5714335354,
+  "lat": 40.6778021,
+  "lon": -73.9690180,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "620",
+    "addr:postcode": "11238",
+    "addr:state": "NY",
+    "addr:street": "Vanderbilt Avenue",
+    "amenity": "cafe",
+    "branch": "Vanderbilt",
+    "cuisine": "breakfast;sandwich;coffee_shop",
+    "delivery": "yes",
+    "diet:gluten_free": "yes",
+    "diet:vegan": "yes",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "name": "Milk Bar",
+    "opening_hours": "Mo-Fr 08:00-15:00, Sa-Su 08:00-16:00",
+    "outdoor_seating": "bench",
+    "phone": "+1-718-230-0844",
+    "takeaway": "yes",
+    "website": "https://www.milkbarbrooklyn.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5714335362,
+  "lat": 40.6775351,
+  "lon": -73.9691190,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "italian;pizza",
+    "drink:beer": "yes",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "drink:wine": "yes",
+    "name": "Amorina",
+    "opening_hours": "We-Th 17:00-21:00, Fr 16:00-22:00, Sa 12:00-22:00, Su 12:00-21:00",
+    "phone": "+1-718-230-3030",
+    "website": "http://www.amorinapizza.com"
+  }
+},
+{
+  "type": "node",
   "id": 5718949340,
   "lat": 40.6741723,
   "lon": -73.9996782,
@@ -6017,6 +8384,80 @@
     "opening_hours": "Mo-Su 11:30-21:30",
     "phone": "+1-929-295-3853",
     "website": "https://www.gojoteriyaki.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5731405474,
+  "lat": 40.6672972,
+  "lon": -73.9880543,
+  "tags": {
+    "amenity": "cafe",
+    "cuisine": "chinese;french",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "name": "Breadivore",
+    "opening_hours": "We-Th 08:30-16:00, Fr 08:30-17:00, Sa-Su 08:30-17:00",
+    "shop": "bakery",
+    "website": "https://www.breadivore.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5737743040,
+  "lat": 40.6679412,
+  "lon": -73.9809080,
+  "tags": {
+    "alt_name": "Jersey Mike's Subs",
+    "amenity": "fast_food",
+    "brand": "Jersey Mike's Subs",
+    "brand:wikidata": "Q6184897",
+    "cuisine": "sandwich",
+    "name": "Jersey Mike's Subs",
+    "opening_hours": "Mo-Su 10:00-21:00",
+    "phone": "+1-347-416-6222",
+    "short_name": "Jersey Mike's",
+    "takeaway": "yes",
+    "website": "https://www.jerseymikes.com/34068/brooklyn-ny"
+  }
+},
+{
+  "type": "node",
+  "id": 5737743043,
+  "lat": 40.6678455,
+  "lon": -73.9805935,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:state": "NY",
+    "amenity": "restaurant",
+    "cuisine": "italian;brunch",
+    "delivery": "yes",
+    "drink:beer": "yes",
+    "drink:coffee": "yes",
+    "drink:wine": "yes",
+    "name": "Botte di Vino",
+    "opening_hours": "Mo-Th 11:00-22:00; Fr-Su 09:00-23:00",
+    "phone": "+1-718-499-4741",
+    "website": "https://www.bottedivinoparkslope.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5737743047,
+  "lat": 40.6677173,
+  "lon": -73.9806993,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:state": "NY",
+    "amenity": "fast_food",
+    "cuisine": "mexican",
+    "delivery": "yes",
+    "fax": "+1-718-499-9885",
+    "name": "Happy Fresh Tortillas",
+    "opening_hours": "Mo-Sa 11:00-22:00",
+    "phone": "+1-718-499-9881",
+    "takeaway": "yes"
   }
 },
 {
@@ -6116,6 +8557,19 @@
 },
 {
   "type": "node",
+  "id": 5771336673,
+  "lat": 40.6708059,
+  "lon": -73.9851362,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "chinese",
+    "drink:wine": "yes",
+    "name": "Fleur",
+    "phone": "+1-718-534-0110"
+  }
+},
+{
+  "type": "node",
   "id": 5772073915,
   "lat": 40.6877686,
   "lon": -73.9813327,
@@ -6129,6 +8583,100 @@
     "drink:tea": "yes",
     "name": "Metro Feast",
     "toilets": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 5775345819,
+  "lat": 40.6649151,
+  "lon": -73.9834200,
+  "tags": {
+    "addr:housenumber": "396",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "amenity": "cafe",
+    "cuisine": "coffee_shop;health_food",
+    "disused:website": "http://livelybrooklyn.com",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "name": "Lively",
+    "opening_hours": "Mo-Fr 07:00-19:00; Sa-Su 08:00-19:00"
+  }
+},
+{
+  "type": "node",
+  "id": 5775345821,
+  "lat": 40.6648484,
+  "lon": -73.9834820,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "400",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "7th Avenue",
+    "amenity": "fast_food",
+    "atm": "yes",
+    "cuisine": "bagel;sandwich",
+    "drink:coffee": "yes",
+    "name": "Bagel Hole of Park Slope",
+    "opening_hours": "06:30-15:00",
+    "phone": "+1-718-788-4014"
+  }
+},
+{
+  "type": "node",
+  "id": 5775345831,
+  "lat": 40.6654367,
+  "lon": -73.9829947,
+  "tags": {
+    "addr:housenumber": "382",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "alt_name": "Tenichi Ramen",
+    "amenity": "restaurant",
+    "atm": "yes",
+    "cuisine": "ramen;japanese",
+    "drink:beer": "draught",
+    "drink:sake": "yes",
+    "drink:tea": "yes",
+    "drink:wine": "yes",
+    "happy_hours": "Mo-Fr 17:00-20:00",
+    "name": "Ten-Ichi Ramen",
+    "opening_hours": "Tu-Su 11:30-21:30",
+    "payment:cash": "only",
+    "phone": "+1-718-369-8809"
+  }
+},
+{
+  "type": "node",
+  "id": 5775345832,
+  "lat": 40.6653031,
+  "lon": -73.9830999,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "388",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "7th Avenue",
+    "air_conditioning": "yes",
+    "amenity": "fast_food",
+    "check_date": "2022-12-02",
+    "cuisine": "pizza",
+    "delivery": "yes",
+    "drive_through": "no",
+    "highchair": "yes",
+    "name": "Norm's Pizza",
+    "opening_hours": "Mo-Th 11:00-21:00; Fr-Sa 11:00-22:00; Su 11:00-21:00",
+    "outdoor_seating": "no",
+    "payment:cash": "yes",
+    "payment:contactless": "yes",
+    "payment:credit_cards": "yes",
+    "payment:debit_cards": "yes",
+    "phone": "+1-347-916-1310",
+    "smoking": "no",
+    "takeaway": "yes",
+    "website": "https://normspizza.com/",
+    "wheelchair": "limited"
   }
 },
 {
@@ -6290,6 +8838,103 @@
 },
 {
   "type": "node",
+  "id": 5802534234,
+  "lat": 40.6693342,
+  "lon": -73.9859779,
+  "tags": {
+    "addr:housenumber": "437",
+    "addr:postcode": "11215",
+    "addr:street": "5th Avenue",
+    "amenity": "fast_food",
+    "cuisine": "burger",
+    "name": "XO Burger",
+    "opening_hours": "Mo-Su 11:00-23:00",
+    "phone": "+1-929-377-7773",
+    "website": "https://www.xoburgersnyc.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5805217636,
+  "lat": 40.6689647,
+  "lon": -73.9866766,
+  "tags": {
+    "amenity": "restaurant",
+    "check_date": "2026-03-14",
+    "cuisine": "diner",
+    "drink:coffee": "yes",
+    "name": "Daisy's Diner",
+    "opening_hours": "24/7",
+    "toilets": "yes",
+    "toilets:access": "customers"
+  }
+},
+{
+  "type": "node",
+  "id": 5805217642,
+  "lat": 40.6696269,
+  "lon": -73.9857354,
+  "tags": {
+    "addr:housenumber": "423",
+    "addr:postcode": "11215",
+    "addr:street": "5th Avenue",
+    "amenity": "fast_food",
+    "cuisine": "health_food;juice",
+    "name": "Playa Bowls",
+    "opening_hours": "Mo-Su 07:00-22:00",
+    "phone": "+1-347-335-0600",
+    "website": "https://www.playabowls.com/location/5th-ave-park-slope-brooklyn/"
+  }
+},
+{
+  "type": "node",
+  "id": 5805217646,
+  "lat": 40.6691904,
+  "lon": -73.9859437,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "313",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "9th Street",
+    "amenity": "cafe",
+    "brand": "Gong Cha",
+    "brand:wikidata": "Q5581670",
+    "brand:zh": "貢茶",
+    "cuisine": "bubble_tea",
+    "drink:bubble_tea": "yes",
+    "drink:coffee": "no",
+    "drink:tea": "yes",
+    "int_name": "Gong Cha",
+    "name": "Gong Cha",
+    "name:zh": "貢茶",
+    "opening_hours": "Mo-Su 11:00-20:00",
+    "phone": "+1-347-294-0496",
+    "takeaway": "yes",
+    "website": "https://www.gongchausa.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5805217649,
+  "lat": 40.6696337,
+  "lon": -73.9861230,
+  "tags": {
+    "amenity": "restaurant",
+    "cocktails": "yes",
+    "cuisine": "diner",
+    "delivery": "yes",
+    "drink:beer": "yes",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "name": "Fifth Avenue Diner",
+    "opening_hours": "Mo-Su 07:00-21:00",
+    "phone": "+1-718-832-8131",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
   "id": 5807371647,
   "lat": 40.6892315,
   "lon": -73.9861259,
@@ -6413,6 +9058,310 @@
 },
 {
   "type": "node",
+  "id": 5816046277,
+  "lat": 40.6689493,
+  "lon": -73.9863673,
+  "tags": {
+    "amenity": "fast_food",
+    "capacity": "0",
+    "cuisine": "middle_eastern",
+    "description": "food cart always at this corner",
+    "diet:halal": "yes",
+    "name": "Express Halal Food",
+    "street_vendor": "yes",
+    "takeaway": "only",
+    "toilets": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 5819051479,
+  "lat": 40.6670686,
+  "lon": -73.9812452,
+  "tags": {
+    "addr:housenumber": "321",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "amenity": "cafe",
+    "cuisine": "crepe;panini;coffee_shop",
+    "diet:gluten_free": "yes",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:smoothie": "yes",
+    "drink:tea": "yes",
+    "name": "Cusp",
+    "phone": "+1-718-788-2980"
+  }
+},
+{
+  "type": "node",
+  "id": 5821317603,
+  "lat": 40.6634448,
+  "lon": -73.9914550,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "620",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "5th Avenue",
+    "amenity": "cafe",
+    "cuisine": "coffee_shop;sandwich",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "name": "Yardsale Cafe",
+    "opening_hours": "Mo-Fr 07:00-17:00; Sa-Su 08:00-17:00",
+    "outdoor_seating": "garden",
+    "phone": "+1-929-477-0167",
+    "shop": "antiques",
+    "website": "https://www.yardsalebk.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5821349507,
+  "lat": 40.6672789,
+  "lon": -73.9808256,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "414",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "8th Street",
+    "amenity": "cafe",
+    "description": "Purveyor of coffee beans, tea, spices, and brewing equipment as well as beverages to go",
+    "drink:coffee": "yes",
+    "drink:tea": "yes",
+    "name": "Java Joe",
+    "opening_hours": "Mo-Fr 07:00-19:00; Sa-Su 09:00-18:00",
+    "phone": "+1-718-369-6026",
+    "shop": "coffee",
+    "website": "https://javajoebrooklyn.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5827853289,
+  "lat": 40.6680852,
+  "lon": -73.9869996,
+  "tags": {
+    "amenity": "fast_food",
+    "capacity": "10",
+    "cuisine": "chinese",
+    "delivery": "yes",
+    "diet:vegetarian": "yes",
+    "fax": "+1-718-369-2021",
+    "name": "Far East",
+    "opening_hours": "Mo-Fr 11:00-23:00, Su 12:00-23:00",
+    "phone": "+1-718-369-2010",
+    "takeaway": "yes",
+    "website": "https://www.fareastbrooklyn.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5827853291,
+  "lat": 40.6681310,
+  "lon": -73.9869618,
+  "tags": {
+    "amenity": "cafe",
+    "board_games": "yes",
+    "cafe": "board_game",
+    "cuisine": "coffee_shop;sandwich;snack;breakfast",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "name": "Sip & Play",
+    "opening_hours": "Mo-Th 10:00-23:00; Fr-Sa 10:00-24:00; Su 10:00-23:00",
+    "phone": "+1-718-971-1684",
+    "website": "https://www.sipnplaynyc.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5827853292,
+  "lat": 40.6681833,
+  "lon": -73.9869266,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "pizza;italian",
+    "delivery": "yes",
+    "name": "Peppino's",
+    "opening_hours": "Tu-Th 22:00-21:00, Fr 11:00-22:00; Sa 11:30-22:00, Su 12:00-21:00",
+    "outdoor_seating": "street",
+    "phone": "+1-718-768-7244",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5827853299,
+  "lat": 40.6679305,
+  "lon": -73.9869794,
+  "tags": {
+    "addr:housenumber": "475",
+    "addr:postcode": "11215",
+    "addr:street": "5th Avenue",
+    "amenity": "cafe",
+    "cuisine": "coffee_shop",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "name": "Pulse Coffee Shop",
+    "opening_hours": "Mo-Su 07:00-16:00",
+    "outdoor_seating": "sidewalk"
+  }
+},
+{
+  "type": "node",
+  "id": 5830803202,
+  "lat": 40.6661881,
+  "lon": -73.9823800,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "354",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "7th Avenue",
+    "amenity": "fast_food",
+    "cuisine": "vietnamese;sandwich;bubble_tea",
+    "drink:bubble_tea": "yes",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "drive_through": "no",
+    "name": "Hanco's",
+    "opening_hours": "Mo-Su 11:00-21:00",
+    "phone": "+1-718-499-8081",
+    "takeaway": "yes",
+    "website": "https://www.hancos.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5832647117,
+  "lat": 40.6666489,
+  "lon": -73.9814925,
+  "tags": {
+    "alt_name": "Hanoi Vietnamese Kitchen",
+    "amenity": "restaurant",
+    "cuisine": "vietnamese",
+    "delivery": "yes",
+    "diet:vegetarian": "yes",
+    "drink:beer": "bottled",
+    "drink:bubble_tea": "yes",
+    "drink:sake": "yes",
+    "drink:tea": "yes",
+    "drink:wine": "yes",
+    "name": "Hà Nội Vietnamese Kitchen",
+    "opening_hours": "Mo-Th 12:00-22:00; Fr-Sa 12:00-23:00; Su 12:30-22:00",
+    "outdoor_seating": "patio",
+    "phone": "+1-718-788-7755",
+    "takeaway": "yes",
+    "toilets": "yes",
+    "toilets:unisex": "yes",
+    "toilets:wheelchair": "yes",
+    "website": "https://hanoinyc.com",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5837225126,
+  "lat": 40.6787076,
+  "lon": -73.9687196,
+  "tags": {
+    "amenity": "restaurant",
+    "atm": "yes",
+    "cuisine": "middle_eastern",
+    "drink:coffee": "yes",
+    "drink:tea": "yes",
+    "name": "Zaytoons",
+    "outdoor_seating": "garden",
+    "phone": "+1-718-230-3200"
+  }
+},
+{
+  "type": "node",
+  "id": 5837225127,
+  "lat": 40.6798257,
+  "lon": -73.9682987,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "poke;brunch",
+    "delivery": "yes",
+    "drink:beer": "yes",
+    "drink:bubble_tea": "yes",
+    "drink:coffee": "yes",
+    "drink:wine": "yes",
+    "name": "Poké Tiky Bar",
+    "opening_hours": "Mo-Sa 11:00-21:00, Su 11:00-20:00",
+    "outdoor_seating": "sidewalk;street",
+    "phone": "+1-347-365-5214",
+    "takeaway": "yes",
+    "website": "https://poketikybar.net/",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 5837225132,
+  "lat": 40.6800590,
+  "lon": -73.9682207,
+  "tags": {
+    "amenity": "restaurant",
+    "cocktails": "yes",
+    "cuisine": "italian",
+    "delivery": "yes",
+    "drink:beer": "yes",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "name": "Wayward Fare",
+    "opening_hours": "Mo-Th 17:00-21:00, Fr-Sa 17:00-22:00, Su 17:00-21:00",
+    "phone": "+1-347-221-1385",
+    "takeaway": "yes",
+    "toilets": "yes",
+    "website": "https://waywardfarebk.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5842396230,
+  "lat": 40.6648083,
+  "lon": -73.9938148,
+  "tags": {
+    "addr:housenumber": "620",
+    "addr:postcode": "11215",
+    "addr:street": "4th Avenue",
+    "amenity": "restaurant",
+    "delivery": "yes",
+    "name": "El Nuevo Sabor Latino",
+    "name:es": "El Nuevo Sabor Latino",
+    "phone": "+1-718-788-9063",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5842396231,
+  "lat": 40.6648362,
+  "lon": -73.9937781,
+  "tags": {
+    "addr:housenumber": "618",
+    "addr:postcode": "11215",
+    "addr:street": "4th Avenue",
+    "amenity": "cafe",
+    "cuisine": "pastry",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "internet_access": "wlan",
+    "internet_access:fee": "no",
+    "name": "Bread & Joe",
+    "opening_hours": "Mo-Fr 06:30-17:00; Sa 08:00-16:00"
+  }
+},
+{
+  "type": "node",
   "id": 5847389629,
   "lat": 40.6818859,
   "lon": -73.9936013,
@@ -6501,6 +9450,27 @@
 },
 {
   "type": "node",
+  "id": 5866304497,
+  "lat": 40.6658587,
+  "lon": -73.9822534,
+  "tags": {
+    "alt_name": "New Kiku Sushi",
+    "amenity": "restaurant",
+    "cuisine": "sushi;japanese",
+    "delivery": "yes",
+    "diet:vegetarian": "yes",
+    "drink:beer": "yes",
+    "drink:sake": "yes",
+    "drink:tea": "yes",
+    "name": "Kiku",
+    "opening_hours": "Mo-Th 11:00-22:00; Fr 11:00-22:30; Sa 12:00-22:30; Su 12:00-22:00",
+    "phone": "+1-718-499-2288",
+    "takeaway": "yes",
+    "website": "http://brooklynkiku.com"
+  }
+},
+{
+  "type": "node",
   "id": 5866582854,
   "lat": 40.6869924,
   "lon": -73.9779035,
@@ -6519,6 +9489,163 @@
     "outdoor_seating": "yes",
     "phone": "+1-347-294-0647",
     "website": "https://www.tacombi.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5889398141,
+  "lat": 40.6659015,
+  "lon": -73.9822178,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "pizza",
+    "delivery": "yes",
+    "diet:gluten_free": "yes",
+    "diet:vegan": "yes",
+    "drink:beer": "yes",
+    "drink:wine": "yes",
+    "fax": "+1-718-637-2091",
+    "name": "Pizza Plus",
+    "opening_hours": "Mo-Th 11:30-22:00; Fr-Sa 11:30-23:00; Su 11:30-22:00",
+    "outdoor_seating": "garden",
+    "phone": "+1-718-768-5327",
+    "takeaway": "yes",
+    "website": "https://pizzaplusmenu.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5889398145,
+  "lat": 40.6660878,
+  "lon": -73.9820630,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "351",
+    "addr:street": "7th Avenue",
+    "amenity": "restaurant",
+    "contact:facebook": "https://www.facebook.com/profile.php?id=100066295909429",
+    "contact:website": "https://indianspicenewyork.site/",
+    "cuisine": "indian",
+    "delivery": "yes",
+    "diet:gluten_free": "yes",
+    "diet:halal": "yes",
+    "diet:vegetarian": "yes",
+    "drink:beer": "bottled",
+    "drink:coffee": "yes",
+    "drink:wine": "yes",
+    "fax": "+1-718-768-7779",
+    "name": "Indian Spice",
+    "opening_hours": "Mo-Th 12:00-22:00, Fr-Sa 12:00-22:30, Su 12:00-22:00",
+    "phone": "+1-718-768-7777",
+    "takeaway": "yes",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5891774855,
+  "lat": 40.6778039,
+  "lon": -73.9686074,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "vietnamese;sandwich",
+    "name": "Banhmigos",
+    "opening_hours": "Mo-Su 11:03-21:00",
+    "phone": "+1-718-255-3218"
+  }
+},
+{
+  "type": "node",
+  "id": 5891774859,
+  "lat": 40.6790596,
+  "lon": -73.9681533,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "609",
+    "addr:postcode": "11238",
+    "addr:state": "NY",
+    "addr:street": "Vanderbilt Avenue",
+    "amenity": "cafe",
+    "cuisine": "coffee_shop;dessert",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "internet_access": "yes",
+    "internet_access:fee": "no",
+    "name": "Gran Caffé de Martini",
+    "outdoor_seating": "yes",
+    "website": "https://www.caffedemartini.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 5891774861,
+  "lat": 40.6779561,
+  "lon": -73.9685515,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "thai",
+    "diet:gluten_free": "yes",
+    "diet:vegetarian": "yes",
+    "drink:sangria": "yes",
+    "drink:wine": "yes",
+    "name": "Nourish",
+    "opening_hours": "Mo-Su 12:00-22:30",
+    "outdoor_seating": "street",
+    "phone": "+1-718-789-3981",
+    "website": "https://www.nourishthai.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5891774867,
+  "lat": 40.6780630,
+  "lon": -73.9685123,
+  "tags": {
+    "amenity": "restaurant",
+    "cocktails": "sake",
+    "cuisine": "japanese",
+    "drink:beer": "draught",
+    "drink:sake": "yes",
+    "drink:wine": "yes",
+    "name": "Ozakaya",
+    "name:ja": "お酒屋",
+    "opening_hours": "Mo-Th 12:00-15:00,17:00-22:00; Fr 12:00-15:00,17:00-22:30; Sa 12:00-16:00,17:00-22:30; Su 12:00-16:00,17:00-22:00",
+    "outdoor_seating": "street",
+    "phone": "+1-929-456-5946",
+    "takeaway": "yes",
+    "website": "https://www.ozakaya.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5893344796,
+  "lat": 40.6803422,
+  "lon": -73.9693396,
+  "tags": {
+    "amenity": "cafe",
+    "cuisine": "coffee_shop",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "name": "Sweetbee Coffee",
+    "opening_hours": "Mo-Su 07:30-16:00"
+  }
+},
+{
+  "type": "node",
+  "id": 5895012931,
+  "lat": 40.6772512,
+  "lon": -73.9687774,
+  "tags": {
+    "amenity": "restaurant",
+    "branch": "Prospect Heights",
+    "cuisine": "indian",
+    "diet:halal": "yes",
+    "fax": "+1-718-398-6996",
+    "name": "Mumbai Place",
+    "opening_hours": "Mo-Th 11:00-22:00; Fr 11:00-13:00, 14:00-23:00; Sa 11:00-23:00, Su 11:00-22:00",
+    "phone": "+1-718-398-7776",
+    "takeaway": "yes"
   }
 },
 {
@@ -6548,6 +9675,108 @@
     "phone": "+1-718-875-9200",
     "takeaway": "yes",
     "website": "https://masalagrillbk.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5908861455,
+  "lat": 40.6637744,
+  "lon": -73.9843814,
+  "tags": {
+    "amenity": "restaurant",
+    "cocktails": "yes",
+    "cuisine": "pizza;italian",
+    "drink:beer": "draught",
+    "drink:espresso": "yes",
+    "drink:wine": "yes",
+    "name": "Baciccia",
+    "opening_hours": "Mo-Th 17:00-21:30, Fr 17:00-22:00; Sa-Su 12:00-22:00",
+    "outdoor_seating": "garden",
+    "phone": "+1-718-788-1000",
+    "website": "https://bacicciabrooklyn.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5908861463,
+  "lat": 40.6630139,
+  "lon": -73.9846183,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "sandwich;wings",
+    "name": "Slope Cheesesteaks & Shakes",
+    "phone": "+1-718-825-6222"
+  }
+},
+{
+  "type": "node",
+  "id": 5908861465,
+  "lat": 40.6644147,
+  "lon": -73.9838344,
+  "tags": {
+    "amenity": "cafe",
+    "cuisine": "coffee_shop",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "name": "Techne Kafe",
+    "opening_hours": "Mo-Su 07:00-16:00",
+    "outdoor_seating": "bench"
+  }
+},
+{
+  "type": "node",
+  "id": 5910319469,
+  "lat": 40.6627823,
+  "lon": -73.9848080,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "sushi;poke",
+    "delivery": "yes",
+    "name": "Kiku Sushi",
+    "opening_hours": "Mo-Th 11:00-22:30; Fr-Sa 11:30-23:00; Su 11:00-22:30",
+    "phone": "+1-718-369-1155",
+    "takeaway": "only",
+    "website": "https://www.brooklynkikusushi.com"
+  }
+},
+{
+  "type": "node",
+  "id": 5910319473,
+  "lat": 40.6628991,
+  "lon": -73.9847109,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "pizza",
+    "delivery": "yes",
+    "name": "Sicily Pizzeria",
+    "opening_hours": "Mo-Th 11:00-22:00, Fr-Sa 11:00-23:00, Su 11:00-20:30",
+    "phone": "+1-347-227-8449",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5910319481,
+  "lat": 40.6626959,
+  "lon": -73.9848775,
+  "tags": {
+    "addr:housenumber": "455",
+    "addr:postcode": "11215",
+    "addr:street": "7th Avenue",
+    "alt_name": "Java",
+    "amenity": "restaurant",
+    "cuisine": "indonesian",
+    "delivery": "yes",
+    "diet:vegetarian": "yes",
+    "drink:beer": "bottled",
+    "drink:wine": "yes",
+    "name": "Java Rijsttafel",
+    "opening_hours": "Tu-Su 16:30-22:30",
+    "phone": "+1-718-832-4583",
+    "takeaway": "yes",
+    "toilets": "yes",
+    "toilets:access": "customers",
+    "website": "https://javaindonesianbk.com"
   }
 },
 {
@@ -6709,6 +9938,52 @@
 },
 {
   "type": "node",
+  "id": 5914043148,
+  "lat": 40.6647746,
+  "lon": -73.9864585,
+  "tags": {
+    "addr:housenumber": "535",
+    "addr:postcode": "11215",
+    "addr:street": "6th Avenue",
+    "amenity": "cafe",
+    "cuisine": "coffee_shop;breakfast;sandwich",
+    "diet:vegetarian": "yes",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "internet_access": "yes",
+    "internet_access:fee": "no",
+    "name": "OS Cafe",
+    "opening_hours": "Mo-Fr 07:30-18:00; Sa-Su 08:00-18:00",
+    "outdoor_seating": "sidewalk",
+    "phone": "+1-347-213-4365",
+    "website": "https://www.oscafebrooklyn.com",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 5914043150,
+  "lat": 40.6648688,
+  "lon": -73.9863911,
+  "tags": {
+    "addr:housenumber": "535",
+    "addr:postcode": "11215",
+    "addr:street": "6th Avenue",
+    "amenity": "restaurant",
+    "cuisine": "greek",
+    "drink:beer": "bottled",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "name": "Athena",
+    "opening_hours": "Mo-Th 12:00-21:30; Fr-Sa 12:00-22:30; Su 12:00-21:00",
+    "outdoor_seating": "sidewalk;street",
+    "phone": "+1-718-965-4578",
+    "website": "https://athenacuisine.com/"
+  }
+},
+{
+  "type": "node",
   "id": 5931990009,
   "lat": 40.6743962,
   "lon": -73.9821571,
@@ -6747,6 +10022,25 @@
     "toilets:wheelchair": "yes",
     "website": "http://www.muraone.com",
     "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5937436932,
+  "lat": 40.6707067,
+  "lon": -73.9862615,
+  "tags": {
+    "alt_name": "BBFL Cafe",
+    "amenity": "cafe",
+    "capacity": "8",
+    "cuisine": "coffee_shop;japanese",
+    "drink:coffee": "yes",
+    "drink:smoothie": "yes",
+    "internet_access": "wlan",
+    "internet_access:fee": "no",
+    "name": "Cafe Nanahoshi",
+    "opening_hours": "Mo-Fr 08:00-19:00; Sa-Su 09:30-19:00",
+    "outdoor_seating": "sidewalk"
   }
 },
 {
@@ -6882,6 +10176,154 @@
 },
 {
   "type": "node",
+  "id": 5981998920,
+  "lat": 40.6690922,
+  "lon": -73.9857384,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "chinese",
+    "delivery": "yes",
+    "name": "Empire Express Chinese Restaurant",
+    "opening_hours": "Mo-Sa 11:00-22:30; Su 12:00-22:30",
+    "phone": "+1-718-499-3758",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5981998923,
+  "lat": 40.6696474,
+  "lon": -73.9869134,
+  "tags": {
+    "addr:housenumber": "287",
+    "addr:postcode": "11215",
+    "addr:street": "9th Street",
+    "amenity": "cafe",
+    "branch": "Park Slope (9th Street)",
+    "cuisine": "bagel;coffee_shop;breakfast;sandwich",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "internet_access": "wlan",
+    "name": "Bagel Pub",
+    "opening_hours": "Mo-Su 07:00-15:00",
+    "outdoor_seating": "sidewalk",
+    "phone": "+1-718-499-4402",
+    "website": "https://bagelpub.com",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5984018669,
+  "lat": 40.6660033,
+  "lon": -73.9887537,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "pizza;latin_american",
+    "delivery": "yes",
+    "disused:website": "http://princesspizzeria.com",
+    "drink:beer": "yes",
+    "drink:wine": "yes",
+    "name": "Princess Pizzeria",
+    "phone": "+1-718-788-9111",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5984075034,
+  "lat": 40.6626448,
+  "lon": -73.9918645,
+  "tags": {
+    "alt_name": "I ♥ Guacamole",
+    "amenity": "restaurant",
+    "cocktails": "yes",
+    "cuisine": "mexican",
+    "drink:coffee": "yes",
+    "name": "I Love Guacamole",
+    "opening_hours": "Mo-Fr 08:00-22:00",
+    "outdoor_seating": "sidewalk;street",
+    "phone": "+1-347-335-0396",
+    "website": "https://iloveguacamole.business.site"
+  }
+},
+{
+  "type": "node",
+  "id": 5984151022,
+  "lat": 40.6638894,
+  "lon": -73.9909976,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "burger;salad;juice;breakfast",
+    "delivery": "yes",
+    "drink:juice": "yes",
+    "drink:smoothie": "yes",
+    "name": "Energy Fuel",
+    "phone": "+1-718-499-6999",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5984151025,
+  "lat": 40.6644619,
+  "lon": -73.9904428,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "lebanese;chicken",
+    "delivery": "yes",
+    "diet:halal": "yes",
+    "drink:juice": "yes",
+    "name": "Barouk",
+    "opening_hours": "Mo-Sa 11:00-20:00; Su 12:00-20:00",
+    "phone": "+1-718-965-0893",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5984151029,
+  "lat": 40.6643749,
+  "lon": -73.9905189,
+  "tags": {
+    "amenity": "fast_food",
+    "atm": "yes",
+    "cuisine": "pizza",
+    "delivery": "yes",
+    "drink:beer": "bottled",
+    "name": "Lenny's Pizza",
+    "opening_hours": "Mo-Th 10:30-01:00; Fr-Sa 10:30-02:00; Su 10:30-01:00",
+    "phone": "+1-718-788-8928",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5984151030,
+  "lat": 40.6637622,
+  "lon": -73.9911334,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "bagel;breakfast;sandwich",
+    "delivery": "yes",
+    "name": "The Bagel Factory",
+    "phone": "+1-718-768-0461",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5984151031,
+  "lat": 40.6645563,
+  "lon": -73.9903601,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "peruvian",
+    "name": "Mikhuy"
+  }
+},
+{
+  "type": "node",
   "id": 5987486730,
   "lat": 40.6832245,
   "lon": -73.9926955,
@@ -7012,6 +10454,23 @@
 },
 {
   "type": "node",
+  "id": 6037706546,
+  "lat": 40.6622139,
+  "lon": -73.9852986,
+  "tags": {
+    "alt_name": "Brooklyn Bodega",
+    "amenity": "fast_food",
+    "cuisine": "sandwich",
+    "description": "to-go sandwich counter with a small selection of Japanese toys and candy",
+    "drink:coffee": "yes",
+    "name": "Sub Hub",
+    "opening_hours": "Mo-Fr 08:30-19:00; Sa-Su 09:00-18:00",
+    "takeaway": "only",
+    "toilets": "no"
+  }
+},
+{
+  "type": "node",
   "id": 6053655803,
   "lat": 40.6804101,
   "lon": -73.9750463,
@@ -7041,6 +10500,43 @@
     "outdoor_seating": "garden",
     "phone": "+1-347-987-3194",
     "shop": "pastry"
+  }
+},
+{
+  "type": "node",
+  "id": 6071606246,
+  "lat": 40.6628451,
+  "lon": -73.9916570,
+  "tags": {
+    "addr:housenumber": "639",
+    "addr:postcode": "11215",
+    "addr:street": "5th Avenue",
+    "amenity": "cafe",
+    "cuisine": "coffee_shop;breakfast;american",
+    "diet:vegan": "yes",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "name": "Roots Cafe",
+    "opening_hours": "Mo-Fr 07:30-16:00; Sa-Su 08:00-16:00",
+    "outdoor_seating": "only",
+    "phone": "+1-929-301-5535",
+    "takeaway": "yes",
+    "website": "https://www.rootsbrooklyn.com"
+  }
+},
+{
+  "type": "node",
+  "id": 6090813612,
+  "lat": 40.6647497,
+  "lon": -73.9898126,
+  "tags": {
+    "amenity": "cafe",
+    "cuisine": "coffee_shop;french",
+    "name": "Le French Tart",
+    "opening_hours": "Mo-Su 06:30-18:30",
+    "shop": "deli",
+    "takeaway": "only"
   }
 },
 {
@@ -7091,6 +10587,21 @@
 },
 {
   "type": "node",
+  "id": 6138206280,
+  "lat": 40.6678954,
+  "lon": -73.9809501,
+  "tags": {
+    "amenity": "fast_food",
+    "atm": "yes",
+    "cuisine": "soup",
+    "name": "The Soup Bowl of Park Slope",
+    "opening_hours": "Mo-Su 09:00-20:30",
+    "outdoor_seating": "only",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
   "id": 6171881585,
   "lat": 40.6840022,
   "lon": -73.9993095,
@@ -7110,6 +10621,24 @@
     "toilets": "yes",
     "toilets:unisex": "yes",
     "website": "https://www.brooklynfarmacyandsodafountain.com"
+  }
+},
+{
+  "type": "node",
+  "id": 6171982286,
+  "lat": 40.6631577,
+  "lon": -73.9913238,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "mexican",
+    "delivery": "yes",
+    "diet:vegetarian": "yes",
+    "drink:beer": "draught",
+    "drink:liquor": "yes",
+    "name": "El Nopal",
+    "opening_hours": "Mo-Th 12:00-22:00; Fr-Sa 12:00-23:00; Su 12:00-22:00",
+    "phone": "+1-718-541-2732",
+    "takeaway": "yes"
   }
 },
 {
@@ -7172,6 +10701,23 @@
     "name": "D'Amico Coffee",
     "opening_hours": "Mo-Sa 06:00-22:00; Su 07:00-21:00",
     "phone": "+1-718-857-5403"
+  }
+},
+{
+  "type": "node",
+  "id": 6304537385,
+  "lat": 40.6649149,
+  "lon": -73.9936878,
+  "tags": {
+    "amenity": "fast_food",
+    "capacity": "3",
+    "cuisine": "chinese",
+    "delivery": "yes",
+    "diet:halal": "yes",
+    "name": "Half Moon Express",
+    "opening_hours": "Mo-Sa 11:00-21:00",
+    "phone": "+1-929-969-8315",
+    "takeaway": "yes"
   }
 },
 {
@@ -7575,6 +11121,23 @@
 },
 {
   "type": "node",
+  "id": 6338367058,
+  "lat": 40.6634110,
+  "lon": -73.9946430,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "pizza",
+    "delivery": "yes",
+    "fax": "+1-718-768-9600",
+    "name": "Brothers Pizza",
+    "opening_hours": "Mo-Sa 10:00-24:00; Su 11:00-23:00",
+    "phone": "+1-718-768-1700",
+    "takeaway": "yes",
+    "website": "http://www.brotherspizzabk.com"
+  }
+},
+{
+  "type": "node",
   "id": 6340372267,
   "lat": 40.6844250,
   "lon": -73.9918853,
@@ -7816,6 +11379,34 @@
 },
 {
   "type": "node",
+  "id": 6381914227,
+  "lat": 40.6694891,
+  "lon": -73.9928615,
+  "tags": {
+    "alt_name": "Villamia Pizza",
+    "amenity": "fast_food",
+    "cuisine": "pizza",
+    "delivery": "yes",
+    "fax": "+1-718-788-3343",
+    "name": "Villa Mia Pizza",
+    "opening_hours": "Mo-Th 10:30-22:30; Fr-Sa 10:30-23:00; Su 12:00-22:00",
+    "phone": "+1-718-788-3330",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 6382031818,
+  "lat": 40.6644065,
+  "lon": -73.9967218,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "pizza;bagel;sandwich",
+    "name": "Pizza & Bagel on 3rd"
+  }
+},
+{
+  "type": "node",
   "id": 6387952436,
   "lat": 40.6888579,
   "lon": -73.9925874,
@@ -7828,6 +11419,25 @@
     "phone": "+1-347-987-4198",
     "takeaway": "yes",
     "website": "https://www.hugethaibrooklyn.com"
+  }
+},
+{
+  "type": "node",
+  "id": 6387990300,
+  "lat": 40.6707039,
+  "lon": -73.9852220,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "indian",
+    "diet:halal": "yes",
+    "drink:byob": "yes",
+    "name": "Tikka Indian Grill",
+    "opening_hours": "Mo-Su 11:00-21:30",
+    "phone": "+1-347-227-7290",
+    "takeaway": "yes",
+    "toilets": "yes",
+    "toilets:access": "customers",
+    "website": "https://www.tikkaindiangrill.com"
   }
 },
 {
@@ -8408,6 +12018,25 @@
 },
 {
   "type": "node",
+  "id": 6540806367,
+  "lat": 40.6665470,
+  "lon": -73.9820587,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "thai",
+    "delivery": "yes",
+    "drink:beer": "yes",
+    "drink:wine": "yes",
+    "name": "Jintana Thai Farmhouse",
+    "opening_hours": "Mo-Th 11:30-16:00,17:00-22:00; Fr 11:30-16:00,17:00-23:00; Sa 12:00-23:00; Su 12:00-22:00",
+    "outdoor_seating": "garden",
+    "phone": "+1-718-788-1922",
+    "takeaway": "yes",
+    "website": "https://www.jintanathaifarmhouse.com"
+  }
+},
+{
+  "type": "node",
   "id": 6556206307,
   "lat": 40.6895176,
   "lon": -73.9879408,
@@ -8434,6 +12063,65 @@
 },
 {
   "type": "node",
+  "id": 6577420638,
+  "lat": 40.6703141,
+  "lon": -73.9849179,
+  "tags": {
+    "addr:housenumber": "339",
+    "addr:postcode": "11215",
+    "addr:street": "7th Street",
+    "amenity": "fast_food",
+    "cuisine": "sandwich;breakfast",
+    "delivery": "yes",
+    "drink:coffee": "yes",
+    "name": "Sandwich Girl",
+    "opening_hours": "Mo-Fr 08:00-20:00; Sa 10:00-18:00",
+    "outdoor_seating": "bench",
+    "phone": "+1-347-522-0139",
+    "takeaway": "yes",
+    "website": "https://www.sandwichgirlnyc.com"
+  }
+},
+{
+  "type": "node",
+  "id": 6594900790,
+  "lat": 40.6723542,
+  "lon": -73.9695287,
+  "tags": {
+    "amenity": "fast_food",
+    "contact:instagram": "@kingdavidtacos",
+    "cuisine": "mexican;breakfast",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "name": "King David Tacos",
+    "opening_hours": "Mo-Su 07:30-14:00",
+    "street_vendor": "yes",
+    "takeaway": "only",
+    "website": "https://kingdavidtacos.com"
+  }
+},
+{
+  "type": "node",
+  "id": 6611929070,
+  "lat": 40.6774844,
+  "lon": -73.9691374,
+  "tags": {
+    "amenity": "cafe",
+    "cocktails": "yes",
+    "cuisine": "american",
+    "drink:beer": "yes",
+    "drink:espresso": "yes",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "name": "Dilly Dally",
+    "opening_hours": "Tu-Fr 08:00-16:00, Sa-Su 09:00-16:00",
+    "outdoor_seating": "garden",
+    "website": "https://www.dillydallybk.com"
+  }
+},
+{
+  "type": "node",
   "id": 6644584701,
   "lat": 40.6810767,
   "lon": -73.9771418,
@@ -8448,6 +12136,27 @@
     "name": "Kimyo",
     "opening_hours": "Mo-Su 13:00-15:30,17:00-22:30",
     "phone": "+1-917-728-7563"
+  }
+},
+{
+  "type": "node",
+  "id": 6677928152,
+  "lat": 40.6688526,
+  "lon": -73.9852378,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "337",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "9th Street",
+    "alt_name": "Golden Shovel",
+    "amenity": "cafe",
+    "cuisine": "coffee_shop;breakfast;sandwich;chinese",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "name": "Dumpling & Cafe",
+    "opening_hours": "Mo-Fr 08:00-19:00; Sa 09:30-19:00; Su 09:30-19:30",
+    "phone": "+1 347-557-9818"
   }
 },
 {
@@ -8552,6 +12261,21 @@
 },
 {
   "type": "node",
+  "id": 6854271759,
+  "lat": 40.6625710,
+  "lon": -73.9919410,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "japanese;ramen",
+    "drink:beer": "yes",
+    "name": "South Slope Ramen",
+    "opening_hours": "Mo-Su 12:00-22:00",
+    "phone": "+1-718-788-8055",
+    "website": "https://www.southsloperamen.com"
+  }
+},
+{
+  "type": "node",
   "id": 6859180119,
   "lat": 40.6891039,
   "lon": -73.9859325,
@@ -8572,6 +12296,24 @@
     "phone": "+1 718-797-1777",
     "takeaway": "yes",
     "website": "https://www.starbucks.com/store-locator/store/1025831/hoyt-st-schermerhorn-st-45-hoyt-street-d-brooklyn-ny-112017211-us"
+  }
+},
+{
+  "type": "node",
+  "id": 6874269654,
+  "lat": 40.6638873,
+  "lon": -73.9941562,
+  "tags": {
+    "addr:housenumber": "635",
+    "addr:postcode": "11215",
+    "addr:street": "4th Avenue",
+    "amenity": "cafe",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "name": "L'Insolent",
+    "opening_hours": "Mo-Fr 07:00-17:00, Sa-Su 08:00-17:00",
+    "outdoor_seating": "sidewalk",
+    "website": "https://linsolentcoffee.com"
   }
 },
 {
@@ -8672,6 +12414,25 @@
 },
 {
   "type": "node",
+  "id": 7124991341,
+  "lat": 40.6804868,
+  "lon": -73.9680977,
+  "tags": {
+    "alt_name": "Ciao, Gloria",
+    "amenity": "cafe",
+    "cuisine": "coffee_shop;breakfast;sandwich",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "name": "Ciao Gloria",
+    "opening_hours": "Mo-Su 08:00-16:00",
+    "phone": "+1-716-666-2426",
+    "website": "https://www.ciaogloria.com",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
   "id": 7129638751,
   "lat": 40.6872330,
   "lon": -73.9933922,
@@ -8708,6 +12469,30 @@
 },
 {
   "type": "node",
+  "id": 7165158294,
+  "lat": 40.6708551,
+  "lon": -73.9850972,
+  "tags": {
+    "alt_name": "Coconana",
+    "amenity": "cafe",
+    "bar": "yes",
+    "check_date": "2026-03-14",
+    "cocktails": "yes",
+    "cuisine": "coffee_shop;vietnamese;sandwich;charcuterie;eclectic",
+    "drink:beer": "yes",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "happy_hours": "Mo-Su 17:00-19:00",
+    "name": "390 Social",
+    "opening_hours": "Mo-Fr 11:00-16:00 \"cafe\"||Mo-Tu 17:00-23:00; We-Th 17:00-24:00; Fr-Sa 17:00-02:00; Su 16:00-22:00 \"bar\"",
+    "phone": "+1-718-734-2902",
+    "website": "https://www.390social.com"
+  }
+},
+{
+  "type": "node",
   "id": 7169792980,
   "lat": 40.6759733,
   "lon": -73.9991410,
@@ -8723,6 +12508,21 @@
     "name": "Trudie's Tavern",
     "opening_hours": "Mo, Tu-Su 16:00-22:00",
     "website": "https://www.trudies.nyc"
+  }
+},
+{
+  "type": "node",
+  "id": 7173278105,
+  "lat": 40.6893239,
+  "lon": -73.9686360,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "indian",
+    "drink:beer": "yes",
+    "drink:wine": "yes",
+    "indoor_seating": "yes",
+    "name": "Dosa Royale",
+    "outdoor_seating": "yes"
   }
 },
 {
@@ -8784,6 +12584,22 @@
     "opening_hours": "Mo-Th 12:00-22:00; Fr-Sa 11:00-23:00; Su 11:00-22:00",
     "phone": "+1-718-576-1507",
     "website": "https://www.rutaoaxacamex.com/brooklyn-ny-location"
+  }
+},
+{
+  "type": "node",
+  "id": 7188790121,
+  "lat": 40.6640465,
+  "lon": -73.9837451,
+  "tags": {
+    "amenity": "restaurant",
+    "branch": "Park Slope",
+    "catering": "yes",
+    "cuisine": "chinese",
+    "name": "East Wind Snack Shop",
+    "opening_hours": "Mo-Su 12:00-21:00",
+    "phone": "+1-929-295-0188",
+    "takeaway": "yes"
   }
 },
 {
@@ -8853,6 +12669,28 @@
 },
 {
   "type": "node",
+  "id": 7728990820,
+  "lat": 40.6698266,
+  "lon": -73.9793260,
+  "tags": {
+    "alt_name": "One More Cha<rm>",
+    "amenity": "restaurant",
+    "cuisine": "thai",
+    "delivery": "yes",
+    "drink:beer": "yes",
+    "drink:bubble_tea": "yes",
+    "drink:tea": "yes",
+    "drink:wine": "yes",
+    "name": "One More Charm",
+    "opening_hours": "Mo-Su 11:30-21:45",
+    "outdoor_seating": "garden",
+    "phone": "+1-929-250-2052",
+    "takeaway": "yes",
+    "website": "https://onemorecharm.com"
+  }
+},
+{
+  "type": "node",
   "id": 7903073467,
   "lat": 40.6851132,
   "lon": -73.9913988,
@@ -8906,6 +12744,22 @@
 },
 {
   "type": "node",
+  "id": 8192046180,
+  "lat": 40.6645615,
+  "lon": -73.9977479,
+  "tags": {
+    "addr:housenumber": "698",
+    "addr:postcode": "11232",
+    "addr:street": "3rd Avenue",
+    "amenity": "fast_food",
+    "cuisine": "sandwich;breakfast",
+    "delivery": "yes",
+    "name": "King Subs",
+    "phone": "+1-718-369-0062"
+  }
+},
+{
+  "type": "node",
   "id": 8197592540,
   "lat": 40.6721638,
   "lon": -73.9874940,
@@ -8934,6 +12788,42 @@
     "drink:espresso": "yes",
     "name": "Cafe Volkan",
     "outdoor_seating": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 8265056191,
+  "lat": 40.6678048,
+  "lon": -73.9806236,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:state": "NY",
+    "amenity": "cafe",
+    "cuisine": "asian;coffee_shop;breakfast;sandwich",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "name": "Brew Memories",
+    "opening_hours": "Mo-Fr 07:00-20:30; Sa,Su 08:00-20:30"
+  }
+},
+{
+  "type": "node",
+  "id": 8394734469,
+  "lat": 40.6705028,
+  "lon": -73.9849985,
+  "tags": {
+    "amenity": "restaurant",
+    "cocktails": "yes",
+    "cuisine": "japanese",
+    "drink:beer": "yes",
+    "drink:liquor": "yes",
+    "drink:sake": "yes",
+    "drink:wine": "yes",
+    "name": "Kome Nori",
+    "opening_hours": "Tu-Th 17:00-21:30, Fr-Sa 17:00-22:30, Su 17:00-21:30",
+    "phone": "+1-347-294-0543",
+    "website": "https://www.komenori.com/"
   }
 },
 {
@@ -9017,6 +12907,23 @@
 },
 {
   "type": "node",
+  "id": 8592591993,
+  "lat": 40.6669264,
+  "lon": -73.9882535,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "mexican",
+    "delivery": "yes",
+    "description": "food truck reliably in this location",
+    "fast_food": "food_truck",
+    "name": "Tacos El Brother",
+    "phone": "+1-917-476-4326",
+    "takeaway": "only",
+    "toilets": "no"
+  }
+},
+{
+  "type": "node",
   "id": 8613851355,
   "lat": 40.6859913,
   "lon": -73.9731215,
@@ -9032,6 +12939,21 @@
     "phone": "+1-347-799-1333",
     "shop": "pasta",
     "website": "https://www.formapasta.com/location/fort-greene/"
+  }
+},
+{
+  "type": "node",
+  "id": 8613867469,
+  "lat": 40.6895953,
+  "lon": -73.9695428,
+  "tags": {
+    "addr:housenumber": "243",
+    "addr:postcode": "11217",
+    "addr:street": "DeKalb Avenue",
+    "amenity": "restaurant",
+    "cuisine": "italian",
+    "name": "Roman's",
+    "website": "https://www.romansnyc.com"
   }
 },
 {
@@ -9096,6 +13018,55 @@
     "takeaway": "yes",
     "toilets": "yes",
     "website": "https://www.sobokunyc.com"
+  }
+},
+{
+  "type": "node",
+  "id": 8766000399,
+  "lat": 40.6687345,
+  "lon": -73.9903602,
+  "tags": {
+    "amenity": "restaurant",
+    "bar": "yes",
+    "cocktails": "yes",
+    "cuisine": "mexican",
+    "drink:liquor": "yes",
+    "name": "Alma Negra",
+    "opening_hours": "Tu-Sa 17:00-23:00; Su 17:00-22:00",
+    "outdoor_seating": "yes",
+    "website": "https://almanegranyc.com"
+  }
+},
+{
+  "type": "node",
+  "id": 8766171729,
+  "lat": 40.6706043,
+  "lon": -73.9888832,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "mexican;breakfast",
+    "name": "Las Melecias",
+    "opening_hours": "Mo-Fr 17:00-21:00; Sa-Su 07:00-19:00",
+    "phone": "+1-347-599-1344"
+  }
+},
+{
+  "type": "node",
+  "id": 8891205156,
+  "lat": 40.6798278,
+  "lon": -73.9695296,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "mexican;breakfast",
+    "drink:beer": "yes",
+    "drink:coffee": "yes",
+    "drink:wine": "yes",
+    "name": "King David Tacos",
+    "opening_hours": "Mo-Fr 07:00-15:00, Sa-Su 07:00-16:00",
+    "outdoor_seating": "only",
+    "phone": "+1-929-367-8226",
+    "website": "https://kingdavidtacos.com",
+    "wheelchair": "yes"
   }
 },
 {
@@ -9232,6 +13203,23 @@
 },
 {
   "type": "node",
+  "id": 9440172785,
+  "lat": 40.6796652,
+  "lon": -73.9683658,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "bagel;pizza;indian",
+    "diet:halal": "yes",
+    "fax": "+1-718-618-0925",
+    "name": "Omar Bagles & Restaurant",
+    "opening_hours": "Mo-Su 06:00-22:00",
+    "phone": "+1-718-618-0923",
+    "website": "https://omarfoodsny.com",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
   "id": 9528668470,
   "lat": 40.6878617,
   "lon": -73.9835994,
@@ -9247,6 +13235,73 @@
     "opening_hours": "Mo 07:00-14:30, 17:00-21:00; Tu-Fr 07:00-14:30, 17:00-22:00; Sa 11:00-15:00, 17:00-22:00; Su 11:00-15:00, 17:00-21:00",
     "phone": "+1-718-308-3608",
     "website": "https://www.lelesroman.com"
+  }
+},
+{
+  "type": "node",
+  "id": 9609222681,
+  "lat": 40.6690330,
+  "lon": -73.9866160,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "pizza",
+    "delivery": "yes",
+    "name": "Pomodoro Pizza Feastin",
+    "opening_hours": "Mo-Su 11:00-21:00",
+    "phone": "+1 718-757-2341",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 9609222682,
+  "lat": 40.6690139,
+  "lon": -73.9866318,
+  "tags": {
+    "amenity": "fast_food",
+    "branch": "450 5TH AVE",
+    "catering": "yes",
+    "contact:sms": "+1-718-757-2341",
+    "cuisine": "chicken;greek",
+    "delivery": "yes",
+    "name": "Chicken Feastin",
+    "opening_hours": "Mo-Su 11:00-21:00",
+    "phone": "+1-718-744-4349",
+    "takeaway": "yes",
+    "website": "https://chicken-feastin.com"
+  }
+},
+{
+  "type": "node",
+  "id": 9624402289,
+  "lat": 40.6894044,
+  "lon": -73.9705995,
+  "tags": {
+    "amenity": "cafe",
+    "cuisine": "coffee_shop",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "name": "Nostrand Coffee Roasters"
+  }
+},
+{
+  "type": "node",
+  "id": 9625310236,
+  "lat": 40.6896885,
+  "lon": -73.9718297,
+  "tags": {
+    "amenity": "restaurant",
+    "cocktails": "yes",
+    "cuisine": "italian",
+    "drink:beer": "yes",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "indoor_seating": "yes",
+    "name": "Saraghina Caffé",
+    "opening_hours": "Mo-Su 17:00-22:00",
+    "outdoor_seating": "yes",
+    "phone": "+1-718-327-4224",
+    "website": "https://saraghinacaffe.com"
   }
 },
 {
@@ -9299,6 +13354,25 @@
 },
 {
   "type": "node",
+  "id": 9964875987,
+  "lat": 40.6783094,
+  "lon": -73.9684219,
+  "tags": {
+    "amenity": "restaurant",
+    "bar": "yes",
+    "cocktails": "yes",
+    "cuisine": "american",
+    "diet:vegetarian": "yes",
+    "drink:beer": "draught",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "name": "No. 7 Restaurant",
+    "opening_hours": "We-Sa 17:00-24:00; Su 12:00-15:00",
+    "website": "https://www.no7restaurant.com"
+  }
+},
+{
+  "type": "node",
   "id": 10109662192,
   "lat": 40.6895109,
   "lon": -73.9829006,
@@ -9336,6 +13410,26 @@
     "opening_hours": "Mo-Su 11:00-21:00",
     "takeaway": "yes",
     "website": "https://www.wonder.com/food-delivery-locations/downtown-brooklyn-ny"
+  }
+},
+{
+  "type": "node",
+  "id": 10282968181,
+  "lat": 40.6836366,
+  "lon": -73.9681287,
+  "tags": {
+    "addr:housenumber": "810",
+    "addr:postcode": "11238",
+    "addr:street": "Fulton Street",
+    "amenity": "cafe",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "indoor_seating": "yes",
+    "name": "Hungry Ghost Coffee",
+    "opening_hours": "Mo-Su 07:00-19:00",
+    "outdoor_seating": "no",
+    "website": "https://www.hungryghostcoffee.com/location/clinton-hill/"
   }
 },
 {
@@ -9385,6 +13479,21 @@
     "phone": "+1 347-725-4450",
     "takeaway": "yes",
     "website": "https://www.chipotle.com/locations/#/?address=185%207TH%20AVE%20%20BROOKLYN%20NY"
+  }
+},
+{
+  "type": "node",
+  "id": 10635155033,
+  "lat": 40.6690652,
+  "lon": -73.9856821,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "caribbean",
+    "name": "Stella's",
+    "opening_hours": "We-Th 15:00-22:00; Fr-Sa 14:00-22:00; Su 12:00-21:00",
+    "phone": "+1-347-987-4164",
+    "takeaway": "yes",
+    "website": "https://www.stellascaribbean.com"
   }
 },
 {
@@ -9522,6 +13631,33 @@
     "phone": "+1-646-907-9467",
     "reservation": "required",
     "website": "https://www.brooklynhighlow.com"
+  }
+},
+{
+  "type": "node",
+  "id": 11020006881,
+  "lat": 40.6656295,
+  "lon": -73.9714371,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "40",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "West Drive",
+    "amenity": "cafe",
+    "check_date": "2026-06-11",
+    "cocktails": "yes",
+    "cuisine": "breakfast;sandwich;eclectic",
+    "drink:beer": "yes",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "drink:wine": "yes",
+    "email": "winnerinthepark@winner.nyc",
+    "name": "Winner in the Park",
+    "opening_hours": "Mo-Fr 07:30-15:00; Sa-Su 07:30-17:00",
+    "outdoor_seating": "yes",
+    "website": "https://www.winner.nyc/location/winner-in-the-park/"
   }
 },
 {
@@ -9698,6 +13834,23 @@
 },
 {
   "type": "node",
+  "id": 11951864818,
+  "lat": 40.6895853,
+  "lon": -73.9694747,
+  "tags": {
+    "amenity": "restaurant",
+    "cocktails": "yes",
+    "cuisine": "american;breakfast",
+    "drink:beer": "yes",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "name": "Fat Rabbit Diner",
+    "opening_hours": "Tu-Su 10:00-23:00",
+    "website": "https://fatrabbitdiner.com"
+  }
+},
+{
+  "type": "node",
   "id": 12014903969,
   "lat": 40.6773550,
   "lon": -73.9834569,
@@ -9727,6 +13880,22 @@
 },
 {
   "type": "node",
+  "id": 12055375089,
+  "lat": 40.6781757,
+  "lon": -73.9684662,
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "631",
+    "addr:postcode": "11238",
+    "addr:state": "NY",
+    "addr:street": "Vanderbilt Avenue",
+    "amenity": "cafe",
+    "name": "Bontree",
+    "opening_hours": "Su-Th 07:00-21:00; Fr-Sa 07:00-22:00"
+  }
+},
+{
+  "type": "node",
   "id": 12095745427,
   "lat": 40.6871101,
   "lon": -73.9937741,
@@ -9739,6 +13908,57 @@
     "name": "Octavia",
     "opening_hours": "Mo-Su 07:00-17:00",
     "outdoor_seating": "street;sidewalk"
+  }
+},
+{
+  "type": "node",
+  "id": 12251325070,
+  "lat": 40.6658137,
+  "lon": -73.9927774,
+  "tags": {
+    "addr:housenumber": "584",
+    "addr:postcode": "11215",
+    "addr:street": "4th Avenue",
+    "amenity": "fast_food",
+    "cuisine": "health_food;juice",
+    "name": "Pure Green",
+    "opening_hours": "Mo-Su 07:00-21:00",
+    "outdoor_seating": "sidewalk",
+    "phone": "+1-718-887-0545",
+    "website": "https://www.puregreenfranchise.com/new-york/park-slope/"
+  }
+},
+{
+  "type": "node",
+  "id": 12272486862,
+  "lat": 40.6663360,
+  "lon": -73.9888689,
+  "tags": {
+    "amenity": "cafe",
+    "cuisine": "coffee_shop;pastry",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "name": "Paris Baguette",
+    "opening_hours": "Mo-Su 06:00-21:00",
+    "toilets": "yes",
+    "toilets:access": "customers"
+  }
+},
+{
+  "type": "node",
+  "id": 12307168436,
+  "lat": 40.6696214,
+  "lon": -73.9895996,
+  "tags": {
+    "amenity": "cafe",
+    "cuisine": "coffee_shop;breakfast",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:tea": "yes",
+    "name": "Luna La Mer",
+    "opening_hours": "We-Su 08:00-16:00",
+    "website": "https://www.lunalamerbk.com"
   }
 },
 {
@@ -9769,6 +13989,36 @@
     "name": "Strange Delight",
     "opening_hours": "Mo-Th 11:30-15:30,17:00-21:30; Fr-Sa 11:30-15:30,17:00-22:30; Su 11:30-15:30,17:00-21:30",
     "website": "https://www.strangedelight.nyc"
+  }
+},
+{
+  "type": "node",
+  "id": 12644652498,
+  "lat": 40.6699938,
+  "lon": -73.9924279,
+  "tags": {
+    "amenity": "cafe",
+    "florist": "yes",
+    "name": "Fiorella",
+    "opening_hours": "Mo-Tu 07:00-21:00, Fr-Su 07:00-22:00",
+    "phone": "+1-347-422-0070"
+  }
+},
+{
+  "type": "node",
+  "id": 12716919291,
+  "lat": 40.6643750,
+  "lon": -73.9805542,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "sushi",
+    "delivery": "yes",
+    "drink:bubble_tea": "yes",
+    "name": "Osaki Sushi",
+    "opening_hours": "Mo-Th 11:00-21:30, Fr-Sa 11:00-22:00, Su 11:00-21:30",
+    "phone": "+1-347-227-8321",
+    "takeaway": "yes",
+    "website": "https://osakisushionline.com"
   }
 },
 {
@@ -9843,6 +14093,26 @@
     "cuisine": "ramen",
     "name": "Ramen Thupka",
     "opening_hours": "Mo-Th 11:30-22:00; Fr-Su 12:00-22:30"
+  }
+},
+{
+  "type": "node",
+  "id": 13258111105,
+  "lat": 40.6693307,
+  "lon": -73.9862652,
+  "tags": {
+    "addr:housenumber": "442",
+    "addr:postcode": "11215",
+    "addr:street": "5th Avenue",
+    "amenity": "fast_food",
+    "cuisine": "mediterranean",
+    "diet:halal": "yes",
+    "indoor_seating": "no",
+    "name": "Up A Notch",
+    "opening_hours": "Mo-Su 12:00-04:00",
+    "phone": "+1-917-293-7034",
+    "street_vendor": "yes",
+    "takeaway": "only"
   }
 },
 {
@@ -10004,6 +14274,27 @@
     "amenity": "cafe",
     "name": "Yafa Cafe",
     "website": "https://www.yafabrooklyn.com"
+  }
+},
+{
+  "type": "node",
+  "id": 14006762201,
+  "lat": 40.6704736,
+  "lon": -73.9849370,
+  "tags": {
+    "addr:housenumber": "397",
+    "addr:postcode": "11215",
+    "addr:street": "5th Avenue",
+    "amenity": "restaurant",
+    "check_date": "2026-07-12",
+    "contact:instagram": "komenoribrooklyn",
+    "cuisine": "japanese",
+    "email": "komenoribrooklyn@gmail.com",
+    "level": "0",
+    "name": "Kome Nori",
+    "opening_hours": "Tu-Th 17:00-22:30; Fr 17:00-23:30; Sa 12:00-16:30, 17:00-23:30; Su 12:00-16:30, 17:00-22:30",
+    "website": "https://www.komenori.com/",
+    "website:menu": "https://www.komenori.com/menu"
   }
 },
 {
@@ -10337,6 +14628,72 @@
 },
 {
   "type": "way",
+  "id": 248141892,
+  "center": {
+    "lat": 40.6893776,
+    "lon": -73.9706740
+  },
+  "nodes": [
+    2549920742,
+    2549920736,
+    2549920824,
+    2549920818,
+    2549920742
+  ],
+  "tags": {
+    "addr:housenumber": "216",
+    "addr:postcode": "11205",
+    "addr:street": "DeKalb Avenue",
+    "alt_name": "New Good Joy",
+    "amenity": "fast_food",
+    "building": "yes",
+    "cuisine": "chinese",
+    "delivery": "yes",
+    "diet:vegetarian": "yes",
+    "height": "3.7",
+    "indoor_seating": "yes",
+    "name": "Good Joy Restaurant",
+    "nycdoitt:bin": "3059079",
+    "opening_hours": "Mo-Th 11:00-22:00, Fr-Sa 11:00-23:00, Su 12:00-22:00",
+    "outdoor_seating": "no",
+    "phone": "+1-718-858-8899",
+    "takeaway": "yes",
+    "website": "https://www.newgoodjoy.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 248142061,
+  "center": {
+    "lat": 40.6878089,
+    "lon": -73.9706129
+  },
+  "nodes": [
+    2549919017,
+    2549918889,
+    2549919139,
+    2549919030,
+    2549919017
+  ],
+  "tags": {
+    "addr:housenumber": "327",
+    "addr:postcode": "11205",
+    "addr:street": "Adelphi Street",
+    "amenity": "restaurant",
+    "building": "yes",
+    "cocktails": "yes",
+    "cuisine": "mediterranean",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "height": "4.2",
+    "name": "Olea",
+    "nycdoitt:bin": "3335279",
+    "opening_hours": "Mo-Th 11:00-21:30; Fr 11:00-22:30; Sa 10:00-22:30; Su 10:00-21:30",
+    "outdoor_seating": "sidewalk;street"
+  }
+},
+{
+  "type": "way",
   "id": 248153042,
   "center": {
     "lat": 40.6851825,
@@ -10481,6 +14838,156 @@
     "phone": "+1 718-624-6688",
     "takeaway": "yes",
     "website": "https://www.mcdonalds.com/us/en-us/location/4344.html"
+  }
+},
+{
+  "type": "way",
+  "id": 248171248,
+  "center": {
+    "lat": 40.6700974,
+    "lon": -73.9929059
+  },
+  "nodes": [
+    2550101543,
+    2550101514,
+    2550101521,
+    2550101549,
+    2550101543
+  ],
+  "tags": {
+    "addr:housenumber": "145",
+    "addr:postcode": "11215",
+    "addr:street": "12th Street",
+    "amenity": "cafe",
+    "building": "yes",
+    "drink:coffee": "yes",
+    "height": "5.1",
+    "man_made": "works",
+    "name": "Brooklyn Cannery",
+    "nycdoitt:bin": "3022772",
+    "product": "beverages",
+    "shop": "beverages",
+    "website": "https://www.brooklyncannery.com"
+  }
+},
+{
+  "type": "way",
+  "id": 248171332,
+  "center": {
+    "lat": 40.6686450,
+    "lon": -73.9936364
+  },
+  "nodes": [
+    2550101363,
+    2550101373,
+    2550101377,
+    2550101374,
+    2550101363
+  ],
+  "tags": {
+    "addr:housenumber": "550",
+    "addr:postcode": "11215",
+    "addr:street": "3rd Avenue",
+    "amenity": "restaurant",
+    "bar": "yes",
+    "building": "yes",
+    "cocktails": "yes",
+    "cuisine": "peruvian",
+    "diet:vegan": "yes",
+    "drink:beer": "yes",
+    "drink:coffee": "yes",
+    "drink:espresso": "yes",
+    "drink:liquor": "yes",
+    "drink:sangria": "yes",
+    "drink:wine": "yes",
+    "fax": "+1-718-788-8071",
+    "height": "7.3",
+    "name": "Surfish",
+    "nycdoitt:bin": "3337715",
+    "opening_hours": "Mo-Su 12:00-23:00",
+    "outdoor_seating": "yes",
+    "phone": "+1-718-788-8070",
+    "toilets": "yes",
+    "website": "https://www.surfishbistro.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 248237392,
+  "center": {
+    "lat": 40.6697479,
+    "lon": -73.9867148
+  },
+  "nodes": [
+    2550572190,
+    2550572206,
+    2550572275,
+    2550572313,
+    2550572303,
+    2550572318,
+    2550572308,
+    2550572249,
+    2550572190
+  ],
+  "tags": {
+    "addr:city": "Brooklyn",
+    "addr:housenumber": "289",
+    "addr:postcode": "11215",
+    "addr:state": "NY",
+    "addr:street": "9th Street",
+    "amenity": "fast_food",
+    "brand": "McDonald's",
+    "brand:wikidata": "Q38076",
+    "building": "yes",
+    "cuisine": "burger",
+    "height": "5.4",
+    "internet_access": "wlan",
+    "name": "McDonald's",
+    "nycdoitt:bin": "3022088",
+    "opening_hours": "Mo-Th 06:00-23:00, Fr-Sa 06:00-24:00, Su 07:00-23:00",
+    "phone": "+1 718-832-8600",
+    "takeaway": "yes",
+    "website": "https://www.mcdonalds.com/us/en-us/location/3363.html"
+  }
+},
+{
+  "type": "way",
+  "id": 248239106,
+  "center": {
+    "lat": 40.6674766,
+    "lon": -73.9873668
+  },
+  "nodes": [
+    2550585687,
+    2550585638,
+    2550585669,
+    7197742124,
+    7197742123,
+    2550585741,
+    2550585191,
+    2550585705,
+    2550585687
+  ],
+  "tags": {
+    "addr:housenumber": "489",
+    "addr:postcode": "11215",
+    "addr:street": "5th Avenue",
+    "alt_name": "Tacos Nuevo Mexico",
+    "amenity": "restaurant",
+    "bar": "yes",
+    "building": "yes",
+    "cocktails": "yes",
+    "cuisine": "mexican",
+    "drink:beer": "yes",
+    "drink:liquor": "yes",
+    "drink:wine": "yes",
+    "height": "7.3",
+    "live_music": "yes",
+    "name": "Nuevo Mexico",
+    "nycdoitt:bin": "3022922",
+    "opening_hours": "Mo 15:00-23:00; We-Th 13:00-23:00; Fr-Sa 13:00-24:00; Su 13:00-23:30",
+    "outdoor_seating": "street",
+    "phone": "+1-718-832-0050"
   }
 },
 {
