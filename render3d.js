@@ -289,6 +289,85 @@ function buildStatic3D() {
     R3.scene.add(im);
   }
 
+  // rooftop water towers — the Brooklyn skyline signature
+  const towerLots = [];
+  W.lots.forEach((lot, i) => { if ((i * 31 + (lot.si || 0) * 7) % 12 === 0) towerLots.push([lot, i]); });
+  const lotH = (lot, i) => {
+    const rowSeed = (((lot.si || 0) * 2 + (lot.side + 3) / 2) * 2654435761 % 100) / 100;
+    return 11.5 + rowSeed * 2 + ((i * 97) % 10) / 10 * 0.3;
+  };
+  const twBody = new THREE.CylinderGeometry(1.5, 1.7, 2.6, 9);
+  const twBodyIM = makeInstanced(twBody, towerLots.length, { color: 0x6b4c36 });
+  const twRoof = new THREE.ConeGeometry(1.85, 1.2, 9);
+  const twRoofIM = makeInstanced(twRoof, towerLots.length, { color: 0x463225 });
+  const twLegs = new THREE.CylinderGeometry(0.9, 1.15, 1.1, 6);
+  const twLegsIM = makeInstanced(twLegs, towerLots.length, { color: 0x2e2a34 });
+  towerLots.forEach(([lot, li], i) => {
+    const h = lotH(lot, li);
+    dummy.rotation.set(0, -lot.ang, 0);
+    dummy.scale.set(1, 1, 1);
+    dummy.position.set(lot.x, h + 0.55, lot.y);
+    dummy.updateMatrix(); twLegsIM.setMatrixAt(i, dummy.matrix);
+    dummy.position.set(lot.x, h + 2.4, lot.y);
+    dummy.updateMatrix(); twBodyIM.setMatrixAt(i, dummy.matrix);
+    dummy.position.set(lot.x, h + 4.3, lot.y);
+    dummy.updateMatrix(); twRoofIM.setMatrixAt(i, dummy.matrix);
+  });
+
+  // curbside trash-bag piles + fire hydrants
+  const trash = [];
+  const hydrants = [];
+  {
+    let seed = 77;
+    const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+    W.segs.forEach((s, si) => {
+      if (s.len < 30) return;
+      const pa = W.nodes[s.a], pb = W.nodes[s.b];
+      const ux = (pb[0] - pa[0]) / s.len, uy = (pb[1] - pa[1]) / s.len;
+      const nx = -uy, ny = ux;
+      const curb = ROAD_HALF[s.cls] + 0.7;
+      for (const side of [-1, 1]) {
+        if (rnd() < 0.55) {
+          const d = 8 + rnd() * (s.len - 16);
+          const bx = pa[0] + ux * d + nx * curb * side, by = pa[1] + uy * d + ny * curb * side;
+          const n = 1 + (rnd() * 3 | 0);
+          for (let k = 0; k < n; k++) {
+            trash.push({ x: bx + (rnd() - 0.5) * 1.6, y: by + (rnd() - 0.5) * 1.2, s: 0.34 + rnd() * 0.22 });
+          }
+        }
+        if (s.cls === 1 && rnd() < 0.5) {
+          const d = 10 + rnd() * (s.len - 20);
+          hydrants.push({
+            x: pa[0] + ux * d + nx * (curb + 0.9) * side,
+            y: pa[1] + uy * d + ny * (curb + 0.9) * side,
+          });
+        }
+      }
+    });
+  }
+  const bagIM = makeInstanced(new THREE.SphereGeometry(1, 7, 5), trash.length, { color: 0x1e2026 });
+  trash.forEach((b, i) => {
+    dummy.position.set(b.x, b.s * 0.55, b.y);
+    dummy.rotation.set(0, (i * 2.3) % 6.28, 0);
+    dummy.scale.set(b.s, b.s * 0.62, b.s * 0.85);
+    dummy.updateMatrix();
+    bagIM.setMatrixAt(i, dummy.matrix);
+  });
+  const hydBody = new THREE.CylinderGeometry(0.15, 0.18, 0.55, 7);
+  hydBody.translate(0, 0.28, 0);
+  const hydIM = makeInstanced(hydBody, hydrants.length, { color: 0x9a5348 });
+  const hydCap = new THREE.SphereGeometry(0.16, 6, 5);
+  hydCap.translate(0, 0.6, 0);
+  const hydCapIM = makeInstanced(hydCap, hydrants.length, { color: 0xb8b2a4 });
+  hydrants.forEach((hd, i) => {
+    dummy.position.set(hd.x, 0, hd.y);
+    dummy.rotation.set(0, 0, 0);
+    dummy.scale.set(1, 1, 1);
+    dummy.updateMatrix();
+    hydIM.setMatrixAt(i, dummy.matrix);
+    hydCapIM.setMatrixAt(i, dummy.matrix);
+  });
+
   // trees
   const canopy = new THREE.InstancedMesh(
     new THREE.SphereGeometry(1, 8, 6),
@@ -381,6 +460,19 @@ function buildStatic3D() {
     sp.position.set(r.fx, 3.6, r.fy);
     R3.scene.add(sp);
   });
+  // warm storefront glass under each awning
+  const shopGeo = new THREE.PlaneGeometry(3.3, 1.8);
+  const shopIM = new THREE.InstancedMesh(shopGeo, new THREE.MeshBasicMaterial({
+    color: 0xffd9a0, transparent: true, opacity: 0.75, side: THREE.DoubleSide,
+  }), rests.length);
+  rests.forEach((r, i) => {
+    dummy.position.set(r.fx, 1.15, r.fy);
+    dummy.rotation.set(0, -r.fang, 0);
+    dummy.scale.set(1, 1, 1);
+    dummy.updateMatrix();
+    shopIM.setMatrixAt(i, dummy.matrix);
+  });
+  R3.scene.add(shopIM);
 
   // route line + destination pin
   const routeGeo = new THREE.BufferGeometry();
@@ -446,7 +538,7 @@ function buildLabels3D() {
       pos[i * 12 + k * 3 + 2] = c[1];
     });
     const u1 = row.w / 1024;
-    const us = [[0, row.v0], [u1, row.v0], [u1, row.v1], [0, row.v1]];
+    const us = [[0, row.v1], [u1, row.v1], [u1, row.v0], [0, row.v0]];
     us.forEach((u, k) => { uv[i * 8 + k * 2] = u[0]; uv[i * 8 + k * 2 + 1] = u[1]; });
     idx.set([i * 4, i * 4 + 1, i * 4 + 2, i * 4, i * 4 + 2, i * 4 + 3], i * 6);
   });
@@ -697,25 +789,39 @@ function buildPools3D() {
   R3.scene.add(wg);
   R3.walker = wg;
 
-  // traffic signals: pole + head + three lamps
+  // traffic signals: corner pole + mast arm hanging a head over the roadway
   R3.pools.signals = mkPool(20, () => {
     const g = new THREE.Group();
-    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.09, 4.4, 5), new THREE.MeshLambertMaterial({ color: 0x2e2a34 }));
-    pole.position.y = 2.2;
+    const poleMat = new THREE.MeshLambertMaterial({ color: 0x2e2a34 });
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.1, 5.6, 5), poleMat);
+    pole.position.y = 2.8;
     g.add(pole);
-    const headBox = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.95, 0.3), new THREE.MeshLambertMaterial({ color: 0x22202a }));
-    headBox.position.y = 4.55;
-    g.add(headBox);
     const lampMats = [];
     const cols = [0xff4d4d, 0xffd24d, 0x4dd06a];
-    for (let i = 0; i < 3; i++) {
-      const m = new THREE.MeshBasicMaterial({ color: cols[i] });
-      const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 5), m);
-      lamp.position.set(0.14, 4.85 - i * 0.3, 0);
-      g.add(lamp);
-      lampMats.push(m);
-    }
+    const mkHead = (x, y) => {
+      const headBox = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.95, 0.3), new THREE.MeshLambertMaterial({ color: 0x22202a }));
+      headBox.position.set(x, y, 0);
+      const parts = [headBox];
+      for (let i = 0; i < 3; i++) {
+        const m = lampMats[i] || new THREE.MeshBasicMaterial({ color: cols[i] });
+        if (!lampMats[i]) lampMats.push(m);
+        const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 5), m);
+        lamp.position.set(x + 0.14, y + 0.3 - i * 0.3, 0);
+        parts.push(lamp);
+      }
+      return parts;
+    };
+    // pole-mounted head + arm assembly that swings toward the intersection
+    const armGroup = new THREE.Group();
+    mkHead(0, 4.3).forEach(p => g.add(p));
+    const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 4.4, 5), poleMat);
+    arm.rotation.z = Math.PI / 2;
+    arm.position.set(2.2, 5.55, 0);
+    armGroup.add(arm);
+    mkHead(4.15, 4.85).forEach(p => armGroup.add(p));
+    g.add(armGroup);
     g.userData.lamps = lampMats;
+    g.userData.arm = armGroup;
     return g;
   });
 
@@ -869,6 +975,9 @@ function render3D(P, S, tp) {
       if (si >= sigs.length) break;
       const g = sigs[si++];
       place(g, c.x, c.y, c.ang);
+      // swing the mast arm out over the intersection
+      const toCenter = Math.atan2(light.y - c.y, light.x - c.x);
+      g.userData.arm.rotation.y = -(toCenter - c.ang);
       const st = lightState(light, c.ang, S.gameT);
       const on = st === "r" ? 0 : st === "y" ? 1 : 2;
       g.userData.lamps.forEach((m, mi) => {
