@@ -361,6 +361,7 @@ function updateRiders(dt, gameT, player) {
     }
     if (r.speed < target) r.speed = Math.min(target, r.speed + 5 * dt);
     else r.speed = Math.max(target, r.speed - 8 * dt);
+    r.dist = (r.dist || 0) + r.speed * dt;
     r.t += r.speed * dt / s.len;
     if (r.t >= 1) {
       const opts = W.adjBike[endNode].filter(e => e.seg !== r.seg);

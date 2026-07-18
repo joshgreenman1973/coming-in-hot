@@ -113,9 +113,10 @@ const Game = {};
 
   /* ---------- comic bursts (world-space) ---------- */
   const FX = [];
+  Game.FX = FX; // shared with the 3D renderer
   function burst(x, y, text, color, size) {
     FX.push({ x, y, text, color, size: size || 2.6, t0: S.t });
-    if (FX.length > 14) FX.shift();
+    if (FX.length > 12) FX.shift();
   }
   const dingSound = () => { tone(880, 0.12, "sine", 0.14); tone(1320, 0.25, "sine", 0.12, 0.1); };
   const cashSound = () => { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.14, "triangle", 0.13, i * 0.06)); };
@@ -240,7 +241,8 @@ const Game = {};
       const stp = closestStreet(r.x, r.y);
       const pickX = stp ? stp.px : r.x, pickY = stp ? stp.py : r.y;
       const estSec = dToR / 7 + len / 7.5 + 40;
-      const fee = 3 + len * 0.0016 + type.feeAdd + Math.random() * 1.2;
+      // base pay runs $2-5 a trip in the real world; tips are the real income
+      const fee = 2 + len * 0.0013 + type.feeAdd + Math.random() * 1.1;
       const tipBase = (1.5 + Math.random() * 4.5 + len * 0.0018 + order.subtotal * 0.04) * type.tipMult;
       // the door sits on a building frontage near the corner, not in the intersection
       let doorX = dp[0], doorY = dp[1];
@@ -1620,6 +1622,8 @@ const Game = {};
   document.getElementById("tut-btn").addEventListener("click", () => { S.forceTut = true; startShift(); });
   document.getElementById("about-btn").addEventListener("click", () => $("about-pop").classList.toggle("hidden"));
   document.getElementById("about-close").addEventListener("click", () => $("about-pop").classList.add("hidden"));
+  document.getElementById("real-btn").addEventListener("click", () => $("real-pop").classList.toggle("hidden"));
+  document.getElementById("real-close").addEventListener("click", () => $("real-pop").classList.add("hidden"));
 
   Game.debug = () => ({ t: S.t, running: S.running, phase: S.phase, x: P.x, y: P.y, speed: P.speed, cars: Traffic.cars.length, peds: Traffic.peds.length, offer: !!S.offer, order: !!S.order });
   Game.S = S; Game.P = P;
