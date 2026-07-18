@@ -81,6 +81,7 @@ async function loadWorld() {
   });
 
   buildLights();
+  buildLightCorners();
   buildParkedCars();
   buildLamps();
   buildTrees();
@@ -111,6 +112,43 @@ function buildLights() {
     const li = W.lights.length;
     W.lights.push({ x: cx, y: cy, nodes: cluster, offset: (li * 7.3) % 24 });
     cluster.forEach(i => W.nodeLight[i] = li);
+  }
+}
+
+/* signal poles belong on sidewalk corners, not in the intersection:
+   find the two crossing streets and offset past both curb lines */
+function buildLightCorners() {
+  for (const light of W.lights) {
+    const segs = [...new Set(nearbySegs(light.x, light.y))].map(si => W.segs[si]);
+    let sA = null, dA = Infinity;
+    for (const s of segs) {
+      const pa = W.nodes[s.a], pb = W.nodes[s.b];
+      const dx = pb[0] - pa[0], dy = pb[1] - pa[1];
+      let t = ((light.x - pa[0]) * dx + (light.y - pa[1]) * dy) / (s.len * s.len);
+      t = Math.max(0, Math.min(1, t));
+      const d = Math.hypot(light.x - (pa[0] + dx * t), light.y - (pa[1] + dy * t));
+      if (d < dA) { dA = d; sA = s; }
+    }
+    if (!sA) continue;
+    let sB = null, perp = 0;
+    for (const s of segs) {
+      let dAng = Math.abs(s.ang - sA.ang) % Math.PI;
+      dAng = Math.min(dAng, Math.PI - dAng);
+      if (dAng > perp) { perp = dAng; sB = s; }
+    }
+    const nAx = -Math.sin(sA.ang), nAy = Math.cos(sA.ang);
+    const hA = ROAD_HALF[sA.cls] + 1.6;
+    if (!sB || perp < 0.35) {
+      // mid-block signal: one pole on the curb
+      light.corners = [{ x: light.x + nAx * hA, y: light.y + nAy * hA, ang: sA.ang }];
+      continue;
+    }
+    const nBx = -Math.sin(sB.ang), nBy = Math.cos(sB.ang);
+    const hB = ROAD_HALF[sB.cls] + 1.6;
+    light.corners = [
+      { x: light.x + nAx * hA + nBx * hB, y: light.y + nAy * hA + nBy * hB, ang: sA.ang },
+      { x: light.x - nAx * hA - nBx * hB, y: light.y - nAy * hA - nBy * hB, ang: sB.ang },
+    ];
   }
 }
 

@@ -1104,13 +1104,13 @@ const Game = {};
       ctx.restore();
     }
 
-    // traffic lights (dots at signal nodes near view)
+    // traffic lights: dots on their sidewalk corners
     for (const light of W.lights) {
       if (light.x < vx0 - 20 || light.x > vx0 + vw + 20 || light.y < vy0 - 20 || light.y > vy0 + vh + 20) continue;
-      const stNS = lightState(light, Math.PI / 2, S.gameT);
-      const stEW = lightState(light, 0, S.gameT);
-      drawLightDot(light.x - 2.6, light.y - 2.6, stNS, true);
-      drawLightDot(light.x + 2.6, light.y - 2.6, stEW, false);
+      if (!light.corners) continue;
+      for (const c of light.corners) {
+        drawLightDot(c.x, c.y, lightState(light, c.ang, S.gameT));
+      }
     }
 
     // moving cars
@@ -1354,7 +1354,7 @@ const Game = {};
     }
   }
 
-  function drawLightDot(x, y, st, ns) {
+  function drawLightDot(x, y, st) {
     ctx.fillStyle = st === "g" ? "#4dd06a" : st === "y" ? "#ffd24d" : "#ff4d4d";
     ctx.beginPath(); ctx.arc(x, y, 0.75, 0, 7); ctx.fill();
   }

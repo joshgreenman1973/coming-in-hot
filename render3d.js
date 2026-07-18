@@ -857,18 +857,19 @@ function render3D(P, S, tp) {
     pedalAnim(g, r.dist || 0);
   });
 
-  // signal poles: nearest intersections, one NS + one EW head
+  // signal poles on their sidewalk corners, heads facing their street
   const sigs = R3.pools.signals;
   sigs.forEach(g => g.visible = false);
   let si = 0;
   for (const light of W.lights) {
     if (si >= sigs.length - 1) break;
+    if (!light.corners) continue;
     if (Math.hypot(light.x - P.x, light.y - P.y) > 130) continue;
-    const states = [lightState(light, Math.PI / 2, S.gameT), lightState(light, 0, S.gameT)];
-    for (let k = 0; k < 2; k++) {
+    for (const c of light.corners) {
+      if (si >= sigs.length) break;
       const g = sigs[si++];
-      place(g, light.x + (k ? 3.1 : -3.1), light.y - 3.1, 0);
-      const st = states[k];
+      place(g, c.x, c.y, c.ang);
+      const st = lightState(light, c.ang, S.gameT);
       const on = st === "r" ? 0 : st === "y" ? 1 : 2;
       g.userData.lamps.forEach((m, mi) => {
         const cols = [0xff4d4d, 0xffd24d, 0x4dd06a];
