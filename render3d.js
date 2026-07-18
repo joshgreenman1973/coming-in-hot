@@ -178,17 +178,40 @@ function init3D() {
     R3.blitScene = new THREE.Scene();
     R3.blitCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     R3.blitMat = new THREE.ShaderMaterial({
-      uniforms: { tex: { value: null } },
+      uniforms: { tex: { value: null }, rtSize: { value: new THREE.Vector2(320, 200) } },
       vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",
       fragmentShader: [
-        "uniform sampler2D tex; varying vec2 vUv;",
+        "uniform sampler2D tex; uniform vec2 rtSize; varying vec2 vUv;",
+        "float Bayer2(vec2 a){ a = floor(a); return fract(a.x/2.0 + a.y*a.y*0.75); }",
+        "float lum(vec3 c){ return dot(c, vec3(0.299,0.587,0.114)); }",
         "void main(){",
+        "  vec2 px = 1.0 / rtSize;",
         "  vec3 c = texture2D(tex, vUv).rgb;",
-        "  float l = dot(c, vec3(0.299, 0.587, 0.114));",
-        "  c = mix(vec3(l), c, 1.45);",              // saturation punch
-        "  c = (c - 0.5) * 1.04 + 0.55;",            // gentle contrast + shadow lift
-        "  c = floor(c * 9.0 + 0.5) / 9.0;",         // 16-bit-ish banding
-        "  gl_FragColor = vec4(clamp(c, 0.0, 1.0), 1.0);",
+        "  float l = lum(c);",
+        "  c = mix(vec3(l), c, 1.5);",
+        "  c = (c - 0.5) * 1.05 + 0.55;",
+        "  float e = 0.0;",
+        "  e += abs(lum(texture2D(tex, vUv + vec2(px.x, 0.0)).rgb) - l);",
+        "  e += abs(lum(texture2D(tex, vUv - vec2(px.x, 0.0)).rgb) - l);",
+        "  e += abs(lum(texture2D(tex, vUv + vec2(0.0, px.y)).rgb) - l);",
+        "  e += abs(lum(texture2D(tex, vUv - vec2(0.0, px.y)).rgb) - l);",
+        "  float edge = smoothstep(0.16, 0.42, e);",
+        "  vec2 dc = vUv * rtSize;",
+        "  float d = Bayer2(0.5*dc)*0.25 + Bayer2(dc);",
+        "  c += (d - 0.5) * 0.10;",
+        "  vec3 pal[32];",
+        "  pal[0]=vec3(.04,.03,.07); pal[1]=vec3(.08,.07,.15); pal[2]=vec3(.12,.11,.22); pal[3]=vec3(.16,.15,.28);",
+        "  pal[4]=vec3(.23,.21,.38); pal[5]=vec3(.29,.23,.42); pal[6]=vec3(.39,.31,.53); pal[7]=vec3(.54,.46,.69);",
+        "  pal[8]=vec3(.20,.19,.25); pal[9]=vec3(.29,.27,.34); pal[10]=vec3(.42,.40,.47); pal[11]=vec3(.56,.54,.63);",
+        "  pal[12]=vec3(1.0,.85,.63); pal[13]=vec3(.94,.69,.38); pal[14]=vec3(.79,.54,.23); pal[15]=vec3(.56,.37,.16);",
+        "  pal[16]=vec3(.37,.25,.12); pal[17]=vec3(.48,.29,.22); pal[18]=vec3(.60,.42,.29); pal[19]=vec3(.72,.54,.38);",
+        "  pal[20]=vec3(.35,.20,.16); pal[21]=vec3(.16,.29,.20); pal[22]=vec3(.25,.42,.29); pal[23]=vec3(.42,.60,.37);",
+        "  pal[24]=vec3(.59,.77,.48); pal[25]=vec3(1.0,.30,.18); pal[26]=vec3(.83,.23,.16); pal[27]=vec3(.25,.85,1.0);",
+        "  pal[28]=vec3(.30,.82,.42); pal[29]=vec3(1.0,.82,.30); pal[30]=vec3(.91,.89,.84); pal[31]=vec3(.18,.43,.71);",
+        "  c = mix(c, vec3(.05,.04,.10), edge * 0.8);",
+        "  vec3 best = pal[0]; float bd = 1e9;",
+        "  for (int i = 0; i < 32; i++) { float dd = distance(c, pal[i]); if (dd < bd) { bd = dd; best = pal[i]; } }",
+        "  gl_FragColor = vec4(best, 1.0);",
         "}",
       ].join("\n"),
       depthTest: false, depthWrite: false,
@@ -197,10 +220,12 @@ function init3D() {
     R3.makeRT = () => {
       if (R3.rt) R3.rt.dispose();
       const s = Math.max(300, Math.round(innerWidth / 3.4));
-      R3.rt = new THREE.WebGLRenderTarget(s, Math.round(s * innerHeight / innerWidth), {
+      const sh = Math.round(s * innerHeight / innerWidth);
+      R3.rt = new THREE.WebGLRenderTarget(s, sh, {
         magFilter: THREE.NearestFilter, minFilter: THREE.NearestFilter,
       });
       R3.blitMat.uniforms.tex.value = R3.rt.texture;
+      R3.blitMat.uniforms.rtSize.value.set(s, sh);
     };
     R3.makeRT();
 
