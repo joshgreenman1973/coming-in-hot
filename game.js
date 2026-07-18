@@ -597,10 +597,10 @@ const Game = {};
     else if (down) P.speed = P.speed > 0.3 ? Math.max(0, P.speed - (S.rain ? 6.5 : 9.5) * dt) : Math.max(-3.2, P.speed - 3 * dt);
     else P.speed *= (1 - 0.3 * dt);
 
-    // steering (bicycle-ish, forgiving)
+    // steering (bicycle-ish, forgiving; pivots in place from a stop)
     const steerTarget = (left ? -1 : 0) + (right ? 1 : 0);
     P.steer += (steerTarget - P.steer) * Math.min(1, dt * (S.rain ? 8 : 12));
-    const sf = Math.min(1, Math.abs(P.speed) / 2.4);
+    const sf = Math.min(1, 0.55 + Math.abs(P.speed) / 3);
     P.ang += P.steer * 3.1 * sf * grip * dt * Math.sign(P.speed || 1);
 
     // lane assist: when not steering and roughly parallel to the street, glide along it
@@ -1483,7 +1483,7 @@ const Game = {};
   function startShift() {
     // spawn near Smith & Union-ish (center-west of map)
     const start = closestStreet(-600, 300) || closestStreet(0, 0);
-    if (start) { P.x = start.px; P.y = start.py; }
+    if (start) { P.x = start.px; P.y = start.py; P.ang = W.segs[start.seg].ang; }
     P.speed = 0; P.battery = 1; P.riding = true; P.carrying = false;
     P.dist = 0; P.knock = 0;
     Object.assign(S, {
