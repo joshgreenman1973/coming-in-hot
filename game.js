@@ -747,56 +747,76 @@ const Game = {};
     P.dist += Math.abs(P.speed) * dt;
 
     /* --- collisions --- */
-    if (P.crashCd > 0) { P.crashCd -= dt; }
-    else {
+    if (P.crashCd > 0) P.crashCd -= dt;
+    const canCrash = P.crashCd <= 0;
+
+    // vehicles are SOLID: oriented-box push-out that applies even during crash grace
+    const pushOutOf = (cx, cy, cang, hl, hw, pad) => {
+      const dx = P.x - cx, dy = P.y - cy;
+      if (Math.abs(dx) > hl + 2 || Math.abs(dy) > hl + 2) return false;
+      const ca = Math.cos(cang), sa = Math.sin(cang);
+      const lx = dx * ca + dy * sa;
+      const ly = -dx * sa + dy * ca;
+      const ex = hl + pad, ey = hw + pad;
+      if (Math.abs(lx) >= ex || Math.abs(ly) >= ey) return false;
+      const ox = ex - Math.abs(lx);
+      const oy = ey - Math.abs(ly);
+      if (ox < oy) {
+        const s = lx >= 0 ? 1 : -1;
+        P.x += ca * s * ox; P.y += sa * s * ox;
+      } else {
+        const s = ly >= 0 ? 1 : -1;
+        P.x += -sa * s * oy; P.y += ca * s * oy;
+      }
+      return true;
+    };
+
+    {
       // moving cars
       for (const car of Traffic.cars) {
         const cp = carPos(car);
-        const d = Math.hypot(cp.x - P.x, cp.y - P.y);
-        if (d < 1.9) {
+        if (pushOutOf(cp.x, cp.y, cp.ang, 2.2, 0.95, 0.45)) {
           const closing = Math.abs(P.speed) + car.speed;
-          if (closing > 7) crash("Clipped by a car", 0.2);
-          else { P.speed *= 0.5; }
-          break;
+          if (canCrash && closing > 6) crash("Clipped by a car", 0.2);
+          else P.speed *= 0.5;
+          car.speed *= 0.4;
         }
       }
       // buses
       for (const bus of Buses.list) {
         const bp = busPos(bus);
-        const dx = bp.x - P.x, dy = bp.y - P.y;
-        if (dx * dx + dy * dy > 36) continue;
-        // oriented check against the 11m bus body
-        const hx = Math.cos(bp.ang), hy = Math.sin(bp.ang);
-        const lon = Math.abs(dx * hx + dy * hy), lat = Math.abs(-dx * hy + dy * hx);
-        if (lon < 6.2 && lat < 2.0) {
+        if (Math.abs(bp.x - P.x) > 9 || Math.abs(bp.y - P.y) > 9) continue;
+        if (pushOutOf(bp.x, bp.y, bp.ang, 5.5, 1.28, 0.45)) {
           const rn = W.busRoutes[bus.route].name;
-          if (Math.abs(P.speed) + bus.speed > 6) crash("Clipped by the " + rn, 0.25);
-          else P.speed *= 0.3;
-          break;
+          if (canCrash && Math.abs(P.speed) + bus.speed > 5) crash("Clipped by the " + rn, 0.25);
+          else P.speed *= 0.4;
         }
       }
-      // rival riders: tangle of handlebars
-      for (const r of Traffic.riders) {
-        const rp = riderPos(r);
-        const d = Math.hypot(rp.x - P.x, rp.y - P.y);
-        if (d < 1.5) {
-          if (Math.abs(P.speed) + r.speed > 8) crash("Tangled with another deliverista", 0.12);
-          else P.speed *= 0.6;
-          r.speed *= 0.3;
-          break;
-        }
-      }
-      // parked cars
-      if (Math.abs(P.speed) > 5) {
-        for (const pc of W.parked) {
-          const dx = pc.x - P.x, dy = pc.y - P.y;
-          if (dx * dx + dy * dy < 3.0) {
+      // parked cars: solid at any speed
+      for (const pc of W.parked) {
+        if (Math.abs(pc.x - P.x) > 5 || Math.abs(pc.y - P.y) > 5) continue;
+        if (pushOutOf(pc.x, pc.y, pc.ang, 2.15, 0.92, 0.4)) {
+          if (canCrash && Math.abs(P.speed) > 5) {
             if (pc.door > 0) crash("DOORED", 0.32);
             else crash("Hit a parked car", 0.08);
-            break;
-          }
+          } else P.speed *= 0.6;
         }
       }
+      // rival riders: soft push, tangle at speed
+      for (const r of Traffic.riders) {
+        const rp = riderPos(r);
+        const dx = P.x - rp.x, dy = P.y - rp.y;
+        const d = Math.hypot(dx, dy);
+        if (d < 1.3) {
+          const push = (1.3 - d) || 0.1;
+          P.x += (dx / (d || 1)) * push; P.y += (dy / (d || 1)) * push;
+          if (canCrash && Math.abs(P.speed) + r.speed > 8) crash("Tangled with another deliverista", 0.12);
+          else P.speed *= 0.7;
+          r.speed *= 0.3;
+        }
+      }
+    }
+    if (canCrash) {
       // open doors (wider zone than the car body)
       for (const pc of openDoors) {
         const doorX = pc.x - Math.sin(pc.ang) * -2.0, doorY = pc.y + Math.cos(pc.ang) * -2.0;
